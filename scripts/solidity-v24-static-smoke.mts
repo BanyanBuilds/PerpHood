@@ -1,0 +1,22 @@
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+
+const math = await readFile(new URL("../contracts/src/BattleCurveMathV24.sol", import.meta.url), "utf8");
+const pool = await readFile(new URL("../contracts/src/LocalBattlePoolV24.sol", import.meta.url), "utf8");
+assert.match(math, /library BattleCurveMathV24/);
+assert.match(math, /wadFourthRootDown/);
+assert.doesNotMatch(math, /SEARCH_ITERATIONS/);
+assert.match(math, /quoteBuyExactTokens/);
+assert.match(math, /cumulativeCostWad/);
+assert.match(pool, /contract LocalBattlePoolV24/);
+assert.match(pool, /commitVerifiedAuthorizedFrame/);
+assert.match(pool, /commitVerifiedLiquidationChunk/);
+assert.match(pool, /MAX_LIQUIDATIONS_PER_CHUNK = 16/);
+assert.match(pool, /LIQUIDATION_BATCH_TIMEOUT = 10 minutes/);
+assert.match(pool, /expireLiquidationBatch/);
+assert.match(pool, /depositToken/);
+assert.match(pool, /_verifyCurveAction/);
+assert.match(pool, /_assertLogicalTokenConservation/);
+assert.match(pool, /frame\.marginalPriceWad != verifiedPrice/);
+assert.doesNotMatch(pool, /commitAuthorizedSingleAccountFrame/);
+console.log("V24 Solidity fixed-point verification and gas-bounded continuation static smoke passed.");

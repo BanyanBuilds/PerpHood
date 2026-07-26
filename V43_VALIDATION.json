@@ -1,0 +1,24 @@
+{
+  "version": "43.0.0",
+  "milestone": "unified-local-battlepool-settlement",
+  "generatedAt": "2026-07-25T17:44:36.896431+00:00",
+  "dependencyFreeRegression": "PASS",
+  "fullCommand": "npm run test:v43",
+  "typescriptFilesChecked": 186,
+  "v43Checks": {
+    "browserReferenceEngine": "PASS",
+    "contractStaticSafety": "PASS",
+    "factoryCalldataAndEventDecode": "PASS",
+    "launcherAndSandboxUI": "PASS",
+    "shortRepaymentHeadroom": "PRESENT",
+    "creatorPerpsRestriction": "PRESENT",
+    "orderedStateCommitments": "PRESENT",
+    "migrationOpenPositionGate": "PRESENT"
+  },
+  "notExecutedHere": {
+    "foundryCompilation": "Foundry unavailable in assembly environment",
+    "foundryTests": "Foundry unavailable in assembly environment",
+    "nextProductionBuild": "Project dependencies were not installed in assembly environment"
+  },
+  "safety": "Unaudited local sandbox. Never use with public funds."
+}

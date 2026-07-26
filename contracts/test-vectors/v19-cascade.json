@@ -1,0 +1,50 @@
+{
+  "engineVersion": "v19-adaptive-cascade-1",
+  "units": {
+    "weth": "ETH decimal in TypeScript reference; convert to 1e18 wad in Solidity",
+    "tokens": "whole-token decimal in TypeScript reference; production token decimals TBD"
+  },
+  "defaultConfig": {
+    "totalSupply": 1000000000,
+    "curveAllocation": 800000000,
+    "initialShortInventory": 100000000,
+    "initialSafetyInventory": 100000000,
+    "openingFdvEth": 0.25,
+    "curveExponent": 5,
+    "executionFeeRate": 0.003,
+    "adaptiveReleaseTrigger": 0.65,
+    "adaptiveReclaimTrigger": 0.22,
+    "adaptiveTargetUtilization": 0.52,
+    "adaptiveMaxShortInventoryFraction": 0.22,
+    "adaptiveMinSafetyFraction": 0.04
+  },
+  "massShortSqueeze": {
+    "seedSpotBuyEth": 1.5,
+    "positionCount": 40,
+    "collateralEthEach": 0.001,
+    "leverage": 20,
+    "squeezeSpotBuyEth": 0.5,
+    "admittedPositions": 40,
+    "internalExecutionSegments": 8,
+    "liquidations": 40,
+    "badDebtEth": 0,
+    "retainedLiquidationEquityEth": 0.013684,
+    "spotPriceMovePercent": 257.96,
+    "endingFreeWethEth": 2.021976
+  },
+  "massLongCascade": {
+    "seedSpotBuyEth": 1.5,
+    "positionCount": 40,
+    "collateralEthEach": 0.001,
+    "leverage": 20,
+    "genesisHolderSellFraction": 0.1,
+    "admittedPositions": 40,
+    "internalExecutionSegments": 52,
+    "liquidations": 40,
+    "badDebtEth": 0,
+    "retainedLiquidationEquityEth": 0.016,
+    "spotPriceMovePercentMagnitude": 68.59,
+    "endingFreeWethEth": 0.896796
+  },
+  "finalTokenConservation": 1000000000
+}

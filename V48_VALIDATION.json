@@ -1,0 +1,58 @@
+{
+  "version": 48,
+  "name": "PERPHOOD V48 Live Data Plane and Robinhood Chain Readiness",
+  "generatedAt": "2026-07-26T16:38:15.613543+00:00",
+  "status": "PASS",
+  "primaryCommand": "npm run test:v48",
+  "package": {
+    "name": "perphood-v48-live-data-plane",
+    "version": "48.0.0"
+  },
+  "inheritedRegression": {
+    "versions": "V21-V47",
+    "battlePoolFuzz": {
+      "seeds": 75,
+      "attemptedActions": 18750,
+      "successfulActions": 18662,
+      "safelyRejectedActions": 88
+    },
+    "shortCascade": {
+      "admitted20xShorts": 40,
+      "liquidations": 40,
+      "badDebtEth": 0
+    },
+    "longCascade": {
+      "admitted20xLongs": 40,
+      "liquidations": 40,
+      "badDebtEth": 0
+    },
+    "finalTokenConservation": 1000000000,
+    "v44TerminalChecks": "16/16",
+    "v45TerminalChecks": "16/16",
+    "v46StaticChecks": "13/13",
+    "v47CanonicalIndexer": "PASS"
+  },
+  "v48Checks": [
+    "environment and chain-ID validation",
+    "multi-provider RPC probing and block-hash quorum",
+    "divergent-provider isolation and failover",
+    "canonical 1s/15s/30s OHLCV materialization",
+    "rolling market metrics and unique traders",
+    "durable reconnectable SSE",
+    "health alerts and readable operations console",
+    "consistent SQLite snapshot and SHA-256 proof",
+    "finalized Supabase/Postgres read-model replication",
+    "in-place Markets/Movers quick execution",
+    "preset-only Long/Short with disabled unset actions (13/13)",
+    "three visible left sidecars with persistence and overflow protection (13/13)",
+    "TypeScript/TSX syntax across 259 files"
+  ],
+  "notExecuted": [
+    "Next.js production build because node_modules is not present",
+    "forge test because Foundry is unavailable",
+    "live Anvil quorum/reorg E2E",
+    "injected-wallet browser E2E",
+    "production Supabase and Robinhood Chain deployment"
+  ],
+  "publicFundsApproved": false
+}

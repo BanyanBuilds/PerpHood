@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "typescriptFiles": 122,
+  "minimumExplicitFontPx": 11,
+  "independentQuickBuyCategories": ["new", "cooking", "migrated"],
+  "attemptedActions": 18750,
+  "successfulActions": 18662,
+  "safelyRejectedActions": 88,
+  "tokenConservation": 1000000000,
+  "shortBattle": {
+    "positions": 40,
+    "liquidations": 40,
+    "boundaries": 8,
+    "badDebtEth": 0,
+    "spotMovePercent": 257.96
+  },
+  "longBattle": {
+    "positions": 40,
+    "liquidations": 40,
+    "boundaries": 52,
+    "badDebtEth": 0,
+    "spotMovePercent": -68.59
+  }
+}

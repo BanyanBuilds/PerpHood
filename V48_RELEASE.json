@@ -1,0 +1,37 @@
+{
+  "version": 48,
+  "name": "PERPHOOD V48 Live Data Plane and Robinhood Chain Readiness",
+  "created": "2026-07-26",
+  "sourceFiles": 425,
+  "typescriptTsxFiles": 259,
+  "primaryValidation": "npm run test:v48",
+  "validationStatus": "PASS",
+  "publicFundsApproved": false,
+  "runtime": {
+    "canonicalLocalDatabase": "SQLite WAL",
+    "optionalReplica": "Supabase/Postgres",
+    "minimumNode": "22",
+    "chain": "Robinhood Chain first / local Anvil reference"
+  },
+  "entrypoints": {
+    "terminal": "/",
+    "fundingRecovery": "/funding",
+    "dataPlaneAdmin": "/admin/data-plane",
+    "indexerAdmin": "/admin/indexer",
+    "keeperAdmin": "/admin/keeper",
+    "launchpadAdmin": "/admin/launchpad",
+    "battlePoolSandbox": "/admin/launchpad/sandbox"
+  },
+  "workers": {
+    "dataPlane": "npm run data-plane:v48",
+    "replicator": "npm run replicator:v48",
+    "indexer": "npm run indexer:v47",
+    "reconciler": "npm run reconciler:v47",
+    "keeper": "npm run keeper:v46"
+  },
+  "workspace": {
+    "marketsMoversTradingSidecar": false,
+    "quickActions": "in-place saved presets",
+    "maximumVisibleLeftSidecars": 3
+  }
+}

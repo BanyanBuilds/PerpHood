@@ -1,0 +1,24 @@
+{
+  "generatedAt": "2026-07-26T18:21:07.786Z",
+  "forge": {
+    "available": false,
+    "status": null,
+    "version": "spawnSync forge ENOENT"
+  },
+  "anvil": {
+    "available": false,
+    "status": null,
+    "version": "spawnSync anvil ENOENT"
+  },
+  "cast": {
+    "available": false,
+    "status": null,
+    "version": "spawnSync cast ENOENT"
+  },
+  "node": "v22.16.0",
+  "requiredForCompiledCampaign": [
+    "forge",
+    "anvil",
+    "cast"
+  ]
+}

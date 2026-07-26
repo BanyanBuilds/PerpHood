@@ -1,0 +1,28 @@
+{
+  "status": "PASS",
+  "version": "29.0.0",
+  "features": {
+    "unifiedPerpHoodCommandBar": true,
+    "marketsWorkspace": ["New Pairs", "Cooking", "Migrated"],
+    "moversWorkspace": ["Movers", "Most Liked", "Highest Market Cap"],
+    "independentMoverQuickBuyAmounts": true,
+    "centeredDualTickerSearch": true,
+    "searchBackdropOpacity": 0.34,
+    "searchBackdropBlurPx": 2,
+    "compactHeaderSearchMaxWidthPx": 330,
+    "duplicateTerminalHeadingRemoved": true,
+    "duplicateTrenchesHeadingRemoved": true,
+    "deadLayoutControlsRemoved": true
+  },
+  "engine": {
+    "randomizedActions": 18750,
+    "safeExecutions": 18662,
+    "unsafeRoutesRejected": 88,
+    "tokenConservation": 1000000000,
+    "shortBattleLiquidations": 40,
+    "longBattleLiquidations": 40,
+    "badDebtEth": 0
+  },
+  "typescriptSyntaxFiles": 124,
+  "fullNextBuild": "not run; npm package installation unavailable in the isolated build environment"
+}

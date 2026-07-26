@@ -1,0 +1,17 @@
+{
+  "version": "28.0.0",
+  "status": "PASS",
+  "officialLogo": true,
+  "headerLogoPx": 34,
+  "appIcon": true,
+  "appleIcon": true,
+  "favicon": true,
+  "typescriptFilesSyntaxValidated": 123,
+  "fuzzSeeds": 75,
+  "attemptedActions": 18750,
+  "successfulActions": 18662,
+  "safelyRejectedActions": 88,
+  "shortBattleBadDebtEth": 0,
+  "longBattleBadDebtEth": 0,
+  "tokenConservation": 1000000000
+}

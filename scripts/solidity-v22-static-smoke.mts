@@ -1,0 +1,21 @@
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+
+const source = await readFile(new URL("../contracts/src/LocalBattlePoolV22.sol", import.meta.url), "utf8");
+const tests = await readFile(new URL("../contracts/test/LocalBattlePoolV22.t.sol", import.meta.url), "utf8");
+assert.equal((source.match(/{/g) ?? []).length, (source.match(/}/g) ?? []).length, "Solidity braces must balance");
+assert.match(source, /contract LocalBattlePoolV22/);
+assert.match(source, /function authorizeSession\(/);
+assert.match(source, /function revokeSession\(/);
+assert.match(source, /function commitAuthorizedSingleAccountFrame\(/);
+assert.match(source, /SessionNonceMismatch/);
+assert.match(source, /SessionActionNotAllowed/);
+assert.match(source, /SessionLimitExceeded/);
+assert.match(tests, /testReplayNonceReverts/);
+assert.match(tests, /testOversizedIntentReverts/);
+assert.match(tests, /testUnauthorizedActionReverts/);
+assert.match(tests, /testRevokedSessionReverts/);
+assert.doesNotMatch(source, /tx\.origin/);
+assert.doesNotMatch(source, /delegatecall/);
+assert.doesNotMatch(source, /selfdestruct/);
+console.log("V22 Solidity session authorization static safety smoke test passed.");

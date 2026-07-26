@@ -1,0 +1,40 @@
+{
+  "project": "PERPHOOD",
+  "version": "45.0.0",
+  "milestone": "Authorized Account Execution and Fully Backed Internal Ledger",
+  "validatedAt": "2026-07-25",
+  "status": "PASS_WITH_EXPLICIT_ENVIRONMENT_LIMITATIONS",
+  "command": "npm run test:v45",
+  "results": {
+    "inheritedRegressionThroughV44": "PASS",
+    "randomizedBattlePoolActions": 18750,
+    "v45LedgerModel": "PASS",
+    "v45P256IntentSigning": "PASS",
+    "v45ContractStatic": "PASS",
+    "v45TerminalUiChecks": "16/16 PASS",
+    "typescriptTsxFilesChecked": 200,
+    "typescriptTsxSyntax": "PASS",
+    "fullLog": "V45_TEST_LOG.txt"
+  },
+  "implemented": [
+    "Fully backed ETH and per-market token liability ledger",
+    "Direct deposits, withdrawals, token deposits, and token withdrawals",
+    "Six-action bounded session authorization",
+    "Nonce, deadline, replay hash, action bitmap, per-intent cap, and cumulative cap",
+    "P-256 browser intent signing and local relay verification",
+    "Sponsored local sequencing with confirmed receipt reconciliation",
+    "Direct owner trading and exit fallback",
+    "Normal, CloseOnly, and Paused execution modes",
+    "Live Funding and custody-health terminal surfaces",
+    "V45 Anvil deployment and demo transaction bootstrap"
+  ],
+  "notExecuted": [
+    "Foundry compilation and forge test because Foundry/solc were unavailable",
+    "Next.js production build because node_modules were absent",
+    "Live wallet-extension execution against a compiled V45 Anvil deployment",
+    "Robinhood Chain or canonical WETH deployment",
+    "Independent security audit or formal verification"
+  ],
+  "trustBoundary": "The local relay verifies P-256 signatures off-chain. The Solidity router enforces session owner, nonce, expiry, action scope, replay hash, execution mode, and opening-notional limits but does not verify the P-256 signature itself. The sequencer cannot use owner-only withdrawal functions, but production still requires audited on-chain or account-abstraction signature enforcement.",
+  "classification": "Unaudited local prototype; never use with public funds"
+}

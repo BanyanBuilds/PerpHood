@@ -1,0 +1,47 @@
+{
+  "version": "50.0.0",
+  "milestone": "formal-invariants-and-adversarial-settlement",
+  "status": "PASS_WITH_EXECUTION_WINDOW_NOTE",
+  "outer_wrapper": {
+    "command": "npm run test:v50",
+    "final_exit_code_observed": false,
+    "reason": "container wall-clock limit interrupted the outer wrapper after passing inherited stages",
+    "constituent_suites_completed": true,
+    "assertion_failures_remaining": 0
+  },
+  "v50": {
+    "fragmentation_vectors": 96,
+    "oscillation_cycles": 500,
+    "last_short_floor_payout_wei": "508918767753352682",
+    "last_short_floor_pnl_wei": "458918767753352682",
+    "portfolios": 48,
+    "close_permutations": 5760,
+    "maximum_portfolio_payout_wei": "374702706168796240",
+    "stateful_seeds": 64,
+    "steps_per_seed": 384,
+    "attempted_actions": 24576,
+    "executed_actions": 24080,
+    "rejected_actions": 496,
+    "liquidations": 2747,
+    "maximum_open_positions": 20,
+    "maximum_obligations_eth": 3.2571270399423304,
+    "static_checks": "11/11",
+    "typescript_tsx_files": 268
+  },
+  "inherited": {
+    "fuzz_actions": 18750,
+    "long_cascade_positions": 40,
+    "short_cascade_positions": 40,
+    "controlled_cascade_bad_debt": 0,
+    "token_conservation": 1000000000
+  },
+  "unexecuted": [
+    "forge test",
+    "Solidity compilation",
+    "Next.js production build",
+    "wallet browser E2E",
+    "test-chain load testing",
+    "external formal verification"
+  ],
+  "public_funds_approved": false
+}

@@ -1,0 +1,27 @@
+{
+  "version": 47,
+  "name": "PERPHOOD V47 Authoritative Indexer and Recovery",
+  "created": "2026-07-25",
+  "sourceFiles": 394,
+  "primaryValidation": "npm run test:v47",
+  "validationStatus": "PASS",
+  "publicFundsApproved": false,
+  "runtime": {
+    "referenceDatabase": "SQLite WAL",
+    "minimumNode": "22",
+    "chain": "local Anvil reference / Robinhood Chain first"
+  },
+  "entrypoints": {
+    "terminal": "/",
+    "fundingRecovery": "/funding",
+    "indexerAdmin": "/admin/indexer",
+    "keeperAdmin": "/admin/keeper",
+    "launchpadAdmin": "/admin/launchpad",
+    "battlePoolSandbox": "/admin/launchpad/sandbox"
+  },
+  "workers": {
+    "indexer": "npm run indexer:v47",
+    "reconciler": "npm run reconciler:v47",
+    "keeper": "npm run keeper:v46"
+  }
+}

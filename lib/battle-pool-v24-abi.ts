@@ -1,0 +1,16 @@
+/** Minimal V24 ABI surface used by the local contract-verification client. */
+export const BATTLE_POOL_V24_ABI = [
+  "function depositToken(uint256 tokenAmount)",
+  "function authorizeSession(bytes32 sessionId,bytes32 publicKeyHash,uint64 validUntil,uint256 maxNotionalWad,uint256 actionBitmap)",
+  "function commitVerifiedAuthorizedFrame(uint64 expectedSequence,bytes32 expectedPreviousStateHash,bytes32 sessionId,uint64 sessionNonce,uint256 intentNotionalWad,uint64 intentDeadline,(bytes32 marketId,uint8 action,uint256 marginalPriceWad,uint256 marketCapWad,uint256 reservedWethWad,uint256 openInterestLongWad,uint256 openInterestShortWad,bytes32 positionsRoot,bytes32 balancesRoot,bytes32 intentHash) frame,(uint256 grossCurveWethWad,uint256 curveTokenAmountWad,uint256 curveFeeWad,uint256 externalWethAmountWad,uint256 nextLockedLongTokensWad,uint256 nextBorrowedShortTokensWad,uint256 nextPerpInventoryWad,uint256 nextSafetyInventoryWad,uint256 nextCirculatingSpotTokensWad) proof,address account,int256 accountWethDeltaWad,int256 accountTokenDelta,int256 poolWethDeltaWad,int256 poolTokenDelta)",
+  "function expireLiquidationBatch()",
+  "function beginLiquidationBatch(bytes32 batchId,uint32 totalPositions,bytes32 positionsRoot)",
+  "function commitVerifiedLiquidationChunk(bytes32 batchId,uint32 expectedCursor,(bytes32 marketId,uint8 action,uint256 marginalPriceWad,uint256 marketCapWad,uint256 reservedWethWad,uint256 openInterestLongWad,uint256 openInterestShortWad,bytes32 positionsRoot,bytes32 balancesRoot,bytes32 intentHash) frame,(uint256 grossCurveWethWad,uint256 curveTokenAmountWad,uint256 curveFeeWad,uint256 externalWethAmountWad,uint256 nextLockedLongTokensWad,uint256 nextBorrowedShortTokensWad,uint256 nextPerpInventoryWad,uint256 nextSafetyInventoryWad,uint256 nextCirculatingSpotTokensWad)[] proofs)",
+  "function runtimeState() view returns ((uint64 sequence,uint64 committedAt,bytes32 marketId,uint8 action,uint256 marginalPriceWad,uint256 marketCapWad,uint256 poolWethWad,uint256 poolTokenAmount,uint256 reservedWethWad,uint256 curveSoldTokenWad,uint256 openInterestLongWad,uint256 openInterestShortWad,bytes32 positionsRoot,bytes32 balancesRoot,bytes32 stateHash) frame,uint256 availableWethWad,bool solvent)",
+  "function curveMarginalPriceWad() view returns (uint256)",
+  "function curveCumulativeCostWad() view returns (uint256)",
+  "function liquidationContinuation() view returns (bytes32 batchId,bytes32 startingStateHash,bytes32 positionsRoot,uint32 nextCursor,uint32 totalPositions,uint64 startedAt,uint64 lastProgressAt,bool active)",
+  "event CurveActionVerified(uint64 indexed sequence,uint8 indexed action,uint256 soldBeforeWad,uint256 soldAfterWad,uint256 curveTokenAmountWad,uint256 grossCurveWethWad,uint256 curveFeeWad)",
+  "event StateFrameCommitted(uint64 indexed sequence,bytes32 indexed stateHash,bytes32 indexed marketId,uint8 action,uint256 marginalPriceWad,uint256 marketCapWad,uint256 poolWethWad,uint256 poolTokenAmount,uint256 reservedWethWad,uint256 curveSoldTokenWad,bytes32 intentHash)",
+  "event LiquidationChunkCommitted(bytes32 indexed batchId,uint32 cursorBefore,uint32 cursorAfter,uint256 processedCount,bytes32 stateHash)",
+] as const;

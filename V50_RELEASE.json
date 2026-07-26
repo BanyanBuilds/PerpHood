@@ -1,0 +1,23 @@
+{
+  "name": "PERPHOOD V50 \u2014 Formal Invariants and Adversarial Settlement",
+  "version": "50.0.0",
+  "created_at_utc": "2026-07-26T17:34:12.742026+00:00",
+  "package": "perphood-v50-formal-invariants",
+  "primary_artifacts": [
+    "FORMAL_INVARIANTS_V50.md",
+    "V50_BUILD_NOTES.md",
+    "V50_VALIDATION.md",
+    "V50_VALIDATION.json",
+    "V50_TEST_LOG.txt"
+  ],
+  "major_changes": [
+    "upward protocol-fee rounding",
+    "stateful invariant reference harness",
+    "exhaustive mixed-position close permutations",
+    "Foundry handler invariant harness",
+    "on-chain invariantSnapshot diagnostics",
+    "live /admin/invariants console"
+  ],
+  "validation_status": "all constituent dependency-free suites passed; outer aggregate wrapper exceeded tool wall-clock limit",
+  "security_status": "unaudited reference software; no public funds"
+}

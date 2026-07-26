@@ -1,0 +1,30 @@
+{
+  "version": "v51-compiler-chain-assault",
+  "result": "PORTABLE_PASS_COMPILED_NOT_RUN",
+  "portable": {
+    "orderingAssault": "PASS",
+    "staticChecks": { "passed": 19, "total": 19 },
+    "typescriptFiles": 274,
+    "allConstituentSuites": "PASS",
+    "monolithicWrapper": "TIMED_OUT_AFTER_V48_TOOL_WALL_CLOCK",
+    "continuationSuites": ["v49-fast", "v50-fast", "v51-fast"]
+  },
+  "compiledCampaign": {
+    "solidityAssaultTestsPackaged": 11,
+    "forgeAvailable": false,
+    "anvilAvailable": false,
+    "castAvailable": false,
+    "executed": false
+  },
+  "inheritedEvidence": {
+    "v50StatefulTransitions": 24576,
+    "v50Liquidations": 2747,
+    "v50ClosePermutations": 5760,
+    "v49ExactCurveVectors": 3001,
+    "battlePoolRandomizedActions": 18750,
+    "controlledLongCascade": 40,
+    "controlledShortCascade": 40,
+    "tokenConservation": 1000000000
+  },
+  "publicFundsApproved": false
+}

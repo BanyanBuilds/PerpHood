@@ -1,0 +1,31 @@
+{
+  "version": "33.0.0",
+  "status": "PASS",
+  "typescriptSyntaxFiles": 145,
+  "xLaunchFeed": {
+    "cashtagExtraction": true,
+    "evmAddressDetection": true,
+    "tickerSuggestions": 5,
+    "accountDeduplication": true,
+    "sourceProvenance": true,
+    "syntheticTrackerRemoved": true,
+    "officialRecentSearchRoute": true,
+    "officialFilteredStreamWorker": true,
+    "noFabricatedPosts": true
+  },
+  "battlePoolRegression": {
+    "attemptedActions": 18750,
+    "successfulActions": 18662,
+    "safelyRejectedActions": 88,
+    "tokenConservation": 1000000000,
+    "shortBattleLiquidations": 40,
+    "shortBattleBadDebtEth": 0,
+    "longBattleLiquidations": 40,
+    "longBattleBadDebtEth": 0
+  },
+  "limitations": [
+    "Live X execution requires valid X API credentials.",
+    "The included stream cache is in-memory and must be replaced with durable shared storage for production.",
+    "The complete Next.js build requires npm dependencies."
+  ]
+}

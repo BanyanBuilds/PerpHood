@@ -1,0 +1,54 @@
+{
+  "version": "49.0.0",
+  "milestone": "settlement-math-verification",
+  "date": "2026-07-26",
+  "command": "npm run test:v49",
+  "exitCode": 0,
+  "status": "PASS",
+  "syntaxFiles": 262,
+  "curveOracle": {
+    "exactRationalVectors": 3001,
+    "maximumCumulativeCostUnderRoundWei": "802",
+    "maximumMarginalPriceDifferenceWei": "0"
+  },
+  "shortSettlement": {
+    "scenarios": 20,
+    "payoutMonotonicAsCurveFalls": true,
+    "floorPayoutEqualsAdvertisedMaximum": true,
+    "profitBoundedByOriginalNotional": true
+  },
+  "liabilityReserve": {
+    "closeOrderPermutations": 24,
+    "maximumPermutationPayoutWei": "2037926464517932999",
+    "guaranteedLiabilityWei": "2105225039082663937",
+    "crossPositionNettingRemoved": true,
+    "postClosePayabilityVerified": true,
+    "prospectiveOpenSolvencyVerified": true
+  },
+  "engine": {
+    "attemptedActions": 18750,
+    "successfulActions": 18382,
+    "safelyRejectedActions": 368,
+    "controlledShortLiquidations": 40,
+    "controlledLongLiquidations": 40,
+    "controlledCascadeBadDebtEth": 0,
+    "finalTokenConservation": 1000000000
+  },
+  "integration": {
+    "staticChecks": "11/11",
+    "signedAbiDecoding": true,
+    "terminalQuotedVsExecutablePnl": true,
+    "shortFloorMaximumDisplayed": true,
+    "unpayableCloseDisabled": true
+  },
+  "notExecuted": [
+    "Solidity compilation",
+    "Foundry test suite",
+    "Foundry stateful invariants",
+    "Next.js production build",
+    "Anvil injected-wallet browser E2E",
+    "formal verification",
+    "independent audit"
+  ],
+  "publicFundsApproved": false
+}

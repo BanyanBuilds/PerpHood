@@ -1,0 +1,51 @@
+{
+  "version": "24.0.0",
+  "status": "PASS_WITH_ENVIRONMENT_LIMITATIONS",
+  "regression": {
+    "randomizedActions": 18750,
+    "safeExecutions": 18662,
+    "unsafeRoutesRejected": 88,
+    "tokenSupplyConserved": 1000000000,
+    "shortBattle": {
+      "positions": 40,
+      "leverage": 20,
+      "liquidations": 40,
+      "executionBoundaries": 8,
+      "badDebtEth": 0,
+      "spotMovePercent": 257.96
+    },
+    "longBattle": {
+      "positions": 40,
+      "leverage": 20,
+      "liquidations": 40,
+      "executionBoundaries": 52,
+      "badDebtEth": 0,
+      "spotMovePercent": -68.59
+    }
+  },
+  "v24": {
+    "inverseDifferentialVectors": 1000,
+    "maximumConservativeUnderquoteTokenWei": 139061804,
+    "verifiedSettlementCalldataBytes": 964,
+    "runtimeSnapshotWords": 17,
+    "orderedEventSmokeFrames": 90,
+    "fixedPointBenchmark": {
+      "samples": 2000,
+      "averageMs": 0.006535,
+      "p95Ms": 0.009284,
+      "p99Ms": 0.031046
+    },
+    "eventPnlBenchmark": {
+      "frames": 2000,
+      "positionsPerFrame": 40,
+      "executableQuotes": 80000,
+      "averageMsPerFrame": 0.143651,
+      "p95MsPerFrame": 0.219838,
+      "p99MsPerFrame": 0.334538
+    }
+  },
+  "notExecutedHere": [
+    "forge test",
+    "next build"
+  ]
+}

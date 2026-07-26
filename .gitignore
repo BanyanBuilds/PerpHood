@@ -1,0 +1,12 @@
+node_modules
+.next
+out
+.env
+.env.local
+*.log
+.DS_Store
+
+.perphood-v22-sequencer-state.json
+.perphood-v22-sequencer-state.json.tmp
+
+.perphood/

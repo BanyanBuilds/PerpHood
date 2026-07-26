@@ -1,0 +1,28 @@
+{
+  "version": "44.0.0",
+  "milestone": "terminal-contract-execution",
+  "date": "2026-07-25",
+  "regressionCommand": "npm run test:v44",
+  "regressionStatus": "PASS",
+  "typescriptTsxFilesChecked": 189,
+  "randomizedBattlePoolActions": 18750,
+  "v44ClientChecks": "PASS",
+  "v44UiChecks": "16/16 PASS",
+  "exactContractPositionPnl": true,
+  "walletConfirmedActions": [
+    "spot-buy",
+    "spot-sell",
+    "open-long",
+    "open-short",
+    "full-close"
+  ],
+  "browserSimulatorFallback": true,
+  "unattendedContractOrdersEnabled": false,
+  "productionBuild": "NOT_RUN_DEPENDENCIES_UNAVAILABLE",
+  "forgeTests": "NOT_RUN_FOUNDRY_UNAVAILABLE",
+  "liveWalletAnvilTest": "NOT_RUN_BROWSER_WALLET_REQUIRED",
+  "audited": false,
+  "publicFundsReady": false,
+  "confirmedBlockMetadataVisible": true,
+  "fullRegressionLog": "V44_TEST_LOG.txt"
+}

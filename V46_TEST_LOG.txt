@@ -1,0 +1,874 @@
+
+> perphood-v46-order-keeper-network@46.0.0 test:v46
+> npm run test:v45 && npm run test:v46-fast
+
+
+> perphood-v46-order-keeper-network@46.0.0 test:v45
+> npm run test:v44 && npm run test:v45-ledger && npm run test:v45-session && npm run test:v45-contract-static && npm run test:v45-ui && npm run test:syntax
+
+
+> perphood-v46-order-keeper-network@46.0.0 test:v44
+> npm run test:v43 && npm run test:v44-client && npm run test:v44-ui && npm run test:syntax
+
+
+> perphood-v46-order-keeper-network@46.0.0 test:v43
+> npm run test:v42 && npm run test:v43-engine && npm run test:v43-contract-static && npm run test:v43-chain && npm run test:v43-ui && npm run test:syntax
+
+
+> perphood-v46-order-keeper-network@46.0.0 test:v42
+> npm run test:v41 && npm run test:v42-chain && npm run test:v42-ui && npm run test:syntax
+
+
+> perphood-v46-order-keeper-network@46.0.0 test:v41
+> npm run test:v40 && npm run test:v41-launchpad && npm run test:v41-ui && npm run test:v41-solidity-static && npm run test:syntax
+
+
+> perphood-v46-order-keeper-network@46.0.0 test:v40
+> npm run test:v39 && npm run test:v40-ui
+
+
+> perphood-v46-order-keeper-network@46.0.0 test:v39
+> npm run test:v38 && npm run test:v39-ui
+
+
+> perphood-v46-order-keeper-network@46.0.0 test:v38
+> npm run test:v37 && npm run test:v38-alerts && npm run test:v38-ui && npm run test:v38-layout
+
+
+> perphood-v46-order-keeper-network@46.0.0 test:v37
+> npm run test:v36 && npm run test:v37-ui
+
+
+> perphood-v46-order-keeper-network@46.0.0 test:v36
+> npm run test:v35 && npm run test:v36-ui
+
+
+> perphood-v46-order-keeper-network@46.0.0 test:v35
+> npm run test:v34 && npm run test:v35-ui
+
+
+> perphood-v46-order-keeper-network@46.0.0 test:v34
+> npm run test:v33 && npm run test:v34-ui
+
+
+> perphood-v46-order-keeper-network@46.0.0 test:v33
+> npm run test:v32 && npm run test:v33-x-feed && npm run test:v33-ui
+
+
+> perphood-v46-order-keeper-network@46.0.0 test:v32
+> npm run test:v31 && npm run test:v32-ui
+
+
+> perphood-v46-order-keeper-network@46.0.0 test:v31
+> npm run test:v30 && npm run test:v31-ui
+
+
+> perphood-v46-order-keeper-network@46.0.0 test:v30
+> npm run test:v29 && npm run test:v30-movers && npm run test:v30-ui
+
+
+> perphood-v46-order-keeper-network@46.0.0 test:v29
+> npm run test:v28 && npm run test:v29-ui
+
+
+> perphood-v46-order-keeper-network@46.0.0 test:v28
+> npm run test:v27 && npm run test:v28-logo
+
+
+> perphood-v46-order-keeper-network@46.0.0 test:v27
+> npm run test:v26 && npm run test:v27-ui
+
+
+> perphood-v46-order-keeper-network@46.0.0 test:v26
+> npm run test:v25 && npm run test:v26-ui
+
+
+> perphood-v46-order-keeper-network@46.0.0 test:v25
+> npm run test:v24 && npm run test:v25-search && npm run test:v25-ui
+
+
+> perphood-v46-order-keeper-network@46.0.0 test:v24
+> npm run test:v23 && npm run test:v24-fixed-point && npm run test:v24-settlement && npm run test:v24-chain-decode && npm run test:v24-event-stream && npm run test:solidity-v24-static
+
+
+> perphood-v46-order-keeper-network@46.0.0 test:v23
+> npm run test:session-key && npm run test:authorized-settlement && npm run test:full-actions && npm run test:session-ledger && npm run test:solidity-v23-static && npm run test:keccak && npm run test:frame-builder && npm run test:local-ledger && npm run test:syntax && npm run test:engine
+
+
+> perphood-v46-order-keeper-network@46.0.0 test:session-key
+> node --experimental-strip-types scripts/session-key-smoke.mts
+
+(node:6371) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V23 P-256 session-key signing and tamper rejection passed.
+
+> perphood-v46-order-keeper-network@46.0.0 test:authorized-settlement
+> node --experimental-strip-types scripts/authorized-settlement-smoke.mts
+
+(node:6394) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V23 sponsored spot-buy quote and authorized settlement encoding passed.
+
+> perphood-v46-order-keeper-network@46.0.0 test:full-actions
+> node --experimental-strip-types scripts/full-action-settlement-smoke.mts
+
+(node:6417) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V23 full action pipeline passed 7 ordered actions with 0 remaining position and zero bad debt.
+
+> perphood-v46-order-keeper-network@46.0.0 test:session-ledger
+> node --experimental-strip-types scripts/session-ledger-smoke.mts
+
+(node:6440) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V23 session authorization ledger model passed replay, scope, size, expiry, and revocation checks.
+
+> perphood-v46-order-keeper-network@46.0.0 test:solidity-v23-static
+> node --experimental-strip-types scripts/solidity-v23-static-smoke.mts
+
+(node:6463) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V23 Solidity full-action authorization and liquidation-batch static safety smoke passed.
+
+> perphood-v46-order-keeper-network@46.0.0 test:keccak
+> node --experimental-strip-types scripts/keccak-smoke.mts
+
+(node:6486) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V21 Keccak and selector vectors passed.
+
+> perphood-v46-order-keeper-network@46.0.0 test:frame-builder
+> node --experimental-strip-types scripts/frame-builder-smoke.mts
+
+(node:6509) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V21 sequencer-to-contract frame builder passed.
+
+> perphood-v46-order-keeper-network@46.0.0 test:local-ledger
+> node --experimental-strip-types scripts/local-ledger-smoke.mts
+
+(node:6532) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V21 local custody ledger smoke test passed.
+
+> perphood-v46-order-keeper-network@46.0.0 test:syntax
+> node --experimental-strip-types scripts/typescript-syntax-smoke.mts
+
+(node:6555) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+TypeScript/TSX syntax smoke passed for 215 files.
+
+> perphood-v46-order-keeper-network@46.0.0 test:engine
+> npm run test:battle-pool && npm run test:parameters && npm run test:fuzz && npm run test:cascade && npm run test:realtime-pnl
+
+
+> perphood-v46-order-keeper-network@46.0.0 test:battle-pool
+> node --experimental-strip-types scripts/battle-pool-smoke.mts
+
+(node:6601) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+{
+  "status": "PASS",
+  "genesisSharePercent": 42.6,
+  "devExitEthAfterShortAttack": 0.509039,
+  "profitableShortPayoutEth": 0.536389,
+  "shortLiquidationPriceImpactPercent": 60.32,
+  "longLiquidationPriceImpactPercent": 21.87,
+  "finalTokenConservation": 1000000000
+}
+
+> perphood-v46-order-keeper-network@46.0.0 test:parameters
+> node --experimental-strip-types scripts/battle-pool-parameter-sweep.mts
+
+(node:6624) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+{
+  "status": "PASS",
+  "testedSurvivors": 16,
+  "topCandidates": [
+    {
+      "curvePercent": 80,
+      "perpPercent": 10,
+      "safetyPercent": 10,
+      "exponent": 5,
+      "genesisSharePercent": 42.6,
+      "shortCapacityEth": 0.6412,
+      "devExitEth": 0.509039,
+      "shortPayoutEth": 0.536389,
+      "endingFreeWeth": 0.006012,
+      "score": 71.81
+    },
+    {
+      "curvePercent": 75,
+      "perpPercent": 10,
+      "safetyPercent": 15,
+      "exponent": 5,
+      "genesisSharePercent": 40.47,
+      "shortCapacityEth": 0.6665,
+      "devExitEth": 0.508081,
+      "shortPayoutEth": 0.537352,
+      "endingFreeWeth": 0.006006,
+      "score": 70.7
+    },
+    {
+      "curvePercent": 85,
+      "perpPercent": 10,
+      "safetyPercent": 5,
+      "exponent": 6,
+      "genesisSharePercent": 40.15,
+      "shortCapacityEth": 0.6596,
+      "devExitEth": 0.508222,
+      "shortPayoutEth": 0.53721,
+      "endingFreeWeth": 0.006007,
+      "score": 69.98
+    },
+    {
+      "curvePercent": 85,
+      "perpPercent": 10,
+      "safetyPercent": 5,
+      "exponent": 5,
+      "genesisSharePercent": 44.69,
+      "shortCapacityEth": 0.6173,
+      "devExitEth": 0.510001,
+      "shortPayoutEth": 0.535421,
+      "endingFreeWeth": 0.006017,
+      "score": 67.54
+    },
+    {
+      "curvePercent": 80,
+      "perpPercent": 10,
+      "safetyPercent": 10,
+      "exponent": 6,
+      "genesisSharePercent": 38.28,
+      "shortCapacityEth": 0.6828,
+      "devExitEth": 0.507397,
+      "shortPayoutEth": 0.53804,
+      "endingFreeWeth": 0.006002,
+      "score": 67.11
+    },
+    {
+      "curvePercent": 75,
+      "perpPercent": 10,
+      "safetyPercent": 15,
+      "exponent": 4,
+      "genesisSharePercent": 45.8,
+      "shortCapacityEth": 0.6216,
+      "devExitEth": 0.510012,
+      "shortPayoutEth": 0.53541,
+      "endingFreeWeth": 0.006017,
+      "score": 65.62
+    },
+    {
+      "curvePercent": 85,
+      "perpPercent": 10,
+      "safetyPercent": 5,
+      "exponent": 7,
+      "genesisSharePercent": 36.55,
+      "shortCapacityEth": 0.6975,
+      "devExitEth": 0.506826,
+      "shortPayoutEth": 0.538615,
+      "endingFreeWeth": 0.005999,
+      "score": 64.31
+    },
+    {
+      "curvePercent": 75,
+      "perpPercent": 10,
+      "safetyPercent": 15,
+      "exponent": 6,
+      "genesisSharePercent": 36.37,
+      "shortCapacityEth": 0.7073,
+      "devExitEth": 0.506576,
+      "shortPayoutEth": 0.538866,
+      "endingFreeWeth": 0.005997,
+      "score": 64.2
+    },
+    {
+      "curvePercent": 80,
+      "perpPercent": 10,
+      "safetyPercent": 10,
+      "exponent": 7,
+      "genesisSharePercent": 34.84,
+      "shortCapacityEth": 0.7128,
+      "devExitEth": 0.506103,
+      "shortPayoutEth": 0.539342,
+      "endingFreeWeth": 0.005994,
+      "score": 61.58
+    },
+    {
+      "curvePercent": 80,
+      "perpPercent": 10,
+      "safetyPercent": 10,
+      "exponent": 4,
+      "genesisSharePercent": 48.22,
+      "shortCapacityEth": 0.5956,
+      "devExitEth": 0.511162,
+      "shortPayoutEth": 0.534253,
+      "endingFreeWeth": 0.006024,
+      "score": 60.69
+    },
+    {
+      "curvePercent": 75,
+      "perpPercent": 10,
+      "safetyPercent": 15,
+      "exponent": 3.5,
+      "genesisSharePercent": 49.12,
+      "shortCapacityEth": 0.5983,
+      "devExitEth": 0.511171,
+      "shortPayoutEth": 0.534244,
+      "endingFreeWeth": 0.006024,
+      "score": 59.13
+    },
+    {
+      "curvePercent": 75,
+      "perpPercent": 10,
+      "safetyPercent": 15,
+      "exponent": 7,
+      "genesisSharePercent": 33.1,
+      "shortCapacityEth": 0.7128,
+      "devExitEth": 0.505383,
+      "shortPayoutEth": 0.540067,
+      "endingFreeWeth": 0.00599,
+      "score": 58.48
+    }
+  ]
+}
+
+> perphood-v46-order-keeper-network@46.0.0 test:fuzz
+> node --experimental-strip-types scripts/battle-pool-fuzz.mts
+
+(node:6647) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+{
+  "status": "PASS",
+  "seeds": 75,
+  "attemptedActions": 18750,
+  "successfulActions": 18662,
+  "safelyRejectedActions": 88
+}
+
+> perphood-v46-order-keeper-network@46.0.0 test:cascade
+> node --experimental-strip-types scripts/battle-pool-cascade.mts
+
+(node:6670) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+{
+  "status": "PASS",
+  "shortBattle": {
+    "admitted20xShorts": 40,
+    "shortInventoryUtilizationBeforeSqueeze": 61.67,
+    "adaptiveReleaseObserved": true,
+    "internalExecutionSteps": 8,
+    "liquidations": 40,
+    "badDebtEth": 0,
+    "liquidationEquityRetainedEth": 0.013684,
+    "spotPriceMovePercent": 257.96,
+    "endingFreeWeth": 2.021976
+  },
+  "longBattle": {
+    "admitted20xLongs": 40,
+    "internalExecutionSteps": 52,
+    "liquidations": 40,
+    "badDebtEth": 0,
+    "liquidationEquityRetainedEth": 0.016,
+    "spotPriceMovePercent": 68.59,
+    "endingFreeWeth": 0.896796
+  },
+  "finalShortPriceEth": 2.6219528721033207e-8,
+  "finalLongPriceEth": 9.639937472713602e-9,
+  "finalTokenConservation": 1000000000
+}
+
+> perphood-v46-order-keeper-network@46.0.0 test:realtime-pnl
+> node --experimental-strip-types scripts/realtime-pnl-smoke.mts
+
+(node:6693) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+{
+  "status": "PASS",
+  "sequence": 2,
+  "longPnlBeforePumpEth": -0.0012,
+  "longPnlAfterPumpEth": 0.06903899,
+  "shortExecutablePnlEth": -0.0003,
+  "spotExecutableValueEth": 0.04970045,
+  "spotCloseImpactPercent": 3.8894,
+  "executionVolumeDeltaUsd": 1000
+}
+
+> perphood-v46-order-keeper-network@46.0.0 test:v24-fixed-point
+> node --experimental-strip-types scripts/v24-fixed-point-smoke.mts
+
+(node:6716) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V24 fixed-point BattleCurve matched the floating reference, stayed conservative across 1,000 inverse vectors (max 139061804 token-wei), and conserved all one-billion tokens across six verified actions.
+
+> perphood-v46-order-keeper-network@46.0.0 test:v24-settlement
+> node --experimental-strip-types scripts/v24-settlement-smoke.mts
+
+(node:6739) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V24 verified settlement encoded 964 bytes with proof-derived price and conserved deltas.
+
+> perphood-v46-order-keeper-network@46.0.0 test:v24-chain-decode
+> node --experimental-strip-types scripts/v24-chain-decode-smoke.mts
+
+(node:6762) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V24 runtime decoder mapped the 17-word contract snapshot, curve state, and custody authority correctly.
+
+> perphood-v46-order-keeper-network@46.0.0 test:v24-event-stream
+> node --experimental-strip-types scripts/v24-event-stream-smoke.mts
+
+(node:6785) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V24 event stream synchronized 1s/15s/30s candles and executable PNL across 90 ordered frames; max local processing 167.28 µs.
+
+> perphood-v46-order-keeper-network@46.0.0 test:solidity-v24-static
+> node --experimental-strip-types scripts/solidity-v24-static-smoke.mts
+
+(node:6808) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V24 Solidity fixed-point verification and gas-bounded continuation static smoke passed.
+
+> perphood-v46-order-keeper-network@46.0.0 test:v25-search
+> node --experimental-strip-types scripts/v25-terminal-search-smoke.mts
+
+(node:6831) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V25 dual ticker search passed oldest-first lineage, market-cap ranking, and ticker+art OG identity.
+
+> perphood-v46-order-keeper-network@46.0.0 test:v25-ui
+> node --experimental-strip-types scripts/v25-ui-static-smoke.mts
+
+(node:6854) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V25 terminal UI static smoke passed #333 theme, terminal-only header, dual ticker search, OG rail, profile sidebar, and adaptive 360 FPS mode.
+
+> perphood-v46-order-keeper-network@46.0.0 test:v26-ui
+> node --experimental-strip-types scripts/v26-padre-density-smoke.mts
+
+PASS  46px terminal-only header
+PASS  82px default market-row rhythm
+PASS  44px rounded-square token art
+PASS  Padre-density row split
+PASS  Buy/Long/Short preserved
+PASS  OG lineage preserved
+PASS  dual ticker search preserved
+PASS  360 FPS controls preserved
+PASS  single terminal route retained
+V26 density smoke passed (9/9).
+(node:6877) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> perphood-v46-order-keeper-network@46.0.0 test:v27-ui
+> node --experimental-strip-types scripts/v27-readable-quick-buy-smoke.mts
+
+V27 readable typography + independent category quick-buy smoke passed.
+(node:6900) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> perphood-v46-order-keeper-network@46.0.0 test:v28-logo
+> node --experimental-strip-types scripts/v28-logo-smoke.mts
+
+V28 official gold logo assets and header integration passed.
+(node:6923) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> perphood-v46-order-keeper-network@46.0.0 test:v29-ui
+> node --experimental-strip-types scripts/v29-movers-search-smoke.mts
+
+(node:6946) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V29 integrated Movers + centered search smoke passed.
+
+> perphood-v46-order-keeper-network@46.0.0 test:v30-movers
+> node --experimental-strip-types scripts/v30-movers-engine-smoke.mts
+
+(node:6969) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V30 movers engine smoke: PASS
+1. organic 62.8 (Active) penalty=0.0
+2. wash 43.4 (Watching) penalty=38.0
+3. sleepy 9.2 (Watching) penalty=0.0
+
+> perphood-v46-order-keeper-network@46.0.0 test:v30-ui
+> node --experimental-strip-types scripts/v30-movers-ui-smoke.mts
+
+V30 movers UI smoke: PASS
+(node:6992) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> perphood-v46-order-keeper-network@46.0.0 test:v31-ui
+> node --experimental-strip-types scripts/v31-terminal-controls-smoke.mts
+
+(node:7015) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V31 terminal settings, strip, sidecar, outside-dismiss, and manual 360 FPS smoke passed.
+
+> perphood-v46-order-keeper-network@46.0.0 test:v32-ui
+> node --experimental-strip-types scripts/v32-pnl-identity-smoke.mts
+
+(node:7038) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V32 floating PNL, all-time ledger, X sharing, wallet identity, and logo smoke passed.
+
+> perphood-v46-order-keeper-network@46.0.0 test:v33-x-feed
+> node --experimental-strip-types scripts/v33-x-launch-feed-smoke.mts
+
+(node:7061) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V33 X Launch Feed smoke: PASS {
+  suggestions: [ 'FALCON', 'FALCONLABS', 'FL', 'FALCONX', 'FALCOAI' ],
+  query: '(from:falcon_labs) ($FALCON OR "contract address") -is:retweet'
+}
+
+> perphood-v46-order-keeper-network@46.0.0 test:v33-ui
+> node --experimental-strip-types scripts/v33-x-launch-ui-smoke.mts
+
+(node:7084) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V33 X Launch Feed UI smoke: PASS
+
+> perphood-v46-order-keeper-network@46.0.0 test:v34-ui
+> node --experimental-strip-types scripts/v34-clean-status-smoke.mts
+
+PASS command bar renders one concise Hz readout
+PASS command bar no longer renders FPS/display sublabels
+PASS shared header uses the same concise Hz wording
+PASS refresh readout has no border
+PASS refresh readout has no button background
+PASS noninteractive chain status is borderless
+PASS bottom status spans are visually plain
+V34 clean-status UI smoke passed (7/7).
+(node:7107) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> perphood-v46-order-keeper-network@46.0.0 test:v35-ui
+> node --experimental-strip-types scripts/v35-trading-workspace-smoke.mts
+
+PASS  workspace layouts or newer resizable chart workspace
+PASS  keyboard buy sell long short
+PASS  keyboard amount and leverage presets
+PASS  unified four-action ticket
+PASS  BattlePool ribbon
+PASS  liquidation map
+PASS  professional position controls
+PASS  spot executable manager
+PASS  readable V35 typography
+PASS  single selected-market workspace
+V35 complete trading workspace smoke passed (10/10).
+(node:7130) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> perphood-v46-order-keeper-network@46.0.0 test:v36-ui
+> node --experimental-strip-types scripts/v36-chart-research-smoke.mts
+
+PASS  one deliberate demo token
+PASS  one demo chart remains reachable from the restored terminal
+PASS  single-market layout removes discovery rail
+PASS  DEX-style time-window metrics
+PASS  market cap is the default chart scale
+PASS  wallet intelligence chart markers
+PASS  GMGN-style intelligence tabs
+PASS  BattlePool and public execution tabs
+PASS  deterministic live demo replay
+PASS  research-derived single-market styling
+V36 one-demo chart foundation smoke passed (10/10).
+(node:7153) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> perphood-v46-order-keeper-network@46.0.0 test:v37-ui
+> node --experimental-strip-types scripts/v37-padre-chart-smoke.mts
+
+PASS  no-scroll fixed chart viewport
+PASS  draggable chart/lower-panel divider
+PASS  optional side trade tape
+PASS  optional lower data panel
+PASS  simple four-action execution rail
+PASS  compact token safety section
+PASS  persistent chart preferences
+PASS  outside-click chart settings dismissal
+PASS  curated wallet and liquidation layers
+PASS  clean defaults
+PASS  market-cap and token-price modes
+PASS  GMGN-style chart controls
+V37 clean chart workspace smoke passed (12/12).
+(node:7176) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> perphood-v46-order-keeper-network@46.0.0 test:v38-alerts
+> node --experimental-strip-types scripts/v38-alert-risk-smoke.mts
+
+(node:7199) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+{
+  "status": "PASS",
+  "alerts": [
+    "market-cap-above",
+    "whale-trade",
+    "short-cluster",
+    "long-cluster",
+    "developer-sell"
+  ],
+  "diverseDefenseScore": 92.3,
+  "washDefenseScore": 59.8,
+  "shortClusterEth": 1.8,
+  "longClusterEth": 1.2
+}
+
+> perphood-v46-order-keeper-network@46.0.0 test:v38-ui
+> node --experimental-strip-types scripts/v38-ui-smoke.mts
+
+PASS  functional market alert button
+PASS  chart publishes one live snapshot
+PASS  saved per-coin alert rules
+PASS  outside-click alert dismissal
+PASS  market-cap and whale alerts
+PASS  liquidation-cluster alerts
+PASS  developer and solvency alerts
+PASS  pulse data tab
+PASS  public liquidation pressure
+PASS  market defense score
+PASS  readable 11px minimum alert UI
+PASS  no-scroll workspace preserved
+V38 alerts and risk workspace smoke passed (12/12).
+(node:7222) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> perphood-v46-order-keeper-network@46.0.0 test:v38-layout
+> node --experimental-strip-types scripts/v38-landing-spacing-smoke.mts
+
+PASS  root restores Markets/Movers terminal
+PASS  single demo token remains
+PASS  demo token appears in New Pairs
+PASS  wide outer terminal gutters
+PASS  clear spacing between all three categories
+PASS  responsive gutters remain usable
+PASS  no-scroll terminal model preserved
+V38 restored landing + spacious terminal smoke passed (7/7).
+(node:7245) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> perphood-v46-order-keeper-network@46.0.0 test:v39-ui
+> node --experimental-strip-types scripts/v39-clean-shell-card-smoke.mts
+
+PASS three-zone command shell
+PASS passive chain pill removed from command bar
+PASS passive portfolio header stats removed
+PASS compact account balance
+PASS entire market row is keyboard navigable
+PASS interactive row controls are excluded
+PASS collision-proof two-column card
+PASS quiet V39 shell
+PASS market deck lowered
+PASS wider category separation
+V39 clean-shell/card checks passed: 10/10
+(node:7268) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> perphood-v46-order-keeper-network@46.0.0 test:v40-ui
+> node --experimental-strip-types scripts/v40-equal-movers-smoke.mts
+
+PASS — all Movers-page columns receive momentum context
+PASS — old first-column-only score behavior removed
+PASS — Movers workspace explicitly uses three equal columns
+PASS — ranked columns cannot force unequal widths
+PASS — all ranked rows use full column width
+PASS — all ranking cards share one height
+V40 equal Movers geometry: 6/6
+(node:7291) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> perphood-v46-order-keeper-network@46.0.0 test:v41-launchpad
+> node --experimental-strip-types scripts/v41-launchpad-engine-smoke.mts
+
+(node:7314) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V41 launchpad engine smoke passed.
+{
+  "minimumTotalSpendEth": 0.001,
+  "gasReserveEth": 0.00018,
+  "creatorBuyEth": 0.00082,
+  "targetMarketCapUsd": 45000,
+  "targetGrossWethEth": 1.209856,
+  "targetCirculatingPercent": 44.267,
+  "migrationGates": 7
+}
+
+> perphood-v46-order-keeper-network@46.0.0 test:v41-ui
+> node --experimental-strip-types scripts/v41-launchpad-ui-smoke.mts
+
+(node:7337) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V41 launchpad UI smoke passed (13/13).
+
+> perphood-v46-order-keeper-network@46.0.0 test:v41-solidity-static
+> node --experimental-strip-types scripts/v41-launchpad-solidity-static-smoke.mts
+
+(node:7360) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V41 launchpad Solidity static smoke passed (10/10).
+
+> perphood-v46-order-keeper-network@46.0.0 test:syntax
+> node --experimental-strip-types scripts/typescript-syntax-smoke.mts
+
+(node:7383) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+TypeScript/TSX syntax smoke passed for 215 files.
+
+> perphood-v46-order-keeper-network@46.0.0 test:v42-chain
+> node --experimental-strip-types scripts/v42-launchpad-chain-smoke.mts
+
+(node:7417) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V42 local-chain launchpad smoke passed (8 contract checks).
+
+> perphood-v46-order-keeper-network@46.0.0 test:v42-ui
+> node --experimental-strip-types scripts/v42-launchpad-ui-smoke.mts
+
+(node:7440) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V42 launchpad UI smoke passed (12/12).
+
+> perphood-v46-order-keeper-network@46.0.0 test:syntax
+> node --experimental-strip-types scripts/typescript-syntax-smoke.mts
+
+(node:7463) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+TypeScript/TSX syntax smoke passed for 215 files.
+
+> perphood-v46-order-keeper-network@46.0.0 test:v43-engine
+> node --experimental-strip-types scripts/v43-unified-battlepool-smoke.mts
+
+(node:7497) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+{
+  "version": "v43-unified-settlement",
+  "spotPriceEth": 8.288789427207601e-9,
+  "freeWethEth": 0.7686570346058039,
+  "conservedTokens": 1000000000,
+  "badDebtEth": 0,
+  "status": "PASS"
+}
+
+> perphood-v46-order-keeper-network@46.0.0 test:v43-contract-static
+> node --experimental-strip-types scripts/v43-contract-static-smoke.mts
+
+(node:7520) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V43 unified BattlePool contract/static smoke: PASS
+
+> perphood-v46-order-keeper-network@46.0.0 test:v43-chain
+> node --experimental-strip-types scripts/v43-launchpad-chain-smoke.mts
+
+(node:7543) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V43 local-chain launchpad smoke passed (8 contract checks).
+
+> perphood-v46-order-keeper-network@46.0.0 test:v43-ui
+> node --experimental-strip-types scripts/v43-launchpad-ui-smoke.mts
+
+(node:7566) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V43 launchpad UI smoke passed (11/11).
+
+> perphood-v46-order-keeper-network@46.0.0 test:syntax
+> node --experimental-strip-types scripts/typescript-syntax-smoke.mts
+
+(node:7589) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+TypeScript/TSX syntax smoke passed for 215 files.
+
+> perphood-v46-order-keeper-network@46.0.0 test:v44-client
+> node --experimental-strip-types scripts/v44-contract-client-smoke.mts
+
+(node:7623) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V44 contract client/event reconciliation smoke: PASS
+
+> perphood-v46-order-keeper-network@46.0.0 test:v44-ui
+> node --experimental-strip-types scripts/v44-terminal-ui-smoke.mts
+
+(node:7646) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V44 terminal-to-contract UI smoke passed (16/16).
+
+> perphood-v46-order-keeper-network@46.0.0 test:syntax
+> node --experimental-strip-types scripts/typescript-syntax-smoke.mts
+
+(node:7669) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+TypeScript/TSX syntax smoke passed for 215 files.
+
+> perphood-v46-order-keeper-network@46.0.0 test:v45-ledger
+> node --experimental-strip-types scripts/v45-account-ledger-smoke.mts
+
+(node:7703) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V45 account ledger/session-limit model smoke: PASS
+
+> perphood-v46-order-keeper-network@46.0.0 test:v45-session
+> node --experimental-strip-types scripts/v45-session-key-smoke.mts
+
+(node:7726) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V45 P-256 canonical intent/signature smoke: PASS
+
+> perphood-v46-order-keeper-network@46.0.0 test:v45-contract-static
+> node --experimental-strip-types scripts/v45-contract-static-smoke.mts
+
+(node:7749) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V45 authorized-account contract static smoke: PASS
+
+> perphood-v46-order-keeper-network@46.0.0 test:v45-ui
+> node --experimental-strip-types scripts/v45-terminal-ui-smoke.mts
+
+(node:7772) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V45 authorized-account terminal UI smoke passed (16/16).
+
+> perphood-v46-order-keeper-network@46.0.0 test:syntax
+> node --experimental-strip-types scripts/typescript-syntax-smoke.mts
+
+(node:7795) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+TypeScript/TSX syntax smoke passed for 215 files.
+
+> perphood-v46-order-keeper-network@46.0.0 test:v46-fast
+> npm run test:v46-engine && npm run test:v46-signature && npm run test:v46-store && npm run test:v46-static && npm run test:syntax
+
+
+> perphood-v46-order-keeper-network@46.0.0 test:v46-engine
+> node --experimental-strip-types scripts/v46-order-engine-smoke.mts
+
+(node:7841) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V46 order-engine smoke passed: comparator semantics, breakeven state machine, expiry, retry backoff, and USD/ETH cap conversion.
+
+> perphood-v46-order-keeper-network@46.0.0 test:v46-signature
+> node --experimental-strip-types scripts/v46-order-signature-smoke.mts
+
+(node:7864) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V46 P-256 durable-order signature smoke passed, including tamper detection and signed cancellation.
+
+> perphood-v46-order-keeper-network@46.0.0 test:v46-store
+> node --experimental-strip-types scripts/v46-order-store-smoke.mts
+
+(node:7887) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V46 durable order-store smoke passed: atomic persistence, idempotency, lease exclusion, fill finality, cancellation, and stats.
+
+> perphood-v46-order-keeper-network@46.0.0 test:v46-static
+> node --experimental-strip-types scripts/v46-static-smoke.mts
+
+(node:7910) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V46 static integration smoke passed (13/13 checks).
+
+> perphood-v46-order-keeper-network@46.0.0 test:syntax
+> node --experimental-strip-types scripts/typescript-syntax-smoke.mts
+
+(node:7933) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+TypeScript/TSX syntax smoke passed for 215 files.

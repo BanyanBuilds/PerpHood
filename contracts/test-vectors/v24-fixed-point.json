@@ -1,0 +1,52 @@
+{
+  "version": "v24-fixed-point-1",
+  "openingPriceWad": "250000000",
+  "openingCostWad": "0",
+  "buys": [
+    {
+      "grossWethWad": "1000000000000000",
+      "feeWethWad": "3000000000000",
+      "netCurveWethWad": "997000000000000",
+      "tokenOutWad": "3939030978922486879022269",
+      "soldAfterWad": "3939030978922486879022269",
+      "marginalPriceAfterWad": "256246704",
+      "exactTokenGrossWethWad": "999999999999998"
+    },
+    {
+      "grossWethWad": "10000000000000000",
+      "feeWethWad": "30000000000000",
+      "netCurveWethWad": "9970000000000000",
+      "tokenOutWad": "35550192088497712653001743",
+      "soldAfterWad": "35550192088497712653001743",
+      "marginalPriceAfterWad": "313794309",
+      "exactTokenGrossWethWad": "9999999999999998"
+    },
+    {
+      "grossWethWad": "100000000000000000",
+      "feeWethWad": "300000000000000",
+      "netCurveWethWad": "99700000000000000",
+      "tokenOutWad": "191827136715818108049981329",
+      "soldAfterWad": "191827136715818108049981329",
+      "marginalPriceAfterWad": "984588488",
+      "exactTokenGrossWethWad": "99999999999999998"
+    },
+    {
+      "grossWethWad": "1000000000000000000",
+      "feeWethWad": "3000000000000000",
+      "netCurveWethWad": "997000000000000000",
+      "tokenOutWad": "426022204134945113267047194",
+      "soldAfterWad": "426022204134945113267047194",
+      "marginalPriceAfterWad": "11198525811",
+      "exactTokenGrossWethWad": "999999999999999995"
+    }
+  ],
+  "sell": {
+    "soldBeforeWad": "426022204134945113267047194",
+    "tokenInWad": "42602220413494511326704719",
+    "grossCurveWethWad": "366957239133460284",
+    "feeWethWad": "1100871717400380",
+    "netWethWad": "365856367416059904",
+    "soldAfterWad": "383419983721450601940342475",
+    "marginalPriceAfterWad": "6529768441"
+  }
+}

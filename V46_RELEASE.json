@@ -1,0 +1,16 @@
+{
+  "version": 46,
+  "name": "PERPHOOD V46 Order & Keeper Network",
+  "created": "2026-07-25",
+  "sourceFiles": 368,
+  "primaryValidation": "npm run test:v46",
+  "validationStatus": "PASS",
+  "publicFundsApproved": false,
+  "entrypoints": {
+    "terminal": "/",
+    "funding": "/funding",
+    "keeperAdmin": "/admin/keeper",
+    "launchpadAdmin": "/admin/launchpad",
+    "battlePoolSandbox": "/admin/launchpad/sandbox"
+  }
+}

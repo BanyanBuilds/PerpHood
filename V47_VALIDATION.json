@@ -1,0 +1,58 @@
+{
+  "version": 47,
+  "name": "PERPHOOD V47 Authoritative Indexer and Recovery",
+  "generatedAt": "2026-07-25T21:21:07.019538+00:00",
+  "status": "PASS",
+  "primaryCommand": "npm run test:v47",
+  "package": {
+    "name": "perphood-v47-authoritative-indexer",
+    "version": "47.0.0"
+  },
+  "inheritedRegression": {
+    "versions": "V21-V46",
+    "battlePoolFuzz": {
+      "seeds": 75,
+      "attemptedActions": 18750,
+      "successfulActions": 18662,
+      "safelyRejectedActions": 88
+    },
+    "shortCascade": {
+      "admitted20xShorts": 40,
+      "liquidations": 40,
+      "badDebtEth": 0
+    },
+    "longCascade": {
+      "admitted20xLongs": 40,
+      "liquidations": 40,
+      "badDebtEth": 0
+    },
+    "finalTokenConservation": 1000000000,
+    "v43UnifiedSettlementBadDebtEth": 0,
+    "v44TerminalChecks": "16/16",
+    "v45TerminalChecks": "16/16",
+    "v46StaticChecks": "13/13"
+  },
+  "v47Checks": [
+    "SQLite WAL schema and integrity",
+    "canonical raw block/event persistence",
+    "factory-wide deterministic projections",
+    "account and token liability reconstruction",
+    "SQL durable-order idempotency and exclusive leases",
+    "common-ancestor rollback and deterministic replay",
+    "recovery-job audit trail",
+    "indexer/reconciler leader lease failover",
+    "active worker heartbeat health without stale false alarms",
+    "live account and BattlePool reconciliation",
+    "latest-run recovery after a historical mismatch",
+    "cross-device session visibility and owner revocation",
+    "indexed API and operations console integration",
+    "TypeScript/TSX syntax across 234 files"
+  ],
+  "notExecuted": [
+    "Next.js production build because dependency installation did not complete in the assembly environment",
+    "forge test because Foundry is unavailable",
+    "live Anvil indexer/reorg execution because Anvil is unavailable",
+    "injected-wallet browser E2E tests"
+  ],
+  "publicFundsApproved": false
+}

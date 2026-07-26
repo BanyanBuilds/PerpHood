@@ -1,0 +1,25 @@
+{
+  "name": "PERPHOOD V49 \u2014 Settlement Math Verification",
+  "version": "49.0.0",
+  "date": "2026-07-26",
+  "status": "reference-only-unaudited",
+  "testCommand": "npm run test:v49",
+  "testExitCode": 0,
+  "primaryDocuments": [
+    "SETTLEMENT_MATH_VERIFICATION_V49.md",
+    "V49_BUILD_NOTES.md",
+    "V49_VALIDATION.md",
+    "V49_VALIDATION.json",
+    "V49_TEST_LOG.txt"
+  ],
+  "coreChanges": [
+    "exact reverse-path long and short settlement quotes",
+    "exact maximum short payout at the curve floor",
+    "non-cross-netted guaranteed liability reserve",
+    "prospective solvency rejection before opening exposure",
+    "post-close payableNow proof",
+    "terminal quoted-versus-executable PNL distinction",
+    "independent exact-rational curve oracle"
+  ],
+  "archiveSha256": "See /mnt/data/V49_ARCHIVE_SHA256.txt in the release handoff."
+}

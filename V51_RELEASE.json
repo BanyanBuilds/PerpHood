@@ -1,0 +1,16 @@
+{
+  "name": "PERPHOOD V51 Compiler-Backed Chain Assault",
+  "version": "51.0.0",
+  "milestone": "stale-quote protection, hostile Solidity actors, Foundry assault profile, and Anvil lifecycle",
+  "portableValidation": "PASS",
+  "compiledValidation": "NOT_RUN_TOOLCHAIN_UNAVAILABLE",
+  "operationsRoute": "/admin/chain-assault",
+  "publicFundsApproved": false,
+  "primaryDocuments": [
+    "COMPILER_CHAIN_ASSAULT_V51.md",
+    "V51_BUILD_NOTES.md",
+    "V51_VALIDATION.md",
+    "V51_VALIDATION.json",
+    "V51_TEST_LOG.txt"
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "version": 46,
+  "milestone": "durable-order-and-keeper-network",
+  "date": "2026-07-25",
+  "status": "PASS_WITH_ENVIRONMENT_BOUNDARIES",
+  "executedCommand": "npm run test:v46",
+  "typescriptTsxSyntaxFiles": 215,
+  "v46StaticChecks": { "passed": 13, "total": 13 },
+  "battlePoolFuzz": {
+    "seeds": 75,
+    "attemptedActions": 18750,
+    "successfulActions": 18662,
+    "safelyRejectedActions": 88
+  },
+  "cascade": {
+    "admitted20xShorts": 40,
+    "shortLiquidations": 40,
+    "shortBadDebtEth": 0,
+    "admitted20xLongs": 40,
+    "longLiquidations": 40,
+    "longBadDebtEth": 0,
+    "finalTokenConservation": 1000000000
+  },
+  "v46Coverage": [
+    "limit-and-trigger-comparators",
+    "breakeven-activation-and-retrace",
+    "expiry-and-retry-backoff",
+    "p256-order-signatures-and-tamper-rejection",
+    "signed-cancellation",
+    "atomic-order-persistence",
+    "idempotency-and-exclusive-leases",
+    "keeper-account-failover",
+    "batch-liquidation-worker",
+    "terminal-order-and-protection-integration",
+    "receipt-and-fill-reconciliation"
+  ],
+  "notExecuted": [
+    "next-production-build-no-node-modules",
+    "eslint-no-node-modules",
+    "forge-tests-foundry-unavailable",
+    "live-anvil-wallet-and-keeper-cycle-anvil-unavailable"
+  ],
+  "publicFundsApproved": false
+}
