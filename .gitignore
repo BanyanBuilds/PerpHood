@@ -14,3 +14,11 @@ out
 *.tsbuildinfo
 
 *.tsbuildinfo
+
+# V59 local mainnet secrets and compiler artifacts
+.env.mainnet.local
+.env.*.local
+contracts/out/
+contracts/cache/
+deployments/*.local.json
+deployments/*.secret*

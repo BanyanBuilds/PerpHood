@@ -1,15 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Leverage X">
   <defs>
-    <linearGradient id="lx" x1="68" y1="88" x2="448" y2="426" gradientUnits="userSpaceOnUse">
+    <linearGradient id="lx" x1="82" y1="82" x2="430" y2="430" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#08CFE4"/>
-      <stop offset="0.52" stop-color="#35E7B1"/>
-      <stop offset="1" stop-color="#A8FF61"/>
+      <stop offset="0.52" stop-color="#38E7B2"/>
+      <stop offset="1" stop-color="#A4FF63"/>
     </linearGradient>
   </defs>
   <g fill="url(#lx)">
-    <path d="M78 135 139 196v174h155l57 72H78V135Z"/>
-    <path d="M84 70h106l250 372H334L84 70Z"/>
-    <path d="m316 184 76-114h66L357 236l-41-52Z"/>
-    <path d="m197 350 51-59 51 63-26 28h-99l23-32Z"/>
+    <path d="M82 158 152 228v130h98l56 72H82V158Z"/>
+    <path d="M92 82h92l246 348h-92L92 82Z"/>
+    <path d="M340 82h90L326 230l-48-66 62-82Z"/>
   </g>
 </svg>

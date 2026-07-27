@@ -1,0 +1,14 @@
+{
+  "product": "leverage X",
+  "version": "V59",
+  "releaseName": "Mainnet Preflight & Closed Factory Deployment Prep",
+  "factorySource": "contracts/src/LeverageXLaunchFactoryV56.sol:LeverageXLaunchFactoryV56",
+  "network": {
+    "name": "Robinhood Chain Mainnet",
+    "chainId": 4663
+  },
+  "deploymentPerformed": false,
+  "publicTradingEnabled": false,
+  "longShortEnabled": false,
+  "fullProjectZipRequired": true
+}

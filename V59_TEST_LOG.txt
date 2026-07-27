@@ -1,0 +1,206 @@
+
+> leveragex-v59-mainnet-preflight@59.0.0 test:v59-fast
+> npm run test:v58-fast && npm run test:v59-static && npm run test:syntax
+
+
+> leveragex-v59-mainnet-preflight@59.0.0 test:v58-fast
+> npm run test:v57-fast && npm run test:v58-ui && npm run test:syntax
+
+
+> leveragex-v59-mainnet-preflight@59.0.0 test:v57-fast
+> npm run test:v56-fast && npm run test:v57-ui && npm run test:syntax
+
+
+> leveragex-v59-mainnet-preflight@59.0.0 test:v56-fast
+> npm run test:v55-fast && npm run test:v56-static
+
+
+> leveragex-v59-mainnet-preflight@59.0.0 test:v55-fast
+> node --experimental-strip-types scripts/v55-real-terminal-smoke.mts && npm run test:v55-vercel && npm run test:syntax
+
+(node:22411) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+Leverage X V55 real terminal smoke passed (70/70).
+  ✓ package preserves the versioned Leverage X identity
+  ✓ package remains V55-compatible or newer
+  ✓ V55 Robinhood deployment command exists
+  ✓ V55 Foundry contract test command exists
+  ✓ public/leveragex-logo.png is packaged
+  ✓ public/favicon.ico is packaged
+  ✓ public/favicon-16.png is packaged
+  ✓ public/favicon-32.png is packaged
+  ✓ public/apple-touch-icon.png is packaged
+  ✓ public/icon-192.png is packaged
+  ✓ public/icon-512.png is packaged
+  ✓ public/leveragex-og.jpg is packaged
+  ✓ site metadata uses leverageX.fun and the shared brand source
+  ✓ browser and Apple icons are registered
+  ✓ installable web manifest uses Leverage X
+  ✓ terminal logo uses the official Leverage X asset
+  ✓ Leverage X V55 launch factory exists
+  ✓ Leverage X fixed-supply ERC-20 exists
+  ✓ Leverage X native-ETH spot market exists
+  ✓ V55 token supply is exactly one billion
+  ✓ inclusive 0.001 ETH launch budget remains locked
+  ✓ creator remains permanently perps-restricted
+  ✓ factory and market publish canonical indexer events
+  ✓ V55 deployment script targets the correct compiled contract
+  ✓ mainnet deployment is locked and RPC chain ID is verified
+  ✓ Supabase uses the Leverage X V55 launch registry
+  ✓ Supabase uses the Leverage X token-media bucket
+  ✓ launch registry deduplicates canonical token addresses
+  ✓ V55 metadata, registry, and discovery APIs exist
+  ✓ launcher uses the V55 APIs
+  ✓ terminal discovers confirmed V55 markets
+  ✓ new has an active P1/P2/P3 profile
+  ✓ new execution profile has bounded network fee and deadline
+  ✓ cooking has an active P1/P2/P3 profile
+  ✓ cooking execution profile has bounded network fee and deadline
+  ✓ migrated has an active P1/P2/P3 profile
+  ✓ migrated execution profile has bounded network fee and deadline
+  ✓ movers has an active P1/P2/P3 profile
+  ✓ movers execution profile has bounded network fee and deadline
+  ✓ liked has an active P1/P2/P3 profile
+  ✓ liked execution profile has bounded network fee and deadline
+  ✓ market-cap has an active P1/P2/P3 profile
+  ✓ market-cap execution profile has bounded network fee and deadline
+  ✓ P1/P2/P3 include distinct execution routes
+  ✓ action-specific slippage is deterministic
+  ✓ terminal exposes honest Robinhood execution routing rather than fake bribes
+  ✓ terminal profiles expose fee, impact, and stale-quote limits
+  ✓ quick Long/Short remain preset-only
+  ✓ selected-market ticket uses P1/P2/P3
+  ✓ selected-market ticket previews maximum debit
+  ✓ selected-market ticket separates protocol and network fees
+  ✓ selected-market ticket blocks trust when canonical market data is stale
+  ✓ selected-market ticket exposes authoritative market states
+  ✓ token intelligence distinguishes indexed evidence from immutable native-token facts
+  ✓ real spot execution enforces selected fee, impact, and slippage limits
+  ✓ wallet execution estimates gas before enforcing its fee ceiling
+  ✓ real execution reports quote, wallet request, and submitted transaction phases
+  ✓ terminal provider maps real chain callbacks into lifecycle phases
+  ✓ transaction lifecycle includes Quote
+  ✓ transaction lifecycle includes Wallet
+  ✓ transaction lifecycle includes Submitted
+  ✓ transaction lifecycle includes Confirmed
+  ✓ transaction lifecycle includes Reconciled
+  ✓ transaction lifecycle includes Indexed
+  ✓ terminal renders the transaction lifecycle tracker
+  ✓ terminal exposes emergency trading controls
+  ✓ three-left-sidecar requirement remains guarded
+  ✓ hosted product starts with no demo token rows
+  ✓ visible runtime source contains no legacy PERPHOOD brand
+  ✓ hosted runtime contains no bundled demo market identifiers
+
+> leveragex-v59-mainnet-preflight@59.0.0 test:v55-vercel
+> node --experimental-strip-types scripts/v55-vercel-deploy-fix-smoke.mts
+
+Leverage X V55 Vercel deploy regression smoke passed (12/12).
+  ✓ order-book quick actions use an explicit spot-only action type
+  ✓ order-book callback accepts both spot buy and spot sell
+  ✓ spot sell remains wired to the quick-action callback
+  ✓ order book no longer misuses the buy/long/short Direction type
+  ✓ production order API store has no filesystem migration imports
+  ✓ production order API store does not bundle the legacy JSON migration helper
+  ✓ legacy JSON migration remains available in its worker-only module
+  ✓ worker-only migration exports the expected migration function
+  ✓ indexer worker imports the isolated migration module
+  ✓ indexer worker no longer imports migration through the production API store
+  ✓ orders API remains explicitly on the Node.js runtime
+  ✓ orders API imports only the production order store
+(node:22434) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> leveragex-v59-mainnet-preflight@59.0.0 test:syntax
+> node --experimental-strip-types scripts/typescript-syntax-smoke.mts
+
+(node:22457) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+TypeScript/TSX syntax smoke passed for 325 files.
+
+> leveragex-v59-mainnet-preflight@59.0.0 test:v56-static
+> node --experimental-strip-types scripts/v56-mainnet-candidate-smoke.mts
+
+Leverage X V56 mainnet-candidate smoke passed (26/26).
+(node:22491) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> leveragex-v59-mainnet-preflight@59.0.0 test:v57-ui
+> node --experimental-strip-types scripts/v57-profile-drawer-smoke.mts
+
+PASS V57+ package version
+PASS non-modal drawer root
+PASS legacy opaque backdrop removed from component
+PASS outside press closes without interception layer
+PASS Escape closes drawer
+PASS Leverage X avatar replaces PH
+PASS legacy X storage migrates to Leverage X key
+PASS flattened grouped navigation
+PASS compact access and sync surface
+PASS performance calendar retained
+PASS drawer occupies only right-side width
+PASS no V57 full-screen dimmer
+PASS terminal remains interactive
+PASS sticky compact footer
+PASS mobile drawer remains partial width
+
+Leverage X V57 profile drawer: 15/15 checks passed.
+(node:22514) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> leveragex-v59-mainnet-preflight@59.0.0 test:syntax
+> node --experimental-strip-types scripts/typescript-syntax-smoke.mts
+
+(node:22537) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+TypeScript/TSX syntax smoke passed for 325 files.
+
+> leveragex-v59-mainnet-preflight@59.0.0 test:v58-ui
+> node --experimental-strip-types scripts/v58-launch-token-ui-smoke.mts
+
+PASS V58+ package version
+PASS launcher renamed Launch Token
+PASS BattlePool launch button removed
+PASS old oversized mint headline removed
+PASS professional compact launch header
+PASS three-step creation flow
+PASS clean coin details hierarchy
+PASS optional social links are collapsible
+PASS large media dropzone
+PASS animated GIF support retained
+PASS live token preview
+PASS inclusive creator budget remains clear
+PASS mainnet factory truth remains visible
+PASS final immutable signing review
+PASS launch panel stays non-modal
+PASS right dock expands without hiding full terminal
+PASS floating launcher gets professional width
+PASS responsive single-column launcher
+PASS clean transparent vector mark
+PASS favicon and app icon assets regenerated
+PASS boxed logo glow removed
+
+Leverage X V58 Launch Token UI: 21/21 checks passed.
+(node:22571) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> leveragex-v59-mainnet-preflight@59.0.0 test:syntax
+> node --experimental-strip-types scripts/typescript-syntax-smoke.mts
+
+(node:22594) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+TypeScript/TSX syntax smoke passed for 325 files.
+
+> leveragex-v59-mainnet-preflight@59.0.0 test:v59-static
+> node --experimental-strip-types scripts/v59-mainnet-preflight-smoke.mts
+
+Leverage X V59 mainnet preflight smoke passed (37/37).
+(node:22628) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> leveragex-v59-mainnet-preflight@59.0.0 test:syntax
+> node --experimental-strip-types scripts/typescript-syntax-smoke.mts
+
+(node:22651) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+TypeScript/TSX syntax smoke passed for 325 files.

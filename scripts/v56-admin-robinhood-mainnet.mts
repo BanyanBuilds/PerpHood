@@ -1,7 +1,7 @@
 import { spawnSync } from "node:child_process";
 
 const RPC = process.env.ROBINHOOD_MAINNET_RPC_URL;
-const FACTORY = process.env.V56_MAINNET_FACTORY_ADDRESS ?? process.env.NEXT_PUBLIC_V56_MAINNET_FACTORY_ADDRESS;
+const FACTORY = process.env.LEVERAGEX_FACTORY_ADDRESS ?? process.env.V59_MAINNET_FACTORY_ADDRESS ?? process.env.V56_MAINNET_FACTORY_ADDRESS ?? process.env.NEXT_PUBLIC_LEVERAGEX_FACTORY_ADDRESS ?? process.env.NEXT_PUBLIC_V56_MAINNET_FACTORY_ADDRESS;
 const EXPLORER = "https://robinhoodchain.blockscout.com";
 const EXPECTED_CHAIN_ID = 4_663;
 const command = process.argv[2] ?? "status";

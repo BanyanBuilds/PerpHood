@@ -1,0 +1,19 @@
+Leverage X V60 build environment summary
+Date: 2026-07-27
+
+Completed:
+- Mainnet canary-control contract and owner command surface assembled.
+- V59 deployment path promoted to LeverageXLaunchFactoryV60 bytecode.
+- Read-only V60 readiness API and mainnet operator console assembled.
+- One-creator / one-market launch and opening gates assembled.
+- Emergency lockdown command assembled.
+- Clean LX vector, favicon, PWA, Apple, and metadata assets generated.
+- README, runbook, release manifest, and validation artifacts updated.
+- npm run test:v60-fast passed.
+- TypeScript/TSX syntax scan passed for 335 files.
+- Secret scan passed after excluding known deterministic test vectors and the standard Anvil development key.
+
+Not completed in this environment:
+- npm ci did not complete before timeout; next build could not be run.
+- forge and cast are not installed; Solidity compile/tests and live-chain preflight remain local gates.
+- No mainnet transaction was signed or broadcast.

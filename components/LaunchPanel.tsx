@@ -41,7 +41,9 @@ import { OgBadge } from "./OgBadge";
 import { useMarkets } from "./MarketProvider";
 
 const EMOJIS = ["🧊", "🐸", "🐕", "🗿", "🛸", "🦎", "🥷", "🦉"];
-const MAINNET_ENABLED = process.env.NEXT_PUBLIC_V56_MAINNET_ENABLED === "true";
+const MAINNET_ENABLED = process.env.NEXT_PUBLIC_LEVERAGEX_MAINNET_ENABLED === "true" || process.env.NEXT_PUBLIC_V56_MAINNET_ENABLED === "true";
+const MAINNET_CANARY_CREATOR = process.env.NEXT_PUBLIC_LEVERAGEX_CANARY_CREATOR_ADDRESS?.trim().toLowerCase() ?? "";
+const MAINNET_CANARY_ONLY = /^0x[0-9a-f]{40}$/.test(MAINNET_CANARY_CREATOR);
 
 type ArtworkState = {
   file: File;
@@ -99,6 +101,7 @@ export function LaunchPanel({
 
   const network = ROBINHOOD_NETWORKS[networkKey];
   const factoryReady = /^0x[0-9a-fA-F]{40}$/.test(network.factoryAddress);
+  const canaryWalletMatches = networkKey !== "mainnet" || !MAINNET_CANARY_ONLY || walletAccount.toLowerCase() === MAINNET_CANARY_CREATOR;
 
   useEffect(() => {
     if (!initialDraft || appliedDraftRef.current === initialDraft.sourcePostId + initialDraft.ticker) return;
@@ -225,6 +228,9 @@ export function LaunchPanel({
     setBusy(true);
     try {
       const connected = await ensureRobinhoodNetwork(networkKey);
+      if (networkKey === "mainnet" && MAINNET_CANARY_ONLY && connected.account.toLowerCase() !== MAINNET_CANARY_CREATOR) {
+        throw new Error(`The first mainnet launch is restricted to ${compactAddress(MAINNET_CANARY_CREATOR)}.`);
+      }
       setWalletAccount(connected.account);
       setStatus(`${compactAddress(connected.account)} connected to ${connected.network.name}.`);
     } catch (error) {
@@ -451,7 +457,7 @@ export function LaunchPanel({
             <section className="lx-launch-section lx-launch-chain-setup">
               <header><div><strong>Chain and market setup</strong><small>Review the production network before connecting.</small></div><ShieldCheck size={18} /></header>
               <label><span>Network</span><select value={networkKey} onChange={(event) => { setNetworkKey(event.target.value as RobinhoodNetworkKey); resetPrepared(); }}>
-                <option value="mainnet" disabled={!MAINNET_ENABLED}>Robinhood Chain Mainnet · 4663 {MAINNET_ENABLED ? "" : "(deployment locked)"}</option>
+                <option value="mainnet" disabled={!MAINNET_ENABLED}>Robinhood Chain Mainnet · 4663 {MAINNET_ENABLED ? MAINNET_CANARY_ONLY ? "(canary only)" : "" : "(deployment locked)"}</option>
               </select></label>
               <label><span>Migration target</span><select value={migrationTargetMarketCapUsd} onChange={(event) => { setMigrationTargetMarketCapUsd(Number(event.target.value)); resetPrepared(); }}>
                 {[30_000, 45_000, 69_000, 100_000].map((value) => <option key={value} value={value}>${value.toLocaleString("en-US")} market cap</option>)}
@@ -463,6 +469,7 @@ export function LaunchPanel({
               </div>
               <KeyButton type="button" tone="ghost" disabled={busy} onClick={() => void connectWallet()}><Wallet size={14} />{walletAccount ? "Reconnect wallet" : "Connect wallet"}</KeyButton>
               {!factoryReady && <div className="lx-launch-warning"><AlertTriangle size={15} /><span>The mainnet factory must be deployed and configured before token creation can be signed.</span></div>}
+              {networkKey === "mainnet" && MAINNET_CANARY_ONLY && <div className={`lx-launch-warning ${canaryWalletMatches ? "ready" : ""}`}><ShieldCheck size={15} /><span>Canary creator only: <b>{compactAddress(MAINNET_CANARY_CREATOR)}</b>{walletAccount ? canaryWalletMatches ? " · wallet matched" : " · switch wallets" : ""}</span></div>}
             </section>
           </div>
         )}

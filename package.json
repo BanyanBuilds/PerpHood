@@ -1,6 +1,6 @@
 {
-  "name": "leveragex-v58-launch-token-ui",
-  "version": "58.0.0",
+  "name": "leveragex-v60-mainnet-canary-control",
+  "version": "60.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -197,7 +197,25 @@
     "test:v57": "npm run test:v56 && npm run test:v57-ui && npm run test:syntax",
     "test:v58-ui": "node --experimental-strip-types scripts/v58-launch-token-ui-smoke.mts",
     "test:v58-fast": "npm run test:v57-fast && npm run test:v58-ui && npm run test:syntax",
-    "test:v58": "npm run test:v56 && npm run test:v57-ui && npm run test:v58-ui && npm run test:syntax"
+    "test:v58": "npm run test:v56 && npm run test:v57-ui && npm run test:v58-ui && npm run test:syntax",
+    "chain:v59:preflight": "node --env-file-if-exists=.env.mainnet.local --experimental-strip-types scripts/v59-mainnet-preflight.mts",
+    "chain:v59:deploy": "node --env-file-if-exists=.env.mainnet.local --experimental-strip-types scripts/v59-deploy-robinhood-mainnet.mts",
+    "chain:v59:verify": "node --env-file-if-exists=.env.mainnet.local --experimental-strip-types scripts/v59-verify-robinhood-mainnet.mts",
+    "chain:v59:status": "node --env-file-if-exists=.env.mainnet.local --experimental-strip-types scripts/v59-factory-status.mts",
+    "test:v59-static": "node --experimental-strip-types scripts/v59-mainnet-preflight-smoke.mts",
+    "test:v59-fast": "npm run test:v58-fast && npm run test:v59-static && npm run test:syntax",
+    "test:v59": "npm run test:v58 && npm run test:v59-static && npm run test:syntax",
+    "chain:v59:admin": "node --env-file-if-exists=.env.mainnet.local --experimental-strip-types scripts/v56-admin-robinhood-mainnet.mts",
+    "chain:v60:canary:preflight": "node --env-file-if-exists=.env.mainnet.local --experimental-strip-types scripts/v60-canary-preflight.mts",
+    "chain:v60:canary:configure": "node --env-file-if-exists=.env.mainnet.local --experimental-strip-types scripts/v60-configure-canary.mts",
+    "chain:v60:canary:status": "node --env-file-if-exists=.env.mainnet.local --experimental-strip-types scripts/v60-canary-status.mts",
+    "chain:v60:canary:open": "node --env-file-if-exists=.env.mainnet.local --experimental-strip-types scripts/v60-open-canary-spot.mts",
+    "chain:v60:emergency-pause": "node --env-file-if-exists=.env.mainnet.local --experimental-strip-types scripts/v60-emergency-pause.mts",
+    "test:v60-static": "node --experimental-strip-types scripts/v60-canary-control-smoke.mts",
+    "test:v60-fast": "npm run test:v59-fast && npm run test:v60-static && npm run test:syntax",
+    "test:v60": "npm run test:v59 && npm run test:v60-static && npm run test:syntax",
+    "chain:test:v60": "forge test --match-path contracts/test/LeverageXLaunchFactoryV60.t.sol -vvv",
+    "chain:v60:emergency-lockdown": "node --env-file-if-exists=.env.mainnet.local --experimental-strip-types scripts/v60-emergency-pause.mts"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.14",

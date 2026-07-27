@@ -1,0 +1,32 @@
+{
+  "version": "V60",
+  "validatedAt": "2026-07-27T23:45:00Z",
+  "staticSuites": {
+    "v55RealTerminal": { "passed": 70, "total": 70 },
+    "v55VercelRegression": { "passed": 12, "total": 12 },
+    "v56MainnetCandidate": { "passed": 26, "total": 26 },
+    "v57ProfileDrawer": { "passed": 15, "total": 15 },
+    "v58LaunchTokenUi": { "passed": 21, "total": 21 },
+    "v59MainnetPreflight": { "passed": 37, "total": 37 },
+    "v60CanaryControl": { "passed": 36, "total": 36 }
+  },
+  "typescriptSyntaxFilesPassed": 335,
+  "logoAssetsPassed": true,
+  "secretScanPassed": true,
+  "broadcastPerformed": false,
+  "productionBuild": {
+    "status": "external-gate-required",
+    "reason": "A clean npm dependency installation timed out in the build environment."
+  },
+  "foundry": {
+    "status": "external-gate-required",
+    "reason": "forge and cast were not installed in the build environment."
+  },
+  "releasePosture": {
+    "factoryDeployed": false,
+    "mainnetUiEnabled": false,
+    "publicLaunchEnabled": false,
+    "spotEnabled": false,
+    "perpsEnabled": false
+  }
+}

@@ -1,30 +1,36 @@
-# leverage X V58 — Mainnet Launch Token UI
+# leverage X V60 — Robinhood Chain Mainnet Canary Control
 
-**leverage X** (`leverageX.fun`) is a Robinhood Chain-first memecoin launch and Spot × Perps terminal. V58 keeps the controlled V56 mainnet-candidate contract posture, preserves the V57 non-modal account drawer, and replaces the old launch form with a professional **Launch Token** workspace.
+**leverage X** is a Robinhood Chain-first memecoin launch and Spot × Perps terminal. V60 preserves the professional Launch Token workspace and non-modal terminal UI, then adds the controlled owner-only path for the first real mainnet canary market.
 
-**Current truth:** this ZIP does not deploy the Robinhood Chain mainnet factory. The V56 factory remains designed to deploy in `Closed` mode with global trading paused, new markets paused, and canary trade caps. The V58 launcher will not fabricate a launch when the verified factory address is missing.
+**Current truth:** this package does not deploy a factory, create a token, open trading, or move funds by itself. It prepares a factory that deploys CLOSED and globally PAUSED, then allows exactly one configured creator and exactly one capped Spot market through explicit local owner transactions. Public launching and all Long/Short functionality remain disabled.
 
 ## Start here
 
 - `LEVERAGEX_MASTER_SPEC.md` — combined PerpHood 1–3 / leverage X specification
-- `V58_BUILD_NOTES.md` — current Launch Token and vector-identity changes
-- `V56_MAINNET_CANDIDATE.md` — mainnet deployment controls
-- `LEVERAGEX_TAKEOVER_AUDIT_V55.md` — inherited implementation audit
-- `V55_VERCEL_DEPLOY_FIX.md` — prior Vercel repair
+- `V60_BUILD_NOTES.md` — V60 scope and safety boundaries
+- `V60_MAINNET_CANARY_RUNBOOK.md` — exact first-market sequence
+- `.env.mainnet.example` — secret-free local configuration template
+- `V59_MAINNET_RUNBOOK.md` — factory preflight/deployment details
 
-## Validate
+## Application validation
 
 ```bash
 npm install
-npm run test:v58-fast
+npm run test:v60-fast
 npm run build
 ```
 
-With Foundry installed:
+## Mainnet sequence
+
+With Foundry installed and `.env.mainnet.local` configured:
 
 ```bash
-npm run chain:test:v56
-npm run chain:v56:preflight
+npm run chain:v59:preflight
+npm run chain:v59:deploy
+npm run chain:v59:verify
+npm run chain:v60:canary:preflight
 ```
 
-Deployment and administration commands remain deliberately locked behind local confirmations. Never store a wallet private key in GitHub, Vercel, Supabase, or chat.
+No command above opens public trading. Owner-writing commands require exact confirmation phrases and an encrypted local Foundry keystore.
+
+Never store a wallet private key, keystore password, Alchemy endpoint, or seed phrase in GitHub, Vercel, Supabase, browser code, screenshots, or chat.

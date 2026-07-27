@@ -1,0 +1,22 @@
+{
+  "product": "leverage X",
+  "version": "V60",
+  "releaseName": "Mainnet Canary Control",
+  "factorySource": "contracts/src/LeverageXLaunchFactoryV60.sol:LeverageXLaunchFactoryV60",
+  "network": {
+    "name": "Robinhood Chain Mainnet",
+    "chainId": 4663
+  },
+  "deployer": "0x728fa84C70f7b88Ab59C86379745FdDBbDd7AD07",
+  "firstTrader": "0x1728DC75f70070DC74Ae2172EF94970e04D9830C",
+  "deploymentPerformed": false,
+  "publicTradingEnabled": false,
+  "longShortEnabled": false,
+  "canary": {
+    "creatorCount": 1,
+    "maximumMarkets": 1,
+    "maxBuyWei": "10000000000000000",
+    "maxSellTokenWad": "5000000000000000000000000"
+  },
+  "fullProjectZipRequired": true
+}

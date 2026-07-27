@@ -27,6 +27,7 @@ export type RobinhoodNetwork = {
 
 const TESTNET_RPC = process.env.NEXT_PUBLIC_ROBINHOOD_TESTNET_RPC_URL ?? "https://rpc.testnet.chain.robinhood.com";
 const MAINNET_RPC = process.env.NEXT_PUBLIC_ROBINHOOD_MAINNET_RPC_URL ?? "https://rpc.mainnet.chain.robinhood.com";
+const MAINNET_CANARY_CREATOR = process.env.NEXT_PUBLIC_LEVERAGEX_CANARY_CREATOR_ADDRESS?.trim().toLowerCase() ?? "";
 
 export const ROBINHOOD_NETWORKS: Record<RobinhoodNetworkKey, RobinhoodNetwork> = {
   testnet: {
@@ -45,7 +46,7 @@ export const ROBINHOOD_NETWORKS: Record<RobinhoodNetworkKey, RobinhoodNetwork> =
     chainHex: "0x1237",
     rpcUrl: MAINNET_RPC,
     explorerUrl: "https://robinhoodchain.blockscout.com",
-    factoryAddress: process.env.NEXT_PUBLIC_V56_MAINNET_FACTORY_ADDRESS ?? process.env.NEXT_PUBLIC_V55_MAINNET_FACTORY_ADDRESS ?? process.env.NEXT_PUBLIC_V54_MAINNET_FACTORY_ADDRESS ?? "",
+    factoryAddress: process.env.NEXT_PUBLIC_LEVERAGEX_FACTORY_ADDRESS ?? process.env.NEXT_PUBLIC_V56_MAINNET_FACTORY_ADDRESS ?? process.env.NEXT_PUBLIC_V55_MAINNET_FACTORY_ADDRESS ?? process.env.NEXT_PUBLIC_V54_MAINNET_FACTORY_ADDRESS ?? "",
   },
 };
 
@@ -116,6 +117,13 @@ export function encodeV54CreateMarket(input: V54LaunchInput) {
   const uriOffset = symbolOffset + symbolTail.length / 2;
   const targetUsdWad = BigInt(Math.round(input.migrationTargetMarketCapUsd)) * 10n ** 18n;
   return `${functionSelector("createMarket(string,string,string,bytes32,uint256)")}${encodeUint(headBytes)}${encodeUint(symbolOffset)}${encodeUint(uriOffset)}${encodeBytes32(input.metadataHash)}${encodeUint(targetUsdWad)}${nameTail}${symbolTail}${uriTail}` as Hex;
+}
+
+function enforceMainnetCanary(account: Hex, networkKey: RobinhoodNetworkKey) {
+  if (networkKey !== "mainnet" || !/^0x[0-9a-f]{40}$/.test(MAINNET_CANARY_CREATOR)) return;
+  if (account !== MAINNET_CANARY_CREATOR) {
+    throw new Error(`Mainnet canary launching is restricted to ${MAINNET_CANARY_CREATOR.slice(0, 8)}…${MAINNET_CANARY_CREATOR.slice(-6)}.`);
+  }
 }
 
 function normalizeAddress(value: string, label: string): Hex {
@@ -212,6 +220,7 @@ export async function quoteV54LaunchBudget(
 ) {
   if (!provider) throw new Error("No injected EVM wallet was found.");
   const { account, network } = await ensureRobinhoodNetwork(networkKey, provider);
+  enforceMainnetCanary(account, networkKey);
   const factoryAddress = normalizeAddress(network.factoryAddress, `${network.name} Leverage X factory`);
   const budget = await estimateBudget(input, account, factoryAddress, network, provider);
   const walletBalance = await readRobinhoodWalletBalance(account, networkKey, provider);

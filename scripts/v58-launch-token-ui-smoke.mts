@@ -9,7 +9,7 @@ const svg = readFileSync("public/leveragex-mark.svg", "utf8");
 const pkg = JSON.parse(readFileSync("package.json", "utf8"));
 
 const checks: Array<[string, boolean]> = [
-  ["V58 package version", pkg.version === "58.0.0"],
+  ["V58+ package version", Number(pkg.version.split(".")[0]) >= 58],
   ["launcher renamed Launch Token", hub.includes('"Launch Token"') && hero.includes("Launch Token")],
   ["BattlePool launch button removed", !hub.includes("Launch BattlePool") && !hero.includes("Launch BattlePool")],
   ["old oversized mint headline removed", !component.includes("Mint a real one-billion-supply memecoin")],
