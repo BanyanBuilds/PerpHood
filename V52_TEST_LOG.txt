@@ -1,0 +1,118 @@
+PERPHOOD V52 validation generated 2026-07-26T23:03:47Z
+
+
+> perphood-v52-product-completion@52.0.0 test:v44-ui
+> node --experimental-strip-types scripts/v44-terminal-ui-smoke.mts
+
+(node:4953) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V44 terminal-to-contract UI smoke passed (16/16).
+
+> perphood-v52-product-completion@52.0.0 test:v45-ui
+> node --experimental-strip-types scripts/v45-terminal-ui-smoke.mts
+
+(node:4976) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V45 authorized-account terminal UI smoke passed (16/16).
+
+> perphood-v52-product-completion@52.0.0 test:v48-quick-presets
+> node --experimental-strip-types scripts/v48-quick-preset-smoke.mts
+
+(node:4999) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V48.1 in-place Quick Buy/Long/Short preset smoke passed (13/13).
+
+> perphood-v52-product-completion@52.0.0 test:v48-left-sidecars
+> node --experimental-strip-types scripts/v48-left-sidecars-smoke.mts
+
+(node:5022) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V48.2 three-left-sidecar smoke passed (13/13).
+
+> perphood-v52-product-completion@52.0.0 test:v52-fast
+> npm run test:v51-fast && npm run test:v52-product && npm run test:v52-scale && npm run test:v52-static && npm run test:syntax
+
+
+> perphood-v52-product-completion@52.0.0 test:v51-fast
+> npm run test:v51-ordering && npm run test:v51-static && npm run test:v51-toolchain && npm run test:syntax
+
+
+> perphood-v52-product-completion@52.0.0 test:v51-ordering
+> node --experimental-strip-types scripts/v51-ordering-assault-smoke.mts
+
+(node:5069) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V51 ordering assault passed: stale buy, short-entry, close-payout, deadline/rollback bounds are deterministic.
+
+> perphood-v52-product-completion@52.0.0 test:v51-static
+> node --experimental-strip-types scripts/v51-static-smoke.mts
+
+(node:5092) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V51 contract-assault integration passed 19/19 checks.
+
+> perphood-v52-product-completion@52.0.0 test:v51-toolchain
+> node --experimental-strip-types scripts/v51-toolchain-probe.mts
+
+(node:5115) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+{
+  "generatedAt": "2026-07-26T23:03:49.144Z",
+  "forge": {
+    "available": false,
+    "status": null,
+    "version": "spawnSync forge ENOENT"
+  },
+  "anvil": {
+    "available": false,
+    "status": null,
+    "version": "spawnSync anvil ENOENT"
+  },
+  "cast": {
+    "available": false,
+    "status": null,
+    "version": "spawnSync cast ENOENT"
+  },
+  "node": "v22.16.0",
+  "requiredForCompiledCampaign": [
+    "forge",
+    "anvil",
+    "cast"
+  ]
+}
+
+> perphood-v52-product-completion@52.0.0 test:syntax
+> node --experimental-strip-types scripts/typescript-syntax-smoke.mts
+
+(node:5141) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+TypeScript/TSX syntax smoke passed for 284 files.
+
+> perphood-v52-product-completion@52.0.0 test:v52-product
+> node --experimental-strip-types scripts/v52-product-completion-smoke.mts
+
+(node:5175) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V52 completion inventory passed for 17 systems with 13 honest blockers.
+
+> perphood-v52-product-completion@52.0.0 test:v52-scale
+> node --experimental-strip-types scripts/v52-scale-foundation-smoke.mts
+
+(node:5198) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V52 deterministic scale foundation passed across 4,096 market/account identifiers.
+
+> perphood-v52-product-completion@52.0.0 test:v52-static
+> node --experimental-strip-types scripts/v52-static-smoke.mts
+
+(node:5221) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V52 product/scale integration passed 14/14 checks.
+
+> perphood-v52-product-completion@52.0.0 test:syntax
+> node --experimental-strip-types scripts/typescript-syntax-smoke.mts
+
+(node:5244) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+TypeScript/TSX syntax smoke passed for 284 files.
+V52 isolated strict TypeScript check for new component, routes, server readiness, and scale/product modules: PASS

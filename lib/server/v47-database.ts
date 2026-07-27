@@ -1,5 +1,5 @@
 import { mkdirSync } from "node:fs";
-import { dirname, resolve } from "node:path";
+import { dirname, isAbsolute, join } from "node:path";
 import { DatabaseSync, type SQLInputValue } from "node:sqlite";
 
 export const V47_DATABASE_VERSION = 1;
@@ -7,7 +7,11 @@ export const V47_DATABASE_VERSION = 1;
 export type V47Database = DatabaseSync;
 
 export function v47DatabasePath() {
-  return resolve(process.env.V47_DATABASE_PATH ?? ".perphood/v47-indexer.sqlite");
+  if (process.env.VERCEL) return "/tmp/perphood/v47-indexer.sqlite";
+  const configured = process.env.V47_DATABASE_PATH?.trim();
+  if (!configured) return join(process.cwd(), ".perphood", "v47-indexer.sqlite");
+  if (isAbsolute(configured)) return configured;
+  return join(/* turbopackIgnore: true */ process.cwd(), configured);
 }
 
 const SCHEMA = `

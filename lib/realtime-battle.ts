@@ -25,7 +25,7 @@ export type BattleRealtimeFrame = {
   slug: string;
   sequence: number;
   updatedAt: number;
-  source: "battlepool-local" | "sequencer" | "chain";
+  source: "battlepool-local" | "sequencer" | "chain" | "v43-contract" | "v45-account" | "v45-session" | "launchpad-local" | "launchpad-test-seed" | "launchpad-migrated";
   priceUsd: number;
   marketCapUsd: number;
   tokenVolume: number;

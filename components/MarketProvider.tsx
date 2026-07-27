@@ -77,6 +77,7 @@ import {
 } from "@/lib/chain/v46-order-client";
 import { loadV45Account } from "@/lib/chain/v45-session-key";
 import type { V46StoredOrder } from "@/lib/chain/v46-order";
+import { useUserState } from "./UserStateProvider";
 import type {
   ClosedTrade,
   LaunchTokenInput,
@@ -325,6 +326,7 @@ type MarketContextValue = {
 const MarketContext = createContext<MarketContextValue | null>(null);
 
 export function MarketProvider({ children }: { children: ReactNode }) {
+  const userState = useUserState();
   const [tokens, setTokens] = useState<Token[]>([]);
   const [events, setEvents] = useState<MarketEvent[]>([]);
   const [positions, setPositions] = useState<Position[]>([]);
@@ -341,6 +343,7 @@ export function MarketProvider({ children }: { children: ReactNode }) {
   const [chainExecution, setChainExecution] = useState<ChainExecutionState>({ mode: "browser-sim", phase: "idle", updatedAt: Date.now() });
   const [riskSettings, setRiskSettings] = useState<RiskSettings>(DEFAULT_RISK);
   const [hydrated, setHydrated] = useState(false);
+  const [v53WatchlistReady, setV53WatchlistReady] = useState(false);
 
   const tokensRef = useRef(tokens);
   const positionsRef = useRef(positions);
@@ -410,6 +413,18 @@ export function MarketProvider({ children }: { children: ReactNode }) {
     }
     setHydrated(true);
   }, []);
+
+  useEffect(() => {
+    if (!hydrated || !userState.ready || v53WatchlistReady) return;
+    const synced = userState.getSection<string[] | null>("watchlist-v1", null);
+    if (Array.isArray(synced)) setWatchlist([...new Set(synced.filter((slug) => typeof slug === "string"))].slice(0, 500));
+    setV53WatchlistReady(true);
+  }, [hydrated, userState, v53WatchlistReady]);
+
+  useEffect(() => {
+    if (!hydrated || !userState.ready || !v53WatchlistReady) return;
+    userState.setSection("watchlist-v1", watchlist);
+  }, [hydrated, userState, v53WatchlistReady, watchlist]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -1188,7 +1203,7 @@ export function MarketProvider({ children }: { children: ReactNode }) {
       entryCap: poolPatch.cap,
       openedAt: Date.now(),
       tokenAmount: trade.tokens,
-      entryPriceEth: trade.priceAfter,
+      entryPriceEth: trade.endPriceEth,
     };
     tokensRef.current = tokensRef.current.map((item) => item.slug === slug ? nextToken : item);
     setTokens(tokensRef.current);

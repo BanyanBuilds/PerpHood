@@ -1,6 +1,6 @@
 {
-  "name": "perphood-v51-compiler-chain-assault",
-  "version": "51.0.0",
+  "name": "perphood-v53-supabase-user-state",
+  "version": "53.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -163,7 +163,16 @@
     "chain:test:v51": "FOUNDRY_PROFILE=assault forge test --match-path contracts/test/LaunchpadFactoryV51Assault.t.sol -vvvv",
     "chain:invariant:v51": "FOUNDRY_PROFILE=assault forge test --match-path contracts/test/LaunchpadFactoryV50Invariant.t.sol -vvvv",
     "chain:assault:v51": "bash scripts/v51-chain-assault.sh",
-    "chain:lifecycle:v51": "node --experimental-strip-types scripts/v51-anvil-lifecycle.mts"
+    "chain:lifecycle:v51": "node --experimental-strip-types scripts/v51-anvil-lifecycle.mts",
+    "test:v52-product": "node --experimental-strip-types scripts/v52-product-completion-smoke.mts",
+    "test:v52-scale": "node --experimental-strip-types scripts/v52-scale-foundation-smoke.mts",
+    "test:v52-static": "node --experimental-strip-types scripts/v52-static-smoke.mts",
+    "test:v52-fast": "npm run test:v51-fast && npm run test:v52-product && npm run test:v52-scale && npm run test:v52-static && npm run test:syntax",
+    "test:v52": "npm run test:v51 && npm run test:v52-product && npm run test:v52-scale && npm run test:v52-static && npm run test:syntax",
+    "test:v53-user-state": "node --experimental-strip-types scripts/v53-user-state-smoke.mts",
+    "test:v53-static": "node --experimental-strip-types scripts/v53-static-smoke.mts",
+    "test:v53-fast": "npm run test:v52-fast && npm run test:v53-user-state && npm run test:v53-static && npm run test:syntax",
+    "test:v53": "npm run test:v52 && npm run test:v53-user-state && npm run test:v53-static && npm run test:syntax"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.14",

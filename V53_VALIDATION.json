@@ -1,0 +1,60 @@
+{
+  "release": "PERPHOOD V53",
+  "package": "perphood-v53-supabase-user-state",
+  "version": "53.0.0",
+  "generatedAt": "2026-07-27T00:37:50.058327+00:00",
+  "result": "PASS_WITH_DECLARED_ENVIRONMENT_LIMITS",
+  "portableConstituentSuites": "PASS",
+  "nestedWrapper": {
+    "result": "WALL_CLOCK_LIMIT",
+    "detail": "The nested npm run test:v53 wrapper exceeded the execution window. The exact remaining constituent suites were continued without reduced coverage and passed."
+  },
+  "v53": {
+    "pureAssertions": 10,
+    "staticAssertions": 24,
+    "syncSections": [
+      "terminal-layout-v1",
+      "liked-tokens-v1",
+      "watchlist-v1",
+      "market-alerts-v1:<slug>"
+    ],
+    "recoveryKeyBits": 256,
+    "maxSnapshotBytes": 262144,
+    "maxRequestBytes": 307200,
+    "conflictResolution": "optimistic revision plus newest-section timestamp merge",
+    "localFallback": true,
+    "financialAuthority": false,
+    "databaseMigration": "supabase/v53_user_state.sql"
+  },
+  "preservedEvidence": {
+    "battlePoolAttemptedActions": 18750,
+    "battlePoolSuccessfulActions": 18382,
+    "battlePoolSafelyRejectedActions": 368,
+    "shortCascadePositions": 40,
+    "longCascadePositions": 40,
+    "controlledCascadeBadDebtEth": 0,
+    "tokenConservation": 1000000000,
+    "exactRationalVectors": 3001,
+    "v50StatefulTransitions": 24576,
+    "v50Liquidations": 2747,
+    "closeOrderPermutations": 5760,
+    "fragmentationVectors": 96,
+    "v44UiChecks": "16/16",
+    "v45UiChecks": "16/16",
+    "v46StaticChecks": "13/13",
+    "v48QuickPresetChecks": "13/13",
+    "v48LeftSidecarChecks": "13/13",
+    "v51StaticChecks": "19/19",
+    "v52StaticChecks": "14/14",
+    "typescriptSyntaxFiles": 292
+  },
+  "notExecuted": {
+    "npmCi": true,
+    "nextProductionBuild": true,
+    "hostedSupabaseMigration": true,
+    "twoDeviceBrowserE2E": true,
+    "forgeAnvilCast": true,
+    "walletOrPublicFunds": true
+  },
+  "safety": "Development build only. Supabase state is preferences-only and public funds remain blocked."
+}

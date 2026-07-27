@@ -1,3 +1,23 @@
+# V53 Current Status
+
+PERPHOOD V53 adds a cross-device Supabase/Postgres path for low-frequency user settings only. Independent Markets/Movers Buy/Long/Short presets, saved layouts with up to three left sidecars, likes, watchlists, and bounded alert history now merge by section timestamp and survive device changes through a 256-bit recovery key. Local storage remains the automatic fallback.
+
+The recovery key cannot authorize trades, sessions, sequencer commands, position closes, withdrawals, custody changes, or BattlePool settlement. The same-origin API stores only its SHA-256 hash and uses a server-only Supabase service-role credential.
+
+**Still not production-ready:** hosted Supabase migration execution, distributed rate limiting, abuse prevention, verified-wallet profile binding, connection pooling, backup drills, browser E2E, production Next.js compilation in this assembly environment, compiled Solidity campaigns, independent audits, and all public-fund controls remain incomplete.
+
+See `USER_STATE_SYNC_V53.md`, `V53_BUILD_NOTES.md`, and `V53_VALIDATION.md`.
+
+---
+
+# V52 Current Status
+
+PERPHOOD V52 is a product-completion and scale-foundation build. The repository now exposes a canonical 17-system completion inventory and explicitly reports 13 unresolved production blockers. It is not approved for public funds or testnet deployment.
+
+The architecture targets 100,000 to 1,000,000 registered users through market-partitioned sequencing, durable queues, horizontally scaled APIs and stream gateways, PostgreSQL projections, distributed caching, worker fleets and RPC quorum. Those targets are not capacity claims until deployed load and failure tests pass.
+
+---
+
 # V51 Production Status
 
 **Current milestone:** compiler-backed attack preparation and stale-quote-safe execution above V50.

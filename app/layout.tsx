@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { MarketProvider } from "@/components/MarketProvider";
 import { TerminalPerformanceProvider } from "@/components/TerminalPerformanceProvider";
+import { UserStateProvider } from "@/components/UserStateProvider";
 
 export const metadata: Metadata = {
   title: "PERPHOOD — Spot × Perps BattlePool",
@@ -10,5 +11,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body><TerminalPerformanceProvider><MarketProvider>{children}</MarketProvider></TerminalPerformanceProvider></body></html>;
+  return <html lang="en"><body><UserStateProvider><TerminalPerformanceProvider><MarketProvider>{children}</MarketProvider></TerminalPerformanceProvider></UserStateProvider></body></html>;
 }

@@ -4,8 +4,10 @@ import { useEffect, type RefObject } from "react";
 
 type DismissEvent = MouseEvent | TouchEvent;
 
-export function useOutsideDismiss<T extends HTMLElement>(
-  refs: Array<RefObject<T | null>>,
+type OutsideDismissRef = Pick<RefObject<HTMLElement | null>, "current">;
+
+export function useOutsideDismiss(
+  refs: readonly OutsideDismissRef[],
   onDismiss: () => void,
   enabled = true,
 ) {

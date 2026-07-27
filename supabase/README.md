@@ -27,3 +27,18 @@ Creator and holder reward routing is intentionally absent. The existing referral
 ## V20 ordered-state requirements
 
 `battle_pool_snapshots`, `battle_pool_events`, and `battle_execution_batches` now carry state sequences and state hashes. The production indexer must reject sequence gaps, duplicate sequences with different hashes, and event streams that do not reconcile to the contract's current `realtimeState()`. Chart and PNL APIs must reference the same sequence.
+
+## V52 scale foundation
+
+`v52_scale_foundation.sql` adds the current product configuration and service-coordination layer:
+
+- Independent Buy, Long and Short presets for all six Markets/Movers categories.
+- Saved workspaces with a database constraint limiting the left dock to three sidecars.
+- Watchlist/like state.
+- An idempotent, partition-keyed command outbox.
+- Hash-partitioned canonical market-event projections.
+- Service heartbeats, leases and recovery checkpoints.
+- Owner-only RLS for presets, workspaces and watchlists.
+- No browser access to command, worker, event or recovery tables.
+
+This migration does not authorize custody or settle trades. BattlePool contracts remain authoritative. A dedicated stream tier must fan out high-frequency data instead of connecting large client populations directly to Postgres Changes.

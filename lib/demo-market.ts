@@ -13,14 +13,13 @@ for (const buy of [0.42, 0.28, 0.31, 0.19, 0.36, 0.24, 0.20]) {
 const demoPatch = poolToTokenPatch(demoPool, DEMO_ETH_USD);
 
 export const DEMO_TOKEN: Token = {
+  ...demoPatch,
   slug: DEMO_MARKET_SLUG,
   symbol: "HOOD",
   name: "PerpHood Demo",
   emoji: "⚔️",
   imageDataUrl: "/perphood-logo.png",
   hue: 48,
-  cap: demoPatch.cap,
-  price: demoPatch.price,
   change24h: 68.42,
   graduation: 73.4,
   longs: 61.8,
@@ -30,8 +29,6 @@ export const DEMO_TOKEN: Token = {
   launchedMinutesAgo: 2,
   featured: true,
   description: "One demo market built to show the complete PerpHood chart workspace. Spot buys, spot sells, leveraged longs, leveraged shorts, live executable PNL, and liquidations all resolve through one BattlePool.",
-  liquidityEth: demoPatch.liquidityEth,
-  insuranceEth: demoPatch.insuranceEth,
   allTimeHighCap: 118_420,
   launchState: "live",
   battlePhase: "bonding",
@@ -43,7 +40,6 @@ export const DEMO_TOKEN: Token = {
   shortOpenInterestEth: 5.00,
   fundingRateHourly: 0.0042,
   borrowRateHourly: 0.0038,
-  badDebtEth: 0,
   linkedWalletConcentration: 8.6,
   uniqueTraders: 684,
   volatility1m: 5.8,
@@ -57,7 +53,6 @@ export const DEMO_TOKEN: Token = {
   creatorWallet: "0xPERP…HOOD",
   launchBlock: 10_420_069,
   metadataLockedAt: Date.now() - 2 * 60_000,
-  ...demoPatch,
 };
 
 export type DemoWindow = "5m" | "1h" | "6h" | "24h";

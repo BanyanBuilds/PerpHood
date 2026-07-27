@@ -1,0 +1,134 @@
+{
+  "release": "PERPHOOD V52 Product Completion and Scale Foundation",
+  "generatedAt": "2026-07-26T23:02:52.608Z",
+  "package": {
+    "name": "perphood-v52-product-completion",
+    "version": "52.0.0"
+  },
+  "result": "portable-guards-passed",
+  "summary": {
+    "total": 17,
+    "byStatus": {
+      "complete": 3,
+      "connected": 6,
+      "prototype": 4,
+      "missing": 4
+    },
+    "byArea": {
+      "product": 5,
+      "execution": 5,
+      "infrastructure": 4,
+      "security": 2,
+      "operations": 1
+    },
+    "completionPercent": 48,
+    "productionBlockers": 13,
+    "productReadyForPublicFunds": false
+  },
+  "tests": {
+    "v44TerminalUi": "16/16",
+    "v45TerminalUi": "16/16",
+    "quickPresets": "13/13",
+    "threeLeftSidecars": "13/13",
+    "v51ContractAssaultStatic": "19/19",
+    "v52ProductSystems": 17,
+    "v52ScaleIdentifiers": 4096,
+    "v52Static": "14/14",
+    "syntaxFiles": 284,
+    "v52IsolatedStrictTypecheck": "pass"
+  },
+  "scaleTargets": [
+    {
+      "id": "foundation",
+      "registeredUsers": 100000,
+      "peakConnectedClients": 10000,
+      "targetMarkets": 10000,
+      "apiReplicasMinimum": 6,
+      "streamGatewaysMinimum": 8,
+      "marketExecutionShards": 64,
+      "accountHistoryShards": 32,
+      "queuePartitions": 64,
+      "description": "First serious production envelope with no single application host in the critical path."
+    },
+    {
+      "id": "growth",
+      "registeredUsers": 500000,
+      "peakConnectedClients": 50000,
+      "targetMarkets": 50000,
+      "apiReplicasMinimum": 20,
+      "streamGatewaysMinimum": 32,
+      "marketExecutionShards": 256,
+      "accountHistoryShards": 128,
+      "queuePartitions": 256,
+      "description": "Regional API and stream fleets with market-partitioned execution and independent recovery consumers."
+    },
+    {
+      "id": "mass",
+      "registeredUsers": 1000000,
+      "peakConnectedClients": 100000,
+      "targetMarkets": 100000,
+      "apiReplicasMinimum": 40,
+      "streamGatewaysMinimum": 64,
+      "marketExecutionShards": 512,
+      "accountHistoryShards": 256,
+      "queuePartitions": 512,
+      "description": "Target architecture for one million accounts; requires measured load, multi-region failover and queue-backed fan-out."
+    }
+  ],
+  "serviceBoundaries": [
+    {
+      "id": "web",
+      "label": "Edge web",
+      "scaling": "CDN + stateless replicas"
+    },
+    {
+      "id": "api",
+      "label": "API gateway",
+      "scaling": "Horizontal replicas behind rate limiting"
+    },
+    {
+      "id": "sequencer",
+      "label": "Market sequencers",
+      "scaling": "Deterministic market shards with hot-market isolation"
+    },
+    {
+      "id": "event-bus",
+      "label": "Durable event bus",
+      "scaling": "Partitioned log with replay and consumer groups"
+    },
+    {
+      "id": "stream",
+      "label": "Realtime gateways",
+      "scaling": "Stateless connection fleets subscribed by market partition"
+    },
+    {
+      "id": "database",
+      "label": "PostgreSQL system",
+      "scaling": "Pooling, partitioning, read replicas and PITR"
+    },
+    {
+      "id": "cache",
+      "label": "Distributed cache",
+      "scaling": "Clustered Redis-compatible service"
+    },
+    {
+      "id": "workers",
+      "label": "Worker fleets",
+      "scaling": "Independent autoscaled consumer groups"
+    },
+    {
+      "id": "rpc",
+      "label": "RPC quorum",
+      "scaling": "Multiple independent providers and regional egress"
+    }
+  ],
+  "boundaries": {
+    "nextProductionBuildExecutedHere": false,
+    "reason": "npm registry installation did not finish in this container; GitHub Actions and Vercel must run the production build after push.",
+    "forge": false,
+    "anvil": false,
+    "cast": false,
+    "publicFundsApproved": false,
+    "testnetApproved": false
+  }
+}

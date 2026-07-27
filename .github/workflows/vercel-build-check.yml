@@ -1,0 +1,29 @@
+name: PERPHOOD V53 Build Gate
+
+on:
+  push:
+    branches: [main, "build/**"]
+  pull_request:
+
+concurrency:
+  group: perphood-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Run V53 portable build guards
+        run: npm run test:v53-fast
+      - name: Build the Next.js application
+        run: npm run build

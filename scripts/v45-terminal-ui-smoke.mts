@@ -27,7 +27,7 @@ const checks: Array<[string, boolean]> = [
 ];
 for (const [label, passed] of checks) assert.equal(passed, true, label);
 const pkg = JSON.parse(pkgRaw) as { name: string; version: string; scripts: Record<string,string> };
-assert.ok(["perphood-v45-authorized-account-execution", "perphood-v46-order-keeper-network", "perphood-v47-authoritative-indexer", "perphood-v48-live-data-plane", "perphood-v49-settlement-math-verification", "perphood-v50-formal-invariants", "perphood-v51-compiler-chain-assault"].includes(pkg.name));
-assert.ok(["45.0.0", "46.0.0", "47.0.0", "48.0.0", "49.0.0", "50.0.0", "51.0.0"].includes(pkg.version));
+assert.ok(["perphood-v45-authorized-account-execution", "perphood-v46-order-keeper-network", "perphood-v47-authoritative-indexer", "perphood-v48-live-data-plane", "perphood-v49-settlement-math-verification", "perphood-v50-formal-invariants", "perphood-v51-compiler-chain-assault", "perphood-v52-product-completion", "perphood-v53-supabase-user-state"].includes(pkg.name));
+assert.ok(["45.0.0", "46.0.0", "47.0.0", "48.0.0", "49.0.0", "50.0.0", "51.0.0", "52.0.0", "53.0.0"].includes(pkg.version));
 assert.ok(pkg.scripts["test:v45"] && pkg.scripts["chain:v45"]);
 console.log(`V45 authorized-account terminal UI smoke passed (${checks.length}/${checks.length}).`);

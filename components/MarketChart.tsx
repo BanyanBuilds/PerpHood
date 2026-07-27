@@ -235,14 +235,15 @@ export function MarketChart({ token, onLiveSnapshot }: { token: Token; onLiveSna
         priceFormat,
       });
     }
-    volumeRef.current = chart.addSeries(HistogramSeries, {
+    const volumeSeries = chart.addSeries(HistogramSeries, {
       visible: preferences.showVolume,
       priceFormat: { type: "volume" },
       priceScaleId: "volume",
       lastValueVisible: false,
       priceLineVisible: false,
     });
-    volumeRef.current.priceScale().applyOptions({ scaleMargins: { top: 0.84, bottom: 0 } });
+    volumeRef.current = volumeSeries;
+    volumeSeries.priceScale().applyOptions({ scaleMargins: { top: 0.84, bottom: 0 } });
 
     return () => {
       candleRef.current = null;
@@ -279,7 +280,7 @@ export function MarketChart({ token, onLiveSnapshot }: { token: Token; onLiveSna
     const series = candleRef.current ?? areaRef.current;
     if (!series || !token.price || !token.cap) return;
     const unit = preferences.displayMode === "marketcap" ? 1 : token.price / token.cap;
-    const lines = [];
+    const lines: Array<ReturnType<typeof series.createPriceLine>> = [];
     if (position && preferences.showEntry) {
       lines.push(series.createPriceLine({ price: position.entryCap * unit, color: "rgba(104,166,255,.86)", lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title: `ENTRY ${position.leverage}×` }));
     }

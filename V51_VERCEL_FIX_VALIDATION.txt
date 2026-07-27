@@ -1,0 +1,26 @@
+PERPHOOD V51 VERCEL DEPLOY REPAIR
+Generated: 2026-07-26
+
+SOURCE REPAIRS
+- Realtime frame source union corrected for V43/V45/launchpad execution sources.
+- Sequenced browser spot entry price corrected to endPriceEth.
+- Undefined TerminalHub setSelectedToken call removed.
+- V45 execution mode widened to its declared union type.
+- Duplicate demo-market object properties eliminated.
+- Market chart series initialization and price-line collection made type-safe.
+- Mixed-element outside-dismiss refs made type-safe.
+- V47 database path scoped to Vercel /tmp and local dynamic path annotated for Turbopack.
+- GitHub Actions Vercel build check added.
+
+VALIDATION COMPLETED
+PASS npm run test:v51-fast
+PASS npm run test:v44-ui (16/16)
+PASS npm run test:v45-ui (16/16)
+PASS npm run test:v48-static
+PASS npm run test:v48-quick-presets (13/13)
+PASS npm run test:v48-left-sidecars (13/13)
+PASS TypeScript project-level strict-error sweep using local external-module declarations
+PASS TypeScript/TSX syntax across 274 files
+
+ENVIRONMENT LIMITATION
+The container's internal npm artifact registry returned HTTP 503 during dependency download, so the final `next build` could not be rerun in this container. The included GitHub Actions workflow and Vercel deployment will execute the real locked-dependency production build after push.

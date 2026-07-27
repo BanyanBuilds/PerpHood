@@ -1,3 +1,45 @@
+# PERPHOOD V53 — Supabase User-State Synchronization
+
+V53 is the current development baseline. It adds settings-only cross-device synchronization for Markets/Movers presets, saved three-left-sidecar workspaces, likes, watchlists, and per-market alerts. Local storage remains the automatic fallback, and the recovery key has no authority over funds, wallets, sessions, orders, or BattlePool settlement.
+
+Open the internal user-state console at:
+
+```text
+/admin/user-state
+```
+
+Install `supabase/v53_user_state.sql`, then configure the server-only Supabase credentials described in `USER_STATE_SYNC_V53.md`. The application still deploys without those values and reports `local-only` mode.
+
+Run the portable gate with:
+
+```bash
+npm run test:v53-fast
+```
+
+The GitHub build workflow runs `npm ci`, the V53 portable gate, and the real Next.js production build on every main/build branch push.
+
+PERPHOOD remains build-mode software. V53 syncs preferences only and is not approval for testnet, public users, or public funds.
+
+See `USER_STATE_SYNC_V53.md`, `V53_BUILD_NOTES.md`, and `V53_VALIDATION.md`.
+
+---
+
+# PERPHOOD V52 — Product Completion and Scale Foundation
+
+V52 is the current development baseline. It adds an honest product-completion inventory, a Vercel-safe readiness endpoint, a 100K–1M-user service topology, deterministic market/account sharding, a Supabase/Postgres scale schema, and a GitHub production-build gate.
+
+Open the completion console at:
+
+```text
+/admin/completion
+```
+
+PERPHOOD is still build-mode software. Public funds and testnet deployment remain blocked until the dashboard's production blockers are resolved, compiled contract campaigns pass, and independent audits are complete.
+
+See `PRODUCT_COMPLETION_V52.md`, `SCALE_ARCHITECTURE_V52.md`, `V52_BUILD_NOTES.md`, and `V52_VALIDATION.md`.
+
+---
+
 # PERPHOOD V51 — Compiler-Backed Chain Assault
 
 V51 binds every current terminal and keeper position action to a deadline and fresh execution limits, adds hostile Solidity actors for stale ordering, reentrancy, rejecting receivers, forced ETH, creator restrictions, and gas ceilings, and packages a complete Forge/Anvil/Cast assault lifecycle.

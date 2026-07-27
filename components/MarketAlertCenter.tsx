@@ -15,6 +15,7 @@ import {
 import type { Token } from "@/lib/types";
 import { useMarkets } from "./MarketProvider";
 import { useOutsideDismiss } from "./useOutsideDismiss";
+import { useUserState } from "./UserStateProvider";
 
 const MAX_HISTORY = 30;
 
@@ -28,38 +29,51 @@ export function MarketAlertCenter({ token, marketCap, open, onClose, onUnreadCha
   const rootRef = useRef<HTMLDivElement>(null);
   const armedAtRef = useRef(Date.now() + 900);
   const seenRef = useRef(new Set<string>());
+  const hydratedSlugRef = useRef("");
   const { events: allEvents, positions } = useMarkets();
+  const userState = useUserState();
   const storageKey = `perphood-v38-alert-rules:${token.slug}`;
   const historyKey = `perphood-v38-alert-history:${token.slug}`;
   const [rules, setRules] = useState<MarketAlertRule[]>(() => defaultMarketAlertRules(token));
   const [history, setHistory] = useState<MarketAlertSignal[]>([]);
   const [unread, setUnread] = useState(0);
+  const [alertsHydrated, setAlertsHydrated] = useState(false);
 
   useOutsideDismiss([rootRef], onClose, open);
 
   useEffect(() => {
+    if (!userState.ready || hydratedSlugRef.current === token.slug) return;
+    hydratedSlugRef.current = token.slug;
+    setAlertsHydrated(false);
+    seenRef.current.clear();
     try {
-      const savedRules = localStorage.getItem(storageKey);
-      const savedHistory = localStorage.getItem(historyKey);
-      if (savedRules) setRules(JSON.parse(savedRules) as MarketAlertRule[]);
+      const synced = userState.getSection<{ rules: MarketAlertRule[]; history: MarketAlertSignal[] } | null>(`market-alerts-v1:${token.slug}`, null);
+      const savedRules = synced?.rules ?? (localStorage.getItem(storageKey) ? JSON.parse(localStorage.getItem(storageKey) as string) as MarketAlertRule[] : null);
+      const savedHistory = synced?.history ?? (localStorage.getItem(historyKey) ? JSON.parse(localStorage.getItem(historyKey) as string) as MarketAlertSignal[] : null);
+      if (savedRules) setRules(savedRules);
+      else setRules(defaultMarketAlertRules(token));
       if (savedHistory) {
-        const parsed = JSON.parse(savedHistory) as MarketAlertSignal[];
-        setHistory(parsed.slice(0, MAX_HISTORY));
+        const parsed = savedHistory.slice(0, MAX_HISTORY);
+        setHistory(parsed);
         parsed.forEach((signal) => seenRef.current.add(signal.fingerprint));
-      }
+      } else setHistory([]);
     } catch {
       setRules(defaultMarketAlertRules(token));
       setHistory([]);
     }
-  }, [historyKey, storageKey, token]);
+    setAlertsHydrated(true);
+  }, [historyKey, storageKey, token, userState]);
 
   useEffect(() => {
+    if (!alertsHydrated) return;
     localStorage.setItem(storageKey, JSON.stringify(rules));
-  }, [rules, storageKey]);
+    userState.setSection(`market-alerts-v1:${token.slug}`, { rules, history: history.slice(0, MAX_HISTORY) });
+  }, [alertsHydrated, history, rules, storageKey, token.slug, userState]);
 
   useEffect(() => {
+    if (!alertsHydrated) return;
     localStorage.setItem(historyKey, JSON.stringify(history.slice(0, MAX_HISTORY)));
-  }, [history, historyKey]);
+  }, [alertsHydrated, history, historyKey]);
 
   useEffect(() => {
     if (open) setUnread(0);

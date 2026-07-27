@@ -10,3 +10,5 @@ out
 .perphood-v22-sequencer-state.json.tmp
 
 .perphood/
+
+*.tsbuildinfo

@@ -13,7 +13,7 @@ const files = {
   env: await readFile(".env.example", "utf8"),
   css: await readFile("app/globals.css", "utf8"),
 };
-assert.match(files.package, /perphood-v48-live-data-plane|perphood-v49-settlement-math-verification|perphood-v50-formal-invariants|perphood-v51-compiler-chain-assault/);
+assert.match(files.package, /perphood-v48-live-data-plane|perphood-v49-settlement-math-verification|perphood-v50-formal-invariants|perphood-v51-compiler-chain-assault|perphood-v52-product-completion|perphood-v53-supabase-user-state/);
 assert.match(files.package, /test:v48/);
 assert.match(files.chain, /chainId: 4_663/);
 assert.match(files.chain, /0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73/);

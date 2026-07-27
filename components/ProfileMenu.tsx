@@ -6,6 +6,9 @@ import {
   Bell,
   BookOpenCheck,
   CalendarDays,
+  Cloud,
+  Copy,
+  Download,
   ChevronRight,
   CircleDollarSign,
   Coins,
@@ -27,13 +30,16 @@ import { useEffect, useMemo, useState } from "react";
 import { buildPnlCalendar, signedEth, summarizePnl } from "@/lib/pnl";
 import { sharePnlToX } from "@/lib/pnl-share";
 import { useMarkets } from "./MarketProvider";
+import { useUserState } from "./UserStateProvider";
 
 type ProfileMenuProps = { onClose: () => void; onOpenPnl?: () => void };
 
 export function ProfileMenu({ onClose, onOpenPnl }: ProfileMenuProps) {
-  const { balanceEth, positions, holdings, pendingOrders, closedTrades, getPositionPnl, getHoldingPnl, toggleWallet } = useMarkets();
+  const { balanceEth, positions, holdings, pendingOrders, closedTrades, getPositionPnl, getHoldingPnl, toggleWallet, walletAddress } = useMarkets();
+  const userState = useUserState();
   const [xConnected, setXConnected] = useState(false);
   const [shareStatus, setShareStatus] = useState("");
+  const [syncAction, setSyncAction] = useState("");
 
   useEffect(() => {
     const close = (event: KeyboardEvent) => { if (event.key === "Escape") onClose(); };
@@ -91,7 +97,7 @@ export function ProfileMenu({ onClose, onOpenPnl }: ProfileMenuProps) {
 
       <div className="profile-popover-head">
         <span className="profile-avatar">PH</span>
-        <span><strong>0x71C…88F</strong><small>External owner wallet · Robinhood Chain</small></span>
+        <span><strong>{walletAddress ? `${walletAddress.slice(0, 6)}…${walletAddress.slice(-4)}` : "Local profile"}</strong><small>{walletAddress ? "External owner wallet · Robinhood Chain" : "Connect a wallet when contract execution is enabled"}</small></span>
         <ShieldCheck size={18} />
       </div>
 
@@ -104,6 +110,18 @@ export function ProfileMenu({ onClose, onOpenPnl }: ProfileMenuProps) {
         <div><WalletCards size={16} /><span><strong>Owner wallet</strong><small>User-controlled and exportable in the wallet app. Only one is active for trading.</small></span><b>Active</b></div>
         <div><KeyRound size={16} /><span><strong>Trading session key</strong><small>Non-exportable, scoped, revocable, and never owns funds.</small></span><b>Authorized</b></div>
         <button onClick={toggleX}><AtSign size={16} /><span><strong>{xConnected ? "X profile connected" : "Connect X profile"}</strong><small>{xConnected ? "PNL sharing and public identity enabled." : "Required for verified public profile and social sharing."}</small></span><b>{xConnected ? "Connected" : "Connect"}</b></button>
+      </section>
+
+      <section className="profile-sync-card">
+        <header><span><Cloud size={16} /><span><strong>User-state sync</strong><small>{userState.message}</small></span></span><b className={userState.status}>{userState.status.replace("-", " ")}</b></header>
+        <div><span><small>Revision</small><strong>{userState.revision}</strong></span><span><small>Synced sections</small><strong>{Object.keys(userState.document.sections).length}</strong></span><span><small>Recovery key</small><strong>{userState.recoveryKey ? `${userState.recoveryKey.slice(0, 9)}…${userState.recoveryKey.slice(-5)}` : "Loading"}</strong></span></div>
+        <footer>
+          <button onClick={async () => { const copied = await userState.copyRecoveryKey(); setSyncAction(copied ? "Recovery key copied" : "Copy failed"); window.setTimeout(() => setSyncAction(""), 1800); }}><Copy size={13} />Copy key</button>
+          <button onClick={() => { const value = window.prompt("Paste your PERPHOOD V53 settings recovery key. This restores settings only—not funds or trading authority."); if (!value) return; const accepted = userState.importRecoveryKey(value); setSyncAction(accepted ? "Importing…" : "Invalid recovery key"); }}><Download size={13} />Import key</button>
+          <button onClick={() => { void userState.syncNow(); }}><RefreshCw size={13} />Sync now</button>
+          {syncAction && <em>{syncAction}</em>}
+        </footer>
+        <p>This key restores presets, layouts, watchlists, likes, and alerts. It cannot move funds, sign trades, or withdraw assets.</p>
       </section>
 
       <section className="profile-pnl-card">

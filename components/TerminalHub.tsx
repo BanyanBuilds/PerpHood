@@ -50,12 +50,27 @@ import { TerminalSidecar, type SidecarPlacement } from "./TerminalSidecar";
 import { ProfileMenu } from "./ProfileMenu";
 import { useOutsideDismiss } from "./useOutsideDismiss";
 import { useTerminalPerformance, type RenderFpsMode } from "./TerminalPerformanceProvider";
+import { useUserState } from "./UserStateProvider";
 
 type DrawerKind = "launch" | "x-launch-feed" | TrackerPanelKind;
 type ColumnKind = "new" | "cooking" | "migrated";
 type MoverColumnKind = "movers" | "liked" | "market-cap";
 type WorkspaceView = "markets" | "movers";
 type SortMode = "activity" | "market-cap" | "volume" | "age";
+
+type PersistedTerminalLayout = {
+  compactMode?: boolean;
+  hideLowConfidence?: boolean;
+  showSignals?: boolean;
+  sortMode?: Record<ColumnKind, SortMode>;
+  categorySettings?: TerminalCategorySettingsMap;
+  panelPlacement?: Record<DrawerKind, SidecarPlacement>;
+  stripSettings?: PositionWatchStripSettings;
+  bottomDockSettings?: { showConnection: boolean; showLaunch: boolean; showEngine: boolean; showLabels: boolean; compact: boolean };
+  workspaceView?: WorkspaceView;
+  pnlWidgetOpen?: boolean;
+  openPanels?: DrawerKind[];
+};
 
 const MAX_LEFT_DOCK_PANELS = 3;
 
@@ -242,6 +257,7 @@ function QuickAmountEditor({ value, onCommit, label }: { value: number; onCommit
 export function TerminalHub() {
   const params = useSearchParams();
   const { tokens, events, balanceEth, positions, buySpot, openPosition, connected, toggleWallet } = useMarkets();
+  const userState = useUserState();
   const { mode: renderMode, setMode: setRenderMode, effectiveFps, measuredFps, quality, hardwareLabel, manualOverdrive } = useTerminalPerformance();
   const [openPanels, setOpenPanels] = useState<DrawerKind[]>(() => {
     const requested = params.get("panel");
@@ -272,6 +288,7 @@ export function TerminalHub() {
   const [pnlWidgetOpen, setPnlWidgetOpen] = useState(true);
   const [rankingTick, setRankingTick] = useState(0);
   const moverOrderRef = useRef<MoversScore[]>([]);
+  const layoutHydratedRef = useRef(false);
   const settingsButtonRef = useRef<HTMLButtonElement>(null);
   const settingsPopoverRef = useRef<HTMLDivElement>(null);
   const bottomSettingsButtonRef = useRef<HTMLButtonElement>(null);
@@ -287,22 +304,15 @@ export function TerminalHub() {
   }, []);
 
   useEffect(() => {
+    if (!userState.ready || layoutHydratedRef.current) return;
+    layoutHydratedRef.current = true;
     try {
-      const saved = window.localStorage.getItem("perphood-terminal-layout-v15") ?? window.localStorage.getItem("perphood-terminal-layout-v14") ?? window.localStorage.getItem("perphood-terminal-layout-v13") ?? window.localStorage.getItem("perphood-terminal-layout-v12") ?? window.localStorage.getItem("perphood-terminal-layout-v11");
+      const syncedLayout = userState.getSection<PersistedTerminalLayout | null>("terminal-layout-v1", null);
+      const saved = syncedLayout
+        ? JSON.stringify(syncedLayout)
+        : window.localStorage.getItem("perphood-terminal-layout-v15") ?? window.localStorage.getItem("perphood-terminal-layout-v14") ?? window.localStorage.getItem("perphood-terminal-layout-v13") ?? window.localStorage.getItem("perphood-terminal-layout-v12") ?? window.localStorage.getItem("perphood-terminal-layout-v11");
       if (saved) {
-        const layout = JSON.parse(saved) as {
-          compactMode?: boolean;
-          hideLowConfidence?: boolean;
-          showSignals?: boolean;
-          sortMode?: Record<ColumnKind, SortMode>;
-          categorySettings?: TerminalCategorySettingsMap;
-          panelPlacement?: Record<DrawerKind, SidecarPlacement>;
-          stripSettings?: PositionWatchStripSettings;
-          bottomDockSettings?: typeof bottomDockSettings;
-          workspaceView?: WorkspaceView;
-          pnlWidgetOpen?: boolean;
-          openPanels?: DrawerKind[];
-        };
+        const layout = JSON.parse(saved) as PersistedTerminalLayout;
         if (typeof layout.compactMode === "boolean") setCompactMode(layout.compactMode);
         if (typeof layout.hideLowConfidence === "boolean") setHideLowConfidence(layout.hideLowConfidence);
         if (typeof layout.showSignals === "boolean") setShowSignals(layout.showSignals);
@@ -334,14 +344,19 @@ export function TerminalHub() {
         if (layout.workspaceView) setWorkspaceView(layout.workspaceView);
         if (typeof layout.pnlWidgetOpen === "boolean") setPnlWidgetOpen(layout.pnlWidgetOpen);
       }
+      const syncedLikes = userState.getSection<string[]>("liked-tokens-v1", []);
+      if (Array.isArray(syncedLikes)) setLikedTokens([...new Set(syncedLikes.filter((slug) => typeof slug === "string"))].slice(0, 500));
     } catch {}
     setLayoutReady(true);
-  }, []);
+  }, [userState]);
 
   useEffect(() => {
     if (!layoutReady) return;
-    window.localStorage.setItem("perphood-terminal-layout-v15", JSON.stringify({ compactMode, hideLowConfidence, showSignals, categorySettings, sortMode, workspaceView, panelPlacement, openPanels, stripSettings, bottomDockSettings, pnlWidgetOpen }));
-  }, [bottomDockSettings, categorySettings, compactMode, hideLowConfidence, layoutReady, openPanels, panelPlacement, pnlWidgetOpen, showSignals, sortMode, stripSettings, workspaceView]);
+    const layout: PersistedTerminalLayout = { compactMode, hideLowConfidence, showSignals, categorySettings, sortMode, workspaceView, panelPlacement, openPanels, stripSettings, bottomDockSettings, pnlWidgetOpen };
+    window.localStorage.setItem("perphood-terminal-layout-v15", JSON.stringify(layout));
+    userState.setSection("terminal-layout-v1", layout);
+    userState.setSection("liked-tokens-v1", likedTokens);
+  }, [bottomDockSettings, categorySettings, compactMode, hideLowConfidence, layoutReady, likedTokens, openPanels, panelPlacement, pnlWidgetOpen, showSignals, sortMode, stripSettings, userState, workspaceView]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -373,6 +388,16 @@ export function TerminalHub() {
     window.localStorage.removeItem("perphood-terminal-layout-v13");
     window.localStorage.removeItem("perphood-terminal-layout-v12");
     window.localStorage.removeItem("perphood-terminal-layout-v11");
+    userState.setSection("terminal-layout-v1", {
+      compactMode: false, hideLowConfidence: false, showSignals: true,
+      categorySettings: structuredClone(DEFAULT_CATEGORY_SETTINGS),
+      sortMode: { new: "age", cooking: "activity", migrated: "volume" },
+      workspaceView: "markets", panelPlacement: { ...DEFAULT_PANEL_PLACEMENT }, openPanels: [],
+      stripSettings: { showPositions: true, showWatchlist: true, showPnl: true, showMarketCap: true, maxPositions: 8, maxWatchlist: 10, compact: false },
+      bottomDockSettings: { showConnection: true, showLaunch: true, showEngine: true, showLabels: true, compact: false },
+      pnlWidgetOpen: true,
+    } satisfies PersistedTerminalLayout);
+    userState.setSection("liked-tokens-v1", []);
   };
 
   const filteredTokens = useMemo(() => {
@@ -535,7 +560,6 @@ export function TerminalHub() {
       const normalized = value.toLowerCase();
       const found = tokens.find((token) => normalized.includes(token.slug) || normalized.includes(token.symbol.toLowerCase()));
       if (found) {
-        setSelectedToken(found);
         setGlobalQuery(found.symbol);
       }
     } catch {

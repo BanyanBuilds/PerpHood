@@ -1,0 +1,29 @@
+{
+  "release": "v52-product-completion-and-scale-foundation",
+  "generatedAt": "2026-07-26T23:02:52.608Z",
+  "route": "/admin/completion",
+  "api": "/api/v52/readiness",
+  "keyFiles": [
+    "PRODUCT_COMPLETION_V52.md",
+    "SCALE_ARCHITECTURE_V52.md",
+    "V52_BUILD_NOTES.md",
+    "V52_VALIDATION.md",
+    "V52_VALIDATION.json",
+    "V52_TEST_LOG.txt",
+    "components/V52CompletionConsole.tsx",
+    "lib/v52-product-completion.ts",
+    "lib/v52-scale-foundation.ts",
+    "lib/server/v52-readiness.ts",
+    "app/admin/completion/page.tsx",
+    "app/api/v52/readiness/route.ts",
+    "supabase/v52_scale_foundation.sql",
+    "app/admin/page.tsx"
+  ],
+  "lockedBehavior": [
+    "in-place Quick Buy",
+    "preset-only Quick Long/Short",
+    "six independent category presets",
+    "three simultaneous left sidecars"
+  ],
+  "publicFundsApproved": false
+}

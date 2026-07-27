@@ -20,7 +20,7 @@ const key = (value: string) => value.toLowerCase();
 const tokenKey = (account: string, market: string) => `${key(account)}:${key(market)}`;
 
 export class V45AccountLedgerModel {
-  executionMode = V45ExecutionMode.Normal;
+  executionMode: V45ExecutionModeValue = V45ExecutionMode.Normal;
   routerEthWei = 0n;
   readonly routerTokenWad = new Map<string, bigint>();
   readonly wethBalanceWei = new Map<string, bigint>();
