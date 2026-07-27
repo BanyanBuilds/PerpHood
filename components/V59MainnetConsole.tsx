@@ -67,6 +67,8 @@ export function V59MainnetConsole() {
   const safe = data?.gates.factorySafelyDeployed ?? false;
   const rpcReady = data?.gates.rpcReady ?? false;
   const factoryLabel = data?.factory.codePresent ? "DEPLOYED" : "NOT DEPLOYED";
+  const globalTradingPaused = data?.factory.globalTradingPaused ?? null;
+  const newMarketsPaused = data?.factory.newMarketsPaused ?? null;
 
   return <main className="v59-mainnet-page">
     <header className="v59-mainnet-hero">
@@ -98,7 +100,7 @@ export function V59MainnetConsole() {
 
       <aside className="v59-mainnet-side">
         <section><header><WalletCards size={16}/><strong>Controlled accounts</strong></header><div><span>Deployer</span><b>{short(data?.accounts.expectedDeployer ?? null)}</b></div><div><span>First trader</span><b>{short(data?.accounts.firstTrader ?? null)}</b></div><div><span>Factory owner</span><b>{short(data?.factory.owner ?? data?.accounts.expectedDeployer ?? null)}</b></div></section>
-        <section><header><Factory size={16}/><strong>On-chain state</strong></header><div><span>Launch mode</span><b>{data?.factory.launchModeLabel ?? "not deployed"}</b></div><div><span>Global pause</span><b>{data?.factory.globalTradingPaused === null ? "—" : data.factory.globalTradingPaused ? "ON" : "OFF"}</b></div><div><span>New markets paused</span><b>{data?.factory.newMarketsPaused === null ? "—" : data.factory.newMarketsPaused ? "ON" : "OFF"}</b></div><div><span>Markets</span><b>{data?.factory.marketCount ?? "0"}</b></div></section>
+        <section><header><Factory size={16}/><strong>On-chain state</strong></header><div><span>Launch mode</span><b>{data?.factory.launchModeLabel ?? "not deployed"}</b></div><div><span>Global pause</span><b>{globalTradingPaused === null ? "—" : globalTradingPaused ? "ON" : "OFF"}</b></div><div><span>New markets paused</span><b>{newMarketsPaused === null ? "—" : newMarketsPaused ? "ON" : "OFF"}</b></div><div><span>Markets</span><b>{data?.factory.marketCount ?? "0"}</b></div></section>
         <section><header><CheckCircle2 size={16}/><strong>Next local command</strong></header><code>npm run chain:v59:preflight</code><p>No browser or Vercel route can sign or broadcast the factory deployment.</p></section>
       </aside>
     </section>
