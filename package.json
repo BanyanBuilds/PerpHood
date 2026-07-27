@@ -1,6 +1,6 @@
 {
-  "name": "leveragex-v56-mainnet-candidate",
-  "version": "56.0.0",
+  "name": "leveragex-v57-mainnet-ui",
+  "version": "57.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -191,7 +191,10 @@
     "chain:test:v56": "forge test --match-path contracts/test/LeverageXLaunchFactoryV56.t.sol -vvv",
     "test:v56-static": "node --experimental-strip-types scripts/v56-mainnet-candidate-smoke.mts",
     "test:v56-fast": "npm run test:v55-fast && npm run test:v56-static",
-    "test:v56": "npm run test:v55 && npm run test:v56-static"
+    "test:v56": "npm run test:v55 && npm run test:v56-static",
+    "test:v57-ui": "node --experimental-strip-types scripts/v57-profile-drawer-smoke.mts",
+    "test:v57-fast": "npm run test:v56-fast && npm run test:v57-ui && npm run test:syntax",
+    "test:v57": "npm run test:v56 && npm run test:v57-ui && npm run test:syntax"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.14",

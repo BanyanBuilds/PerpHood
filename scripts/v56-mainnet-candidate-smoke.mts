@@ -10,8 +10,8 @@ function check(condition: unknown, label: string) {
 }
 
 const pkg = JSON.parse(read("package.json")) as { version: string; name: string; scripts: Record<string, string> };
-check(pkg.version === "56.0.0", "package version is V56");
-check(pkg.name === "leveragex-v56-mainnet-candidate", "package name is leverage X V56");
+check(Number(pkg.version.split(".")[0]) >= 56, "package inherits the V56+ mainnet candidate baseline");
+check(pkg.name.startsWith("leveragex-v"), "package remains a leverage X versioned build");
 check(pkg.scripts["chain:v56:preflight"]?.includes("v56-mainnet-preflight"), "mainnet preflight command exists");
 check(pkg.scripts["chain:v56:mainnet"]?.includes("v56-deploy-robinhood-mainnet"), "mainnet deploy command exists");
 check(pkg.scripts["chain:v56:admin"]?.includes("v56-admin-robinhood-mainnet"), "mainnet admin command exists");
