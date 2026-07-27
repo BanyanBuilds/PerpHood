@@ -1,6 +1,6 @@
 {
-  "name": "leveragex-v55-real-trading-terminal",
-  "version": "55.0.0",
+  "name": "leveragex-v56-mainnet-candidate",
+  "version": "56.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -184,7 +184,14 @@
     "test:v55": "npm run test:v48-quick-presets && npm run test:v48-left-sidecars && npm run test:v49-math && npm run test:v50-adversarial && npm run test:v50-stateful && npm run test:v51-ordering && npm run test:v53-user-state && npm run test:v55-fast",
     "chain:v55:testnet": "node --experimental-strip-types scripts/v55-deploy-robinhood.mts testnet",
     "chain:v55:mainnet": "node --experimental-strip-types scripts/v55-deploy-robinhood.mts mainnet",
-    "test:v55-vercel": "node --experimental-strip-types scripts/v55-vercel-deploy-fix-smoke.mts"
+    "test:v55-vercel": "node --experimental-strip-types scripts/v55-vercel-deploy-fix-smoke.mts",
+    "chain:v56:preflight": "node --experimental-strip-types scripts/v56-mainnet-preflight.mts",
+    "chain:v56:mainnet": "node --experimental-strip-types scripts/v56-deploy-robinhood-mainnet.mts",
+    "chain:v56:admin": "node --experimental-strip-types scripts/v56-admin-robinhood-mainnet.mts",
+    "chain:test:v56": "forge test --match-path contracts/test/LeverageXLaunchFactoryV56.t.sol -vvv",
+    "test:v56-static": "node --experimental-strip-types scripts/v56-mainnet-candidate-smoke.mts",
+    "test:v56-fast": "npm run test:v55-fast && npm run test:v56-static",
+    "test:v56": "npm run test:v55 && npm run test:v56-static"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.14",

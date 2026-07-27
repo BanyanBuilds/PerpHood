@@ -8,11 +8,13 @@ import { KeyButton } from "./KeyButton";
 import { useMarkets } from "./MarketProvider";
 import { ProfileMenu } from "./ProfileMenu";
 import { useTerminalPerformance } from "./TerminalPerformanceProvider";
+import { LEVERAGEX_RELEASE_STAGE, LEVERAGEX_RELEASE_STATUS } from "@/lib/v56-release-state";
 
 export function Header() {
   const [profileOpen, setProfileOpen] = useState(false);
   const { connected, toggleWallet, balanceEth } = useMarkets();
   const { effectiveFps } = useTerminalPerformance();
+  const release = LEVERAGEX_RELEASE_STATUS[LEVERAGEX_RELEASE_STAGE];
 
   const handleWalletButton = () => {
     if (!connected) toggleWallet();
@@ -28,7 +30,7 @@ export function Header() {
         </Link>
 
         <div className="terminal-header-status" aria-label="Terminal status">
-          <span><i />BattlePool live</span>
+          <span title={release.detail}><i className={release.live ? "live" : "locked"} />{release.label}</span>
           <span><Activity size={13} />{effectiveFps} Hz</span>
         </div>
 

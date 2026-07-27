@@ -6175,3 +6175,32 @@ body:has(.v37-clean-chart-page) {
 .v55-market-truth header{display:flex;align-items:center;justify-content:space-between;gap:10px}.v55-market-truth header span{display:flex;align-items:center;gap:6px}.v55-market-truth header em{font-style:normal;font-size:11px;font-weight:800;letter-spacing:.08em;padding:3px 7px;border-radius:999px;background:rgba(102,255,174,.1);color:#74ffb3}.v55-market-truth header em.stale,.v55-market-truth header em.indexing{color:#f3c969;background:rgba(243,201,105,.1)}.v55-market-truth header em.paused{color:#ff7f88;background:rgba(255,94,107,.1)}
 .v55-market-truth>div{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.v55-market-truth>div span{min-width:0;border:1px solid rgba(255,255,255,.055);border-radius:7px;padding:7px;background:rgba(255,255,255,.02);display:grid;gap:3px}.v55-market-truth small{color:var(--muted);font-size:11px}.v55-market-truth strong{font-size:12px;overflow:hidden;text-overflow:ellipsis}.v55-market-truth p{margin:0;color:#e1bd66;font-size:11px;line-height:1.45}
 @media(max-width:720px){.v55-market-truth>div{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Leverage X V56 — transparent vector identity and mainnet-candidate shell. */
+.brand-mark,
+.terminal-site-header .brand-lockup .brand-mark,
+.perphood-command-brand .brand-mark,
+.stage-ring .brand-mark {
+  overflow: visible !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.brand-mark img {
+  object-fit: contain !important;
+  filter: drop-shadow(0 0 8px rgba(29, 231, 192, .14));
+}
+.terminal-site-header .brand-lockup:hover .brand-mark {
+  box-shadow: none !important;
+  transform: translateY(-1px);
+}
+.terminal-site-header .brand-lockup:hover .brand-mark img {
+  filter: drop-shadow(0 0 12px rgba(63, 244, 176, .24));
+}
+.terminal-site-header .brand-lockup strong {
+  font-weight: 900 !important;
+  letter-spacing: -.055em !important;
+}
+.terminal-header-status span i.locked { background:#f2b85b !important; box-shadow:0 0 10px rgba(242,184,91,.26) !important; }
+.terminal-header-status span i.live { background:#65ef9b !important; box-shadow:0 0 10px rgba(101,239,155,.28) !important; }

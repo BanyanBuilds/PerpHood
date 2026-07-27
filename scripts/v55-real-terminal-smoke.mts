@@ -12,8 +12,8 @@ function check(condition: unknown, label: string) {
 }
 
 const pkg = JSON.parse(read("package.json")) as { name: string; version: string; scripts: Record<string, string> };
-check(pkg.name === "leveragex-v55-real-trading-terminal", "package uses the Leverage X V55 identity");
-check(pkg.version === "55.0.0", "package version is V55");
+check(["leveragex-v55-real-trading-terminal", "leveragex-v56-mainnet-candidate"].includes(pkg.name), "package preserves the Leverage X V55/V56 identity");
+check(["55.0.0", "56.0.0"].includes(pkg.version), "package version is V55-compatible or V56");
 check(pkg.scripts["chain:deploy:v55"]?.includes("v55-deploy-robinhood"), "V55 Robinhood deployment command exists");
 check(pkg.scripts["chain:test:v55"]?.includes("LeverageXLaunchFactoryV55"), "V55 Foundry contract test command exists");
 

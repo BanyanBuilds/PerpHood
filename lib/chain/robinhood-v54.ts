@@ -45,7 +45,7 @@ export const ROBINHOOD_NETWORKS: Record<RobinhoodNetworkKey, RobinhoodNetwork> =
     chainHex: "0x1237",
     rpcUrl: MAINNET_RPC,
     explorerUrl: "https://robinhoodchain.blockscout.com",
-    factoryAddress: process.env.NEXT_PUBLIC_V55_MAINNET_FACTORY_ADDRESS ?? process.env.NEXT_PUBLIC_V54_MAINNET_FACTORY_ADDRESS ?? "",
+    factoryAddress: process.env.NEXT_PUBLIC_V56_MAINNET_FACTORY_ADDRESS ?? process.env.NEXT_PUBLIC_V55_MAINNET_FACTORY_ADDRESS ?? process.env.NEXT_PUBLIC_V54_MAINNET_FACTORY_ADDRESS ?? "",
   },
 };
 
@@ -212,7 +212,7 @@ export async function quoteV54LaunchBudget(
 ) {
   if (!provider) throw new Error("No injected EVM wallet was found.");
   const { account, network } = await ensureRobinhoodNetwork(networkKey, provider);
-  const factoryAddress = normalizeAddress(network.factoryAddress, `${network.name} Leverage X V55 factory`);
+  const factoryAddress = normalizeAddress(network.factoryAddress, `${network.name} Leverage X factory`);
   const budget = await estimateBudget(input, account, factoryAddress, network, provider);
   const walletBalance = await readRobinhoodWalletBalance(account, networkKey, provider);
   if (walletBalance < budget.totalBudgetWei) throw new Error("Wallet needs at least 0.001 ETH on this network for the capped launch transaction.");

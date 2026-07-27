@@ -41,7 +41,7 @@ import { OgBadge } from "./OgBadge";
 import { useMarkets } from "./MarketProvider";
 
 const EMOJIS = ["🧊", "🐸", "🐕", "🗿", "🛸", "🦎", "🥷", "🦉"];
-const MAINNET_ENABLED = (process.env.NEXT_PUBLIC_V55_MAINNET_ENABLED ?? process.env.NEXT_PUBLIC_V54_MAINNET_ENABLED) === "true";
+const MAINNET_ENABLED = process.env.NEXT_PUBLIC_V56_MAINNET_ENABLED === "true";
 
 type ArtworkState = {
   file: File;
@@ -77,7 +77,7 @@ export function LaunchPanel({
 }) {
   const { tokens } = useMarkets();
   const [step, setStep] = useState<LaunchStep>("identity");
-  const [networkKey, setNetworkKey] = useState<RobinhoodNetworkKey>("testnet");
+  const [networkKey, setNetworkKey] = useState<RobinhoodNetworkKey>("mainnet");
   const [name, setName] = useState("");
   const [ticker, setTicker] = useState("");
   const [description, setDescription] = useState("");
@@ -175,7 +175,7 @@ export function LaunchPanel({
       return;
     }
     if (!factoryReady) {
-      setStatus(`${network.name} factory is not deployed/configured yet. V55 must deploy the factory before minting is enabled.`);
+      setStatus(`${network.name} factory is not deployed/configured yet. Deploy and verify the paused V56 factory before minting is enabled.`);
       return;
     }
     setBusy(true);
@@ -383,10 +383,9 @@ export function LaunchPanel({
             </article>
 
             <article className="v41-migration-card">
-              <header><ShieldCheck size={21} /><span><strong>Network and factory</strong><small>Testnet first; mainnet stays locked</small></span></header>
+              <header><ShieldCheck size={21} /><span><strong>Network and factory</strong><small>Robinhood Chain mainnet · controlled canary launch</small></span></header>
               <label><span>Network</span><select value={networkKey} onChange={(event) => { setNetworkKey(event.target.value as RobinhoodNetworkKey); resetPrepared(); }}>
-                <option value="testnet">Robinhood Chain Testnet · 46630</option>
-                <option value="mainnet" disabled={!MAINNET_ENABLED}>Robinhood Chain Mainnet · 4663 {MAINNET_ENABLED ? "" : "(locked)"}</option>
+                <option value="mainnet" disabled={!MAINNET_ENABLED}>Robinhood Chain Mainnet · 4663 {MAINNET_ENABLED ? "" : "(deployment locked)"}</option>
               </select></label>
               <label><span>Migration target display</span><select value={migrationTargetMarketCapUsd} onChange={(event) => { setMigrationTargetMarketCapUsd(Number(event.target.value)); resetPrepared(); }}>
                 {[30_000, 45_000, 69_000, 100_000].map((value) => <option key={value} value={value}>${value.toLocaleString("en-US")}</option>)}
