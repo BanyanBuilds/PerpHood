@@ -42,7 +42,7 @@ export function MoversPage() {
   }, [filter, query, tokens]);
 
   const quickBuy = async (token: Token) => {
-    const contractExecution = (token.chainDeploymentMode === "anvil-v43" || token.chainDeploymentMode === "anvil-v45") && Boolean(token.chainMarketAddress);
+    const contractExecution = (token.chainDeploymentMode === "anvil-v43" || token.chainDeploymentMode === "anvil-v45" || token.chainDeploymentMode === "robinhood-testnet-v54" || token.chainDeploymentMode === "robinhood-mainnet-v54") && Boolean(token.chainMarketAddress);
     if (!connected && !contractExecution) {
       toggleWallet();
       setNotice("Wallet connected — Quick Buy again to place 0.01 ETH.");
@@ -76,6 +76,7 @@ export function MoversPage() {
     </nav>
 
     <section className="movers-card-grid">
+      {markets.length === 0 && <div className="trench-empty"><TrendingUp size={22} /><strong>No real markets launched yet</strong><span>Launch the first PERPHOOD token on Robinhood Chain. This page never fabricates token activity.</span></div>}
       {markets.map((token, index) => <MoverCard key={token.slug} token={token} rank={index + 1} liked={liked.includes(token.slug)} watched={watchlist.includes(token.slug)} onLike={() => setLiked((current) => current.includes(token.slug) ? current.filter((slug) => slug !== token.slug) : [...current, token.slug])} onWatch={() => toggleWatchlist(token.slug)} onQuickBuy={() => { void quickBuy(token); }} />)}
     </section>
 

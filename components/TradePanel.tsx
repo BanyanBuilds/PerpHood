@@ -86,8 +86,9 @@ export function TradePanel({ token, variant = "full", onClose, presetSide, prese
   const buttonTone = side === "short" ? "red" : "green";
   const capacityUsed = side === "buy" || !Number.isFinite(quote.capacityEth) ? 0 : Math.min(100, quote.notionalEth / Math.max(quote.capacityEth, 0.0001) * 100);
   const v45AccountExecution = token.chainDeploymentMode === "anvil-v45" && Boolean(token.chainMarketAddress);
+  const v54SpotExecution = (token.chainDeploymentMode === "robinhood-testnet-v54" || token.chainDeploymentMode === "robinhood-mainnet-v54") && Boolean(token.chainMarketAddress);
   const sessionExecution = v45AccountExecution && hasLocalV45Session();
-  const contractExecution = (token.chainDeploymentMode === "anvil-v43" || v45AccountExecution) && Boolean(token.chainMarketAddress);
+  const contractExecution = (token.chainDeploymentMode === "anvil-v43" || v45AccountExecution || v54SpotExecution) && Boolean(token.chainMarketAddress);
   const durableOrderExecution = sessionExecution;
   const availableBalance = v45AccountExecution ? balanceEth : contractExecution ? walletBalanceEth : balanceEth;
   const executionBusy = contractExecution && chainExecution.slug === token.slug && (chainExecution.phase === "wallet" || chainExecution.phase === "pending");
@@ -240,8 +241,8 @@ export function TradePanel({ token, variant = "full", onClose, presetSide, prese
 
       <div className="trade-tabs">
         <button className={side === "buy" ? "active buy" : ""} onClick={() => selectSide("buy")}><ShoppingBag size={15} />Buy</button>
-        <button className={side === "long" ? "active long" : ""} onClick={() => selectSide("long")}><ArrowUpRight size={15} />Long</button>
-        <button className={side === "short" ? "active short" : ""} onClick={() => selectSide("short")}><ArrowDownRight size={15} />Short</button>
+        <button disabled={v54SpotExecution} className={side === "long" ? "active long" : ""} onClick={() => selectSide("long")}><ArrowUpRight size={15} />Long</button>
+        <button disabled={v54SpotExecution} className={side === "short" ? "active short" : ""} onClick={() => selectSide("short")}><ArrowDownRight size={15} />Short</button>
       </div>
 
       {side !== "buy" && <>
@@ -277,12 +278,12 @@ export function TradePanel({ token, variant = "full", onClose, presetSide, prese
       {(!contractExecution || durableOrderExecution) && orderMode === "market" && side !== "buy" && <button className="advanced-toggle" onClick={() => setAdvanced((value) => !value)}><span><Gauge size={14} />Take profit, stop loss &amp; breakeven</span><ChevronDown size={15} className={advanced ? "open" : ""} /></button>}
       {(!contractExecution || durableOrderExecution) && orderMode === "market" && advanced && side !== "buy" && <div className="advanced-grid"><label><span>Take profit</span><div><input type="number" min="1" value={takeProfitPercent} onChange={(event) => setTakeProfitPercent(Math.max(1, Number(event.target.value)))} /><b>%</b></div><small>{money(takeProfitCap)}</small></label><label><span>Stop loss</span><div><input type="number" min="1" value={stopLossPercent} onChange={(event) => setStopLossPercent(Math.max(1, Number(event.target.value)))} /><b>%</b></div><small>{money(stopLossCap)}</small></label><label className="v46-breakeven"><span><input type="checkbox" checked={breakevenEnabled} onChange={(event) => setBreakevenEnabled(event.target.checked)} /> Breakeven</span><div><input type="number" min="1" value={breakevenActivationPercent} onChange={(event) => setBreakevenActivationPercent(Math.max(1, Number(event.target.value)))} /><b>% arm</b></div><small>Retrace to {money(quote.markCap)}</small></label></div>}
 
-      {contractExecution && <div className={`v44-execution-strip ${chainExecution.slug === token.slug ? chainExecution.phase : "idle"}`}><span><b>{sessionExecution ? orderMode === "market" ? "V45 AUTHORIZED EXECUTION" : "V46 DURABLE KEEPER ORDER" : "V44 CONTRACT EXECUTION"}</b><small>{chainExecution.slug === token.slug && chainExecution.message ? chainExecution.message : sessionExecution ? "P-256 intent · on-chain nonce and limits · sponsored sequencer." : "Wallet-confirmed settlement against the shared V43 BattlePool."}</small></span><em>{sessionExecution ? "SESSION" : walletAddress ? `${walletAddress.slice(0, 6)}…${walletAddress.slice(-4)}` : "connect on trade"}</em></div>}
+      {contractExecution && <div className={`v44-execution-strip ${chainExecution.slug === token.slug ? chainExecution.phase : "idle"}`}><span><b>{v54SpotExecution ? "V54 ROBINHOOD SPOT" : sessionExecution ? orderMode === "market" ? "V45 AUTHORIZED EXECUTION" : "V46 DURABLE KEEPER ORDER" : "V44 CONTRACT EXECUTION"}</b><small>{chainExecution.slug === token.slug && chainExecution.message ? chainExecution.message : v54SpotExecution ? "Connected-wallet settlement against the real Robinhood Chain bonding curve." : sessionExecution ? "P-256 intent · on-chain nonce and limits · sponsored sequencer." : "Wallet-confirmed settlement against the shared V43 BattlePool."}</small></span><em>{sessionExecution ? "SESSION" : walletAddress ? `${walletAddress.slice(0, 6)}…${walletAddress.slice(-4)}` : "connect on trade"}</em></div>}
 
       {side !== "buy" && !quote.allowed && orderMode === "market" && <div className="trade-block-reason"><Info size={15} /><span><b>Risk engine limit</b><small>{quote.reason}</small></span></div>}
       {insufficient && <div className="trade-block-reason"><Info size={15} /><span><b>Insufficient trading balance</b><small>Reduce collateral, deposit funds, or close another position.</small></span></div>}
 
-      <KeyButton className="trade-submit" tone={buttonTone} onClick={() => void submit()} disabled={executionBusy || insufficient || (side !== "buy" && orderMode === "market" && !quote.allowed)}><Zap size={17} />{executionBusy ? "AWAITING CONFIRMATION" : contractExecution || connected ? cta : "CONNECT WALLET"}</KeyButton>
+      <KeyButton className="trade-submit" tone={buttonTone} onClick={() => void submit()} disabled={executionBusy || insufficient || (v54SpotExecution && side !== "buy") || (side !== "buy" && orderMode === "market" && !quote.allowed)}><Zap size={17} />{executionBusy ? "AWAITING CONFIRMATION" : contractExecution || connected ? cta : "CONNECT WALLET"}</KeyButton>
 
       {tokenOrders.length > 0 && <div className="ticket-open-orders"><div><strong>OPEN ORDERS</strong><span>{tokenOrders.length}</span></div>{tokenOrders.slice(0, 4).map((order) => <article key={order.id}><span><b className={order.side === "short" ? "negative" : "positive"}>{order.side.toUpperCase()}</b><small>{order.kind} · {order.side === "buy" ? "spot" : `${order.leverage}×`} · {order.collateral} ETH</small></span><em>{money(order.triggerCap)}</em><button onClick={() => cancelOrder(order.id)}><X size={13} /></button></article>)}</div>}
 

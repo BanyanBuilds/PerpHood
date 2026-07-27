@@ -1,11 +1,10 @@
-import { DEMO_TOKEN } from "./demo-market";
 import type { Token } from "./types";
 
-/** V36 review build: one deliberate demo market so the chart workspace is immediately visible. */
-export const TOKENS: Token[] = [DEMO_TOKEN];
+/** Production starts empty. Markets appear only after a confirmed indexed launch. */
+export const TOKENS: Token[] = [];
 
 export const getToken = (slug: string): Token => {
   const token = TOKENS.find((item) => item.slug === slug);
-  if (!token) throw new Error(`Market ${slug} is not available from the live data source.`);
+  if (!token) throw new Error(`Market ${slug} is not available from the live launch registry.`);
   return token;
 };

@@ -3,7 +3,6 @@
 import { Bell, BellRing, Check, RotateCcw, ShieldAlert, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { freeWeth, poolFromToken } from "@/lib/battle-pool";
-import { DEMO_LIQUIDATION_CLUSTERS, isDemoMarket } from "@/lib/demo-market";
 import {
   buildLiquidationClusters,
   buildMarketDefensePulse,
@@ -85,13 +84,10 @@ export function MarketAlertCenter({ token, marketCap, open, onClose, onUnreadCha
   const events = useMemo(() => allEvents.filter((event) => event.slug === token.slug), [allEvents, token.slug]);
   const pool = token.battlePoolVersion ? poolFromToken(token) : null;
   const freeRatio = pool?.realWethBalance ? Math.max(0, Math.min(1, freeWeth(pool) / pool.realWethBalance)) : 1;
-  const clusters = useMemo(() => {
-    const positionClusters = buildLiquidationClusters(tokenPositions, marketCap);
-    const demoClusters = isDemoMarket(token.slug)
-      ? DEMO_LIQUIDATION_CLUSTERS.map((cluster) => ({ ...cluster, distancePercent: marketCap > 0 ? ((cluster.marketCap - marketCap) / marketCap) * 100 : cluster.distancePercent }))
-      : [];
-    return [...positionClusters, ...demoClusters].sort((a, b) => Math.abs(a.distancePercent) - Math.abs(b.distancePercent));
-  }, [marketCap, token.slug, tokenPositions]);
+  const clusters = useMemo(
+    () => buildLiquidationClusters(tokenPositions, marketCap).sort((a, b) => Math.abs(a.distancePercent) - Math.abs(b.distancePercent)),
+    [marketCap, tokenPositions],
+  );
   const pulse = useMemo(() => buildMarketDefensePulse(token, events, clusters, freeRatio), [clusters, events, freeRatio, token]);
 
   useEffect(() => {

@@ -6094,3 +6094,12 @@ body:has(.v37-clean-chart-page) {
 .v53-section-list code { color:#72e6a3; font-size:11px; }
 @media (max-width:900px) { .v53-sync-hero { grid-template-columns:repeat(2,minmax(0,1fr)); } }
 @media (max-width:560px) { .v53-user-state-console { padding:16px; } .v53-sync-hero { grid-template-columns:1fr; } .profile-sync-card > div { grid-template-columns:1fr; } }
+
+/* V54 — production Robinhood Chain launch path */
+.v54-launch-note { margin: 13px 0 0; color: #9d998f; font-size: 12px; line-height: 1.45; }
+.v54-launch-receipt { grid-column: 1 / -1; display: grid; gap: 7px; padding: 14px; border: 1px solid #386b49; border-radius: 12px; background: #26382c; }
+.v54-launch-receipt strong { color: #87dfa5; font-size: 14px; }
+.v54-launch-receipt span { display: grid; grid-template-columns: 78px minmax(0, 1fr); gap: 8px; color: #a8b5ab; font-size: 11px; }
+.v54-launch-receipt a { min-width: 0; display: inline-flex; align-items: center; gap: 5px; color: #d4f2dc; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.v54-spin { animation: v54-spin 900ms linear infinite; }
+@keyframes v54-spin { to { transform: rotate(360deg); } }

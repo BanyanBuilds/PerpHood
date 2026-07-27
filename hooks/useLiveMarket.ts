@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useBattleRealtime } from "./useBattleRealtime";
-import { buildDemoCandles, isDemoMarket, nextDemoTrade } from "@/lib/demo-market";
 import {
   MARKET_HISTORY_URL,
   MARKET_WS_URL,
@@ -20,11 +19,9 @@ export function useLiveMarket(market: string, timeframeSeconds: number) {
   const [trades, setTrades] = useState<LiveTrade[]>([]);
   const [state, setState] = useState<FeedState>(MARKET_WS_URL ? "connecting" : "disabled");
   const [error, setError] = useState<string>("");
-  const [demoSequence, setDemoSequence] = useState(0);
   const retryRef = useRef(0);
   const localSequenceRef = useRef(0);
   const localPriceRef = useRef<number | null>(null);
-  const demoPriceRef = useRef<number | null>(null);
 
   useEffect(() => {
     setBaseCandles([]);
@@ -32,30 +29,9 @@ export function useLiveMarket(market: string, timeframeSeconds: number) {
     setError("");
     localSequenceRef.current = 0;
     localPriceRef.current = null;
-    demoPriceRef.current = null;
     if (!market) return;
 
     const controller = new AbortController();
-    if (isDemoMarket(market)) {
-      const history = buildDemoCandles();
-      demoPriceRef.current = history.at(-1)?.close ?? 0;
-      setBaseCandles(history);
-      setState("live");
-      setError("");
-      let tick = 0;
-      const timer = window.setInterval(() => {
-        tick += 1;
-        const trade = nextDemoTrade(demoPriceRef.current ?? history.at(-1)?.close ?? 0, tick);
-        demoPriceRef.current = trade.price;
-        setTrades((rows) => [trade, ...rows].slice(0, 100));
-        setDemoSequence((value) => value + 1);
-        setBaseCandles((current) => addTradeToCandles(current, trade, 1));
-      }, 250);
-      return () => {
-        controller.abort();
-        window.clearInterval(timer);
-      };
-    }
     if (MARKET_HISTORY_URL) {
       const separator = MARKET_HISTORY_URL.includes("?") ? "&" : "?";
       fetch(`${MARKET_HISTORY_URL}${separator}market=${encodeURIComponent(market)}&interval=1s&limit=3000`, { signal: controller.signal })
@@ -144,6 +120,6 @@ export function useLiveMarket(market: string, timeframeSeconds: number) {
 
   const candles = useMemo(() => timeframeSeconds === 1 ? baseCandles : aggregateCandles(baseCandles, timeframeSeconds), [baseCandles, timeframeSeconds]);
   const effectiveState: FeedState = battleFrame ? "live" : state;
-  const source = battleFrame ? "battlepool" : isDemoMarket(market) ? "demo" : MARKET_WS_URL ? "websocket" : "none";
-  return { candles, trades, state: effectiveState, error, latestTrade: trades[0] ?? null, source, sequence: battleFrame?.sequence ?? demoSequence };
+  const source = battleFrame ? "battlepool" : MARKET_WS_URL ? "websocket" : "none";
+  return { candles, trades, state: effectiveState, error, latestTrade: trades[0] ?? null, source, sequence: battleFrame?.sequence ?? 0 };
 }

@@ -9,7 +9,7 @@ const consoles = [
   { href: "/admin/data-plane", label: "V48 Data Plane", detail: "RPC quorum, market streams, candles and replication", Icon: Network },
   { href: "/admin/indexer", label: "V47 Indexer", detail: "Canonical history, reorg recovery and reconciliation", Icon: Database },
   { href: "/admin/keeper", label: "V46 Keeper Network", detail: "Durable orders, trigger execution and liquidations", Icon: Server },
-  { href: "/admin/launchpad", label: "Launch Lifecycle", detail: "Factory, market phases, migration gates and sandbox", Icon: Activity },
+  { href: "/admin/launchpad", label: "Real Launch Registry", detail: "Confirmed Robinhood Chain factory deployments and explorer receipts", Icon: Activity },
 ] as const;
 
 export default function AdminPage() {

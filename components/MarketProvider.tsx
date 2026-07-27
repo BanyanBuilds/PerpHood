@@ -4,7 +4,6 @@
 
 import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { TOKENS } from "@/lib/data";
-import { createDemoMarketEvents, DEMO_ONLY } from "@/lib/demo-market";
 import { applyOgRegistry, hammingSimilarity, tokenIdentityParts } from "@/lib/og";
 import {
   BATTLE_OPENING_FDV_ETH,
@@ -78,6 +77,9 @@ import {
 import { loadV45Account } from "@/lib/chain/v45-session-key";
 import type { V46StoredOrder } from "@/lib/chain/v46-order";
 import { useUserState } from "./UserStateProvider";
+import { injectedProvider } from "@/lib/chain/local-battle-client";
+import { fetchV54LaunchTokens } from "@/lib/v54-launch-registry";
+import { executeV54SpotBuy, executeV54SpotSell, readV54MarketRuntime } from "@/lib/chain/robinhood-v54";
 import type {
   ClosedTrade,
   LaunchTokenInput,
@@ -133,7 +135,8 @@ function storageValue<T>(primary: string, legacy: string, fallback: T): T {
   return JSON.parse(raw) as T;
 }
 
-function normalizeToken(token: Token): Token {
+function normalizeToken(token: Token | undefined): Token {
+  if (!token) throw new Error("The requested market is not available from the confirmed launch registry.");
   const cap = Math.max(0, token.cap);
   const age = token.marketAgeSeconds ?? token.launchedMinutesAgo * 60;
   const hasBattlePool = Boolean(token.battlePoolVersion);
@@ -164,8 +167,8 @@ function normalizeToken(token: Token): Token {
     ...tokenIdentityParts(token),
     ogStatus: token.ogStatus ?? "og",
     metadataLockedAt: token.metadataLockedAt ?? Date.now() - token.launchedMinutesAgo * 60_000,
-    creatorWallet: token.creatorWallet ?? "0xPERP…HOOD",
-    launchBlock: token.launchBlock ?? 10_000_000 - Math.round(token.launchedMinutesAgo * 4),
+    creatorWallet: token.creatorWallet,
+    launchBlock: token.launchBlock,
   };
 }
 
@@ -221,7 +224,7 @@ function computeRiskScore(token: Token) {
 }
 
 export type ChainExecutionState = {
-  mode: "browser-sim" | "v43-contract" | "v45-account" | "v45-session";
+  mode: "browser-sim" | "v43-contract" | "v45-account" | "v45-session" | "v54-spot";
   phase: "idle" | "wallet" | "pending" | "confirmed" | "error";
   action?: string;
   slug?: string;
@@ -236,6 +239,12 @@ function isContractMarket(token: Token) {
   return (token.chainDeploymentMode === "anvil-v43" || token.chainDeploymentMode === "anvil-v45")
     && Boolean(token.chainMarketAddress)
     && /^0x[0-9a-fA-F]{40}$/.test(token.chainMarketAddress ?? "");
+}
+
+function isV54SpotMarket(token: Token) {
+  return (token.chainDeploymentMode === "robinhood-testnet-v54" || token.chainDeploymentMode === "robinhood-mainnet-v54")
+    && /^0x[0-9a-fA-F]{40}$/.test(token.chainMarketAddress ?? "")
+    && /^0x[0-9a-fA-F]{40}$/.test(token.chainTokenAddress ?? "");
 }
 
 function shortWallet(value?: string) {
@@ -363,17 +372,15 @@ export function MarketProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     try {
-      const custom = storageValue<Token[]>("perphood-v20-custom-tokens", "perphood-v19-custom-tokens", []);
-      const savedPositions = storageValue<Position[]>("perphood-v20-positions", "perphood-v19-positions", []);
-      const savedHoldings = storageValue<SpotHolding[]>("perphood-v20-holdings", "perphood-v19-holdings", []);
-      const savedClosed = storageValue<ClosedTrade[]>("perphood-v20-closed-trades", "perphood-v19-closed-trades", []);
-      const savedOrders = storageValue<PendingOrder[]>("perphood-v20-pending-orders", "perphood-v19-pending-orders", []);
+      const custom: Token[] = []; // V54 production never hydrates browser/anvil demo markets.
+      const savedPositions: Position[] = [];
+      const savedHoldings: SpotHolding[] = [];
+      const savedClosed: ClosedTrade[] = [];
+      const savedOrders: PendingOrder[] = [];
       const savedPresets = storageValue<TradePreset[]>("perphood-trade-presets", "rook-trade-presets", DEFAULT_PRESETS);
       const savedWatchlist = storageValue<string[]>("perphood-watchlist", "rook-watchlist", []);
-      const savedAuctionBids = storageValue<Record<string, number>>("perphood-v20-auction-bids", "perphood-v19-auction-bids", {});
+      const savedAuctionBids: Record<string, number> = {};
       const savedRisk = storageValue<RiskSettings | null>("perphood-risk-settings", "rook-risk-settings", null);
-      const savedBalance = Number(localStorage.getItem("perphood-balance") ?? localStorage.getItem("rook-balance") ?? "0");
-      const savedConnected = (localStorage.getItem("perphood-connected") ?? localStorage.getItem("rook-connected")) === "true";
       const normalizedCustom = custom.map((token) => {
         const pool = token.battlePoolVersion ? poolFromToken(token) : createBattlePoolState();
         return normalizeToken({
@@ -389,7 +396,7 @@ export function MarketProvider({ children }: { children: ReactNode }) {
       });
       const reviewTokens = [...TOKENS, ...normalizedCustom];
       setTokens(applyOgRegistry(reviewTokens).map(normalizeToken));
-      setEvents(DEMO_ONLY ? createDemoMarketEvents() : []);
+      setEvents([]);
       setPositions(savedPositions.filter((position) => position.tokenAmount || position.borrowedTokens).map((position) => ({
         ...position,
         initialCollateral: position.initialCollateral ?? position.collateral,
@@ -406,8 +413,8 @@ export function MarketProvider({ children }: { children: ReactNode }) {
       setWatchlist(savedWatchlist);
       setAuctionBids(savedAuctionBids);
       setRiskSettings(savedRisk ? { ...DEFAULT_RISK, ...savedRisk } : DEFAULT_RISK);
-      setBalanceEth(DEMO_ONLY ? 2.35 : Number.isFinite(savedBalance) ? savedBalance : 0);
-      setConnected(DEMO_ONLY ? true : savedConnected);
+      setBalanceEth(0);
+      setConnected(false);
     } catch {
       // Corrupt local storage should never prevent PERPHOOD from loading.
     }
@@ -428,17 +435,9 @@ export function MarketProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!hydrated) return;
-    localStorage.setItem("perphood-v20-custom-tokens", JSON.stringify(tokens.filter((token) => token.isCustom)));
-    localStorage.setItem("perphood-v20-positions", JSON.stringify(positions));
-    localStorage.setItem("perphood-v20-holdings", JSON.stringify(holdings));
-    localStorage.setItem("perphood-v20-closed-trades", JSON.stringify(closedTrades.slice(0, 10000)));
-    localStorage.setItem("perphood-v20-pending-orders", JSON.stringify(pendingOrders));
     localStorage.setItem("perphood-trade-presets", JSON.stringify(tradePresets));
     localStorage.setItem("perphood-watchlist", JSON.stringify(watchlist));
-    localStorage.setItem("perphood-v20-auction-bids", JSON.stringify(auctionBids));
     localStorage.setItem("perphood-risk-settings", JSON.stringify(riskSettings));
-    localStorage.setItem("perphood-balance", String(balanceEth));
-    localStorage.setItem("perphood-connected", String(connected));
   }, [auctionBids, balanceEth, closedTrades, connected, holdings, hydrated, pendingOrders, positions, riskSettings, tokens, tradePresets, watchlist]);
 
   const pushEvent = useCallback((event: Omit<MarketEvent, "id" | "createdAt">) => {
@@ -575,49 +574,23 @@ export function MarketProvider({ children }: { children: ReactNode }) {
     return new Error(message);
   }, []);
 
+  const refreshV54LaunchRegistry = useCallback(async () => {
+    try {
+      const liveTokens = await fetchV54LaunchTokens();
+      tokensRef.current = applyOgRegistry(liveTokens).map(normalizeToken);
+      setTokens(tokensRef.current);
+    } catch {
+      // A registry outage must show an honest empty state, not demo markets.
+    }
+  }, []);
+
   useEffect(() => {
     if (!hydrated) return;
-    let cancelled = false;
-    const attachLocalDeployment = async () => {
-      type Manifest = { version?: string; chainId?: number; factoryAddress?: string; accountRouterAddress?: string; demoMarketAddress?: string; demoTokenAddress?: string; creator?: string; demoTransactionHash?: string };
-      let manifest: Manifest = {};
-      let deploymentMode: "anvil-v43" | "anvil-v45" = "anvil-v45";
-      try {
-        const v45 = await fetch("/local-chain/v45-deployment.json", { cache: "no-store" });
-        if (v45.ok) manifest = await v45.json() as Manifest;
-        else {
-          deploymentMode = "anvil-v43";
-          const v43 = await fetch("/local-chain/v43-deployment.json", { cache: "no-store" });
-          if (v43.ok) manifest = await v43.json() as Manifest;
-        }
-      } catch {
-        // Environment variables can still attach a market when no public manifest exists.
-      }
-      if (cancelled) return;
-      const v45Router = process.env.NEXT_PUBLIC_V45_ACCOUNT_ROUTER_ADDRESS ?? manifest.accountRouterAddress ?? manifest.factoryAddress;
-      const marketAddress = process.env.NEXT_PUBLIC_V45_DEMO_MARKET_ADDRESS ?? process.env.NEXT_PUBLIC_V43_DEMO_MARKET_ADDRESS ?? manifest.demoMarketAddress;
-      const tokenAddress = process.env.NEXT_PUBLIC_V45_DEMO_TOKEN_ADDRESS ?? process.env.NEXT_PUBLIC_V43_DEMO_TOKEN_ADDRESS ?? manifest.demoTokenAddress;
-      const factoryAddress = process.env.NEXT_PUBLIC_V45_LAUNCHPAD_FACTORY_ADDRESS ?? process.env.NEXT_PUBLIC_V43_LAUNCHPAD_FACTORY_ADDRESS ?? manifest.factoryAddress;
-      if (v45Router && /^0x[0-9a-fA-F]{40}$/.test(v45Router)) deploymentMode = "anvil-v45";
-      if (!marketAddress || !/^0x[0-9a-fA-F]{40}$/.test(marketAddress)) return;
-      tokensRef.current = tokensRef.current.map((item, index) => index === 0 ? normalizeToken({
-        ...item,
-        chainDeploymentMode: deploymentMode,
-        chainId: manifest.chainId ?? 31_337,
-        chainFactoryAddress: factoryAddress,
-        chainMarketAddress: marketAddress,
-        chainTokenAddress: tokenAddress,
-        contractAddress: tokenAddress ?? item.contractAddress,
-        creatorWallet: manifest.creator ?? item.creatorWallet,
-        launchTransactionHash: manifest.demoTransactionHash ?? item.launchTransactionHash,
-        chainExecutionVersion: deploymentMode === "anvil-v45" ? "v45-authorized-account-execution" : "v44-terminal-contract-execution",
-      }) : item);
-      setTokens(tokensRef.current);
-      await refreshChainMarket(tokensRef.current[0]?.slug ?? "");
-    };
-    void attachLocalDeployment();
-    return () => { cancelled = true; };
-  }, [hydrated, refreshChainMarket]);
+    void refreshV54LaunchRegistry();
+    const onLaunch = () => { void refreshV54LaunchRegistry(); };
+    window.addEventListener("perphood:v54-launch-confirmed", onLaunch);
+    return () => window.removeEventListener("perphood:v54-launch-confirmed", onLaunch);
+  }, [hydrated, refreshV54LaunchRegistry]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -897,7 +870,27 @@ export function MarketProvider({ children }: { children: ReactNode }) {
     const token = normalizeToken(tokensRef.current.find((item) => item.slug === holding.slug) ?? TOKENS[0]);
     return quoteExecutableSpotPnl(token, holding);
   }, []);
-  const toggleWallet = useCallback(() => setConnected((value) => !value), []);
+  const toggleWallet = useCallback(() => {
+    const provider = injectedProvider();
+    if (!provider) {
+      setConnected(false);
+      setWalletAddress(undefined);
+      setWalletBalanceEth(0);
+      return;
+    }
+    void provider.request<string[]>({ method: "eth_requestAccounts" }).then(async (accounts) => {
+      const account = accounts[0];
+      if (!account) throw new Error("Wallet returned no account.");
+      const rawBalance = await provider.request<string>({ method: "eth_getBalance", params: [account, "latest"] });
+      setWalletAddress(account.toLowerCase());
+      setWalletBalanceEth(fromWad(BigInt(rawBalance), 8));
+      setConnected(true);
+    }).catch(() => {
+      setConnected(false);
+      setWalletAddress(undefined);
+      setWalletBalanceEth(0);
+    });
+  }, []);
   const toggleWatchlist = useCallback((slug: string) => setWatchlist((current) => current.includes(slug) ? current.filter((item) => item !== slug) : [slug, ...current]), []);
 
   const commitToAuction = useCallback((slug: string, amountEth: number) => {
@@ -1117,6 +1110,51 @@ export function MarketProvider({ children }: { children: ReactNode }) {
   const buySpot = useCallback(async (slug: string, amountEth: number, feeTier: "market" | "maker" = "market") => {
     void feeTier;
     const token = normalizeToken(tokensRef.current.find((item) => item.slug === slug) ?? TOKENS[0]);
+    if (isV54SpotMarket(token)) {
+      if (!token.chainMarketAddress || !token.chainTokenAddress) throw new Error("The V54 market registry is incomplete.");
+      const networkKey = token.chainDeploymentMode === "robinhood-mainnet-v54" ? "mainnet" as const : "testnet" as const;
+      const action = `Buy ${token.symbol}`;
+      beginChainExecution(slug, action, "v54-spot");
+      try {
+        const receipt = await executeV54SpotBuy(token.chainMarketAddress, token.chainTokenAddress, amountEth, networkKey);
+        const runtime = await readV54MarketRuntime(token.chainMarketAddress, networkKey);
+        const nextToken = normalizeToken({
+          ...token,
+          priceEth: runtime.priceEth,
+          marketCapEth: runtime.marketCapEth,
+          realWethBalance: runtime.realEthBalance,
+          poolFeesEth: runtime.feesEth,
+          chainLastBlock: receipt.blockNumber,
+          chainLastSyncedAt: Date.now(),
+          uniqueTraders: Math.max(1, token.uniqueTraders ?? 1),
+        });
+        tokensRef.current = tokensRef.current.map((item) => item.slug === slug ? nextToken : item);
+        setTokens(tokensRef.current);
+        const holding: SpotHolding = {
+          id: `v54:${receipt.transactionHash}:spot`,
+          slug,
+          investedEth: amountEth,
+          entryCap: 0,
+          openedAt: Date.now(),
+          tokenAmount: fromWad(receipt.tokenAmountWad, 18),
+          entryPriceEth: fromWad(receipt.marginalPriceWad, 18),
+          executionMode: "v54-spot",
+          chainMarketAddress: token.chainMarketAddress,
+          chainTokenAddress: token.chainTokenAddress,
+          chainTransactionHash: receipt.transactionHash,
+          chainBlockNumber: receipt.blockNumber,
+        };
+        holdingsRef.current = [holding, ...holdingsRef.current];
+        setHoldings(holdingsRef.current);
+        setWalletAddress(receipt.account);
+        setConnected(true);
+        setChainExecution({ mode: "v54-spot", phase: "confirmed", action, slug, account: receipt.account, transactionHash: receipt.transactionHash, blockNumber: receipt.blockNumber, message: `${action} confirmed on Robinhood Chain in block ${receipt.blockNumber}.`, updatedAt: Date.now() });
+        pushEvent({ slug, action: "spot-buy", amountEth, marketCap: 0, actor: shortWallet(receipt.account), note: `${holding.tokenAmount?.toLocaleString(undefined, { maximumFractionDigits: 0 })} real ERC-20 tokens · ${runtime.marketCapEth.toFixed(6)} ETH market cap`, transactionHash: receipt.transactionHash, blockNumber: receipt.blockNumber, executionMode: "v54-spot" });
+        return holding;
+      } catch (error) {
+        throw failChainExecution(slug, action, error, "v54-spot");
+      }
+    }
     if (isContractMarket(token)) {
       if (!token.chainMarketAddress) throw new Error("The V43 market address is missing.");
       const action = `Buy ${token.symbol}`;
@@ -1410,6 +1448,35 @@ export function MarketProvider({ children }: { children: ReactNode }) {
     const holding = holdingsRef.current.find((item) => item.id === id);
     if (!holding) return;
     const token = normalizeToken(tokensRef.current.find((item) => item.slug === holding.slug) ?? TOKENS[0]);
+    if (holding.executionMode === "v54-spot" || isV54SpotMarket(token)) {
+      if (!holding.tokenAmount || !token.chainMarketAddress || !token.chainTokenAddress) throw new Error("The V54 spot holding is missing canonical token data.");
+      const networkKey = token.chainDeploymentMode === "robinhood-mainnet-v54" ? "mainnet" as const : "testnet" as const;
+      const safeFraction = clamp(fraction, 0.01, 1);
+      const tokenAmount = holding.tokenAmount * safeFraction;
+      const investedClosed = holding.investedEth * safeFraction;
+      const action = `Sell ${token.symbol}`;
+      beginChainExecution(holding.slug, action, "v54-spot");
+      try {
+        const receipt = await executeV54SpotSell(token.chainMarketAddress, token.chainTokenAddress, toWad(tokenAmount.toFixed(18)), networkKey);
+        const runtime = await readV54MarketRuntime(token.chainMarketAddress, networkKey);
+        const payout = fromWad(receipt.netEthWei, 18);
+        const nextToken = normalizeToken({ ...token, priceEth: runtime.priceEth, marketCapEth: runtime.marketCapEth, realWethBalance: runtime.realEthBalance, poolFeesEth: runtime.feesEth, chainLastBlock: receipt.blockNumber, chainLastSyncedAt: Date.now() });
+        tokensRef.current = tokensRef.current.map((item) => item.slug === holding.slug ? nextToken : item);
+        setTokens(tokensRef.current);
+        if (safeFraction >= 0.999) holdingsRef.current = holdingsRef.current.filter((item) => item.id !== id);
+        else holdingsRef.current = holdingsRef.current.map((item) => item.id === id ? { ...item, investedEth: item.investedEth * (1 - safeFraction), tokenAmount: (item.tokenAmount ?? 0) * (1 - safeFraction) } : item);
+        setHoldings(holdingsRef.current);
+        setWalletAddress(receipt.account);
+        setConnected(true);
+        setChainExecution({ mode: "v54-spot", phase: "confirmed", action, slug: holding.slug, account: receipt.account, transactionHash: receipt.transactionHash, blockNumber: receipt.blockNumber, message: `${action} confirmed on Robinhood Chain in block ${receipt.blockNumber}.`, updatedAt: Date.now() });
+        const closedSpot: ClosedTrade = { id: randomId(), slug: holding.slug, direction: "spot", leverage: 1, entryCap: 0, exitCap: 0, collateral: investedClosed, pnlEth: payout - investedClosed, roiPercent: investedClosed > 0 ? (payout - investedClosed) / investedClosed * 100 : 0, openedAt: holding.openedAt, closedAt: Date.now(), reason: "spot-sale" };
+        setClosedTrades((current) => [closedSpot, ...current].slice(0, 10_000));
+        pushEvent({ slug: holding.slug, action: "spot-sell", amountEth: payout, marketCap: 0, actor: shortWallet(receipt.account), note: `${tokenAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })} real ERC-20 tokens sold · ${runtime.marketCapEth.toFixed(6)} ETH market cap`, transactionHash: receipt.transactionHash, blockNumber: receipt.blockNumber, executionMode: "v54-spot" });
+        return;
+      } catch (error) {
+        throw failChainExecution(holding.slug, action, error, "v54-spot");
+      }
+    }
     if ((holding.executionMode === "v43-contract" || holding.executionMode === "v45-account" || holding.executionMode === "v45-session") || isContractMarket(token) && holding.chainTransactionHash) {
       if (!holding.tokenAmount) throw new Error("The contract holding has no indexed token amount.");
       if (!token.chainMarketAddress || !token.chainTokenAddress) throw new Error("The V43 market or token address is missing.");
@@ -2089,7 +2156,7 @@ export function MarketProvider({ children }: { children: ReactNode }) {
 
   const resetLocalData = useCallback(() => {
     setTokens(TOKENS.map(normalizeToken));
-    setEvents(DEMO_ONLY ? createDemoMarketEvents() : []);
+    setEvents([]);
     setPositions([]);
     setHoldings([]);
     setClosedTrades([]);
@@ -2097,11 +2164,11 @@ export function MarketProvider({ children }: { children: ReactNode }) {
     setTradePresets(DEFAULT_PRESETS);
     setWatchlist([]);
     setAuctionBids({});
-    setBalanceEth(DEMO_ONLY ? 2.35 : 0);
+    setBalanceEth(0);
     setWalletAddress(undefined);
     setWalletBalanceEth(0);
     setChainExecution({ mode: "browser-sim", phase: "idle", updatedAt: Date.now() });
-    setConnected(DEMO_ONLY);
+    setConnected(false);
     setRiskSettings(DEFAULT_RISK);
     if (typeof localStorage !== "undefined") {
       [

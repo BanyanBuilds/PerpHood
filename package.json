@@ -1,6 +1,6 @@
 {
-  "name": "perphood-v53-supabase-user-state",
-  "version": "53.0.0",
+  "name": "perphood-v54-production-launch",
+  "version": "54.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -172,7 +172,12 @@
     "test:v53-user-state": "node --experimental-strip-types scripts/v53-user-state-smoke.mts",
     "test:v53-static": "node --experimental-strip-types scripts/v53-static-smoke.mts",
     "test:v53-fast": "npm run test:v52-fast && npm run test:v53-user-state && npm run test:v53-static && npm run test:syntax",
-    "test:v53": "npm run test:v52 && npm run test:v53-user-state && npm run test:v53-static && npm run test:syntax"
+    "test:v53": "npm run test:v52 && npm run test:v53-user-state && npm run test:v53-static && npm run test:syntax",
+    "chain:v54:testnet": "node --experimental-strip-types scripts/v54-deploy-robinhood.mts testnet",
+    "chain:v54:mainnet": "node --experimental-strip-types scripts/v54-deploy-robinhood.mts mainnet",
+    "chain:test:v54": "forge test --match-path contracts/test/PerpHoodLaunchFactoryV54.t.sol -vvv",
+    "test:v54": "npm run test:v48-quick-presets && npm run test:v48-left-sidecars && npm run test:v49-math && npm run test:v50-adversarial && npm run test:v50-stateful && npm run test:v51-ordering && npm run test:v53-user-state && node --experimental-strip-types scripts/v54-production-launch-smoke.mts && npm run test:syntax",
+    "test:v54-fast": "node --experimental-strip-types scripts/v54-production-launch-smoke.mts && npm run test:syntax"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.14",

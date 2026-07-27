@@ -3,7 +3,6 @@
 import { AlertTriangle, ChevronDown, Gauge, Info, ShieldCheck, Settings2, Zap } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { money } from "@/lib/format";
-import { DEMO_HOLDER_INTEL, isDemoMarket } from "@/lib/demo-market";
 import type { Direction, Token } from "@/lib/types";
 import { KeyButton } from "./KeyButton";
 import { hasLocalV45Session } from "@/lib/chain/v45-terminal-executor";
@@ -74,8 +73,9 @@ export function WorkspaceTradeTicket({ token, requestedMode, requestedAmount, re
   }, [feePreset]);
 
   const v45AccountExecution = token.chainDeploymentMode === "anvil-v45" && Boolean(token.chainMarketAddress);
+  const v54SpotExecution = (token.chainDeploymentMode === "robinhood-testnet-v54" || token.chainDeploymentMode === "robinhood-mainnet-v54") && Boolean(token.chainMarketAddress);
   const sessionExecution = v45AccountExecution && hasLocalV45Session();
-  const contractExecution = (token.chainDeploymentMode === "anvil-v43" || v45AccountExecution) && Boolean(token.chainMarketAddress);
+  const contractExecution = (token.chainDeploymentMode === "anvil-v43" || v45AccountExecution || v54SpotExecution) && Boolean(token.chainMarketAddress);
   const durableOrderExecution = sessionExecution;
   const availableBalance = v45AccountExecution ? balanceEth : contractExecution ? walletBalanceEth : balanceEth;
   const executionBusy = contractExecution && chainExecution.slug === token.slug && (chainExecution.phase === "wallet" || chainExecution.phase === "pending");
@@ -92,7 +92,7 @@ export function WorkspaceTradeTicket({ token, requestedMode, requestedAmount, re
   const slCap = mode === "long" ? quote.markCap * (1 - stopLoss / 100) : quote.markCap * (1 + stopLoss / 100);
   const beActivationCap = mode === "long" ? quote.markCap * (1 + breakevenActivation / 100) : quote.markCap * (1 - breakevenActivation / 100);
 
-  const safety = isDemoMarket(token.slug) ? DEMO_HOLDER_INTEL : {
+  const safety = {
     holders: token.uniqueTraders ?? 0,
     top10Share: token.linkedWalletConcentration ?? 0,
     creatorShare: 0,
@@ -100,7 +100,7 @@ export function WorkspaceTradeTicket({ token, requestedMode, requestedAmount, re
     snipers: 0,
     first70Holding: 0,
     bundledShare: 0,
-    liquidityProviders: 1,
+    liquidityProviders: token.chainMarketAddress ? 1 : 0,
   };
   const safetyWarnings = [
     safety.top10Share > 25 ? "Concentrated holders" : null,
@@ -153,7 +153,7 @@ export function WorkspaceTradeTicket({ token, requestedMode, requestedAmount, re
         return;
       }
       if (mode === "buy") {
-        setNotice(sessionExecution ? "Relaying the signed V45 spot-buy intent…" : contractExecution ? "Confirm the V43 spot buy in your wallet…" : "Executing spot buy…");
+        setNotice(v54SpotExecution ? "Confirm the real Robinhood Chain spot buy in your wallet…" : sessionExecution ? "Relaying the signed V45 spot-buy intent…" : contractExecution ? "Confirm the V43 spot buy in your wallet…" : "Executing spot buy…");
         const holding = await buySpot(token.slug, amount);
         setNotice(contractExecution ? `Confirmed in block ${holding.chainBlockNumber}.` : `Bought ${amount.toFixed(3)} ETH of ${token.symbol}.`);
         return;
@@ -169,7 +169,7 @@ export function WorkspaceTradeTicket({ token, requestedMode, requestedAmount, re
 
   const sellAcrossHoldings = async (fraction: number) => {
     try {
-      setNotice(sessionExecution ? "Relaying the signed V45 spot-sell intent…" : contractExecution ? "Approve if needed, then confirm the V43 sell…" : "Selling spot position…");
+      setNotice(v54SpotExecution ? "Approve the ERC-20 if needed, then confirm the Robinhood Chain sell…" : sessionExecution ? "Relaying the signed V45 spot-sell intent…" : contractExecution ? "Approve if needed, then confirm the V43 sell…" : "Selling spot position…");
       for (const holding of marketHoldings) await sellHolding(holding.id, fraction);
       setNotice(`Sold ${(fraction * 100).toFixed(0)}% of the ${token.symbol} spot position.`);
     } catch (error) {
@@ -178,7 +178,7 @@ export function WorkspaceTradeTicket({ token, requestedMode, requestedAmount, re
   };
 
   const cta = mode === "buy" ? `Buy ${token.symbol}` : mode === "sell" ? `Sell ${token.symbol}` : `Open ${activeLeverage}× ${mode}`;
-  const disabled = executionBusy || insufficient || (mode !== "buy" && mode !== "sell" && orderMode === "market" && !quote.allowed) || (mode === "sell" && !marketHoldings.length);
+  const disabled = executionBusy || insufficient || (v54SpotExecution && mode !== "buy" && mode !== "sell") || (mode !== "buy" && mode !== "sell" && orderMode === "market" && !quote.allowed) || (mode === "sell" && !marketHoldings.length);
 
   return <aside className="v37-trade-ticket">
     <div className="v37-ticket-presets">
@@ -187,7 +187,7 @@ export function WorkspaceTradeTicket({ token, requestedMode, requestedAmount, re
     </div>
 
     <div className="v37-side-tabs">
-      {(["buy", "sell", "long", "short"] as TicketMode[]).map((item) => <button type="button" key={item} className={`${mode === item ? "active" : ""} ${item}`} onClick={() => { setMode(item); if (item === "sell") setOrderMode("market"); }}>{item}</button>)}
+      {(["buy", "sell", "long", "short"] as TicketMode[]).map((item) => <button type="button" key={item} disabled={v54SpotExecution && (item === "long" || item === "short")} className={`${mode === item ? "active" : ""} ${item}`} onClick={() => { setMode(item); if (item === "sell") setOrderMode("market"); }}>{item}</button>)}
     </div>
 
     <div className="v37-order-line">
@@ -230,7 +230,7 @@ export function WorkspaceTradeTicket({ token, requestedMode, requestedAmount, re
 
     <KeyButton className="v37-submit" tone={mode === "sell" || mode === "short" ? "red" : "green"} disabled={disabled} onClick={mode === "sell" ? () => void sellAcrossHoldings(1) : () => void submit()}><Zap size={17} />{executionBusy ? sessionExecution ? "Relaying intent…" : "Awaiting wallet…" : connected || contractExecution ? cta : "Connect wallet"}</KeyButton>
     <div className="v37-ticket-foot"><span>Fee {feePreset}</span><span>MEV guard on</span><span>One BattlePool</span></div>
-    {contractExecution && <div className={`v44-execution-strip ${chainExecution.phase}`}><span><b>{sessionExecution ? orderMode === "market" ? "V45 SESSION" : "V46 KEEPER ORDER" : "V43 CONTRACT"}</b><small>{sessionExecution ? `Sponsored sequencer · seq ${token.chainStateSequence ?? "—"}` : walletAddress ? `${walletAddress.slice(0, 6)}…${walletAddress.slice(-4)} · seq ${token.chainStateSequence ?? "—"}` : "Wallet connects on first trade"}</small></span><em>{chainExecution.slug === token.slug ? chainExecution.phase.toUpperCase() : "READY"}</em></div>}
+    {contractExecution && <div className={`v44-execution-strip ${chainExecution.phase}`}><span><b>{v54SpotExecution ? "V54 ROBINHOOD SPOT" : sessionExecution ? orderMode === "market" ? "V45 SESSION" : "V46 KEEPER ORDER" : "V43 CONTRACT"}</b><small>{sessionExecution ? `Sponsored sequencer · seq ${token.chainStateSequence ?? "—"}` : walletAddress ? `${walletAddress.slice(0, 6)}…${walletAddress.slice(-4)} · seq ${token.chainStateSequence ?? "—"}` : "Wallet connects on first trade"}</small></span><em>{chainExecution.slug === token.slug ? chainExecution.phase.toUpperCase() : "READY"}</em></div>}
     {notice && <div className="v37-ticket-notice">{notice}</div>}
   </aside>;
 }

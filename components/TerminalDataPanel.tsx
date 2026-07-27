@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { freeWeth, poolFromToken, positionObligationsWeth, shortInventoryUtilization } from "@/lib/battle-pool";
-import { DEMO_HOLDER_INTEL, DEMO_HOLDERS, DEMO_LIQUIDATION_CLUSTERS, DEMO_TOP_TRADERS, isDemoMarket } from "@/lib/demo-market";
 import { buildLiquidationClusters, buildMarketDefensePulse } from "@/lib/market-alerts";
 import { money } from "@/lib/format";
 import type { MarketEvent, Token } from "@/lib/types";
@@ -25,7 +24,7 @@ export function TerminalDataPanel({ token, tabs = TERMINAL_DATA_TABS, defaultTab
   const tokenOrders = pendingOrders.filter((order) => order.slug === token.slug);
   const battlePool = token.battlePoolVersion ? poolFromToken(token) : null;
   const freeRatio = battlePool?.realWethBalance ? Math.max(0, Math.min(1, freeWeth(battlePool) / battlePool.realWethBalance)) : 1;
-  const clusters = isDemoMarket(token.slug) ? DEMO_LIQUIDATION_CLUSTERS : buildLiquidationClusters(tokenPositions, token.cap);
+  const clusters = buildLiquidationClusters(tokenPositions, token.cap);
   const pulse = buildMarketDefensePulse(token, events, clusters, freeRatio);
 
   return (
@@ -71,31 +70,31 @@ export function TerminalDataPanel({ token, tabs = TERMINAL_DATA_TABS, defaultTab
         <article><small>Pool fees retained</small><strong>{battlePool.poolFeesEth.toFixed(6)} ETH</strong><span>Current 0.30% battle execution fee</span></article>
         <article><small>Realized bad debt</small><strong className={battlePool.badDebtEth > 0 ? "negative" : "positive"}>{battlePool.badDebtEth.toFixed(12)} ETH</strong><span>Target: zero</span></article>
         <article><small>Engine version</small><strong>{battlePool.battlePoolVersion}</strong><span>Exact-liquidation boundary solver</span></article>
-        <article><small>Live state sequence</small><strong>#{liveFrame?.sequence ?? 0}</strong><span>{liveFrame ? `${Math.max(0, Date.now() - liveFrame.updatedAt)} ms since BattlePool frame` : "Demo replay until chain feed connects"}</span></article>
+        <article><small>Live state sequence</small><strong>#{liveFrame?.sequence ?? 0}</strong><span>{liveFrame ? `${Math.max(0, Date.now() - liveFrame.updatedAt)} ms since BattlePool frame` : "Waiting for the canonical chain feed"}</span></article>
         <p><strong>One battlefield:</strong> spot buys and leveraged longs remove tokens; spot sells and leveraged shorts add tokens. Every liquidation executes through this same curve and any remaining trader equity stays here.</p>
       </div> : <TerminalEmpty copy="This market has not been migrated to the unified BattlePool engine." />)}
 
-      {tab === "Top traders" && <div className="terminal-table terminal-top-traders"><div className="terminal-table-head"><span>Trader</span><span>Realized PnL</span><span>Unrealized PnL</span><span>Volume</span><span>Win rate</span></div>{DEMO_TOP_TRADERS.map((trader) => <div key={trader.wallet}><span><b>{trader.wallet}</b><small>{trader.label}</small></span><span className="positive">+{trader.realized.toFixed(3)} ETH</span><span className={trader.unrealized >= 0 ? "positive" : "negative"}>{trader.unrealized >= 0 ? "+" : ""}{trader.unrealized.toFixed(3)} ETH</span><span>{trader.volume.toFixed(1)} ETH</span><span>{trader.winRate}%</span></div>)}</div>}
+      {tab === "Top traders" && <TerminalEmpty copy="Top-trader rankings will appear after the Robinhood Chain indexer has enough confirmed trade history." />}
 
       {tab === "Insiders" && <div className="wallet-intel-panel">
-        <article><small>Creator holding</small><strong>{DEMO_HOLDER_INTEL.creatorShare.toFixed(1)}%</strong><span>Creator has no fee or perp privileges</span></article>
-        <article><small>Top 10 concentration</small><strong>{DEMO_HOLDER_INTEL.top10Share.toFixed(1)}%</strong><span>Healthy for current pool depth</span></article>
-        <article><small>Bundled / linked</small><strong>{DEMO_HOLDER_INTEL.bundledShare.toFixed(1)}%</strong><span>Strong links only; weak heuristics excluded</span></article>
-        <article><small>Insider wallets</small><strong>{DEMO_HOLDER_INTEL.insiders}</strong><span>Visible as chart markers</span></article>
-        <article><small>Sniper wallets</small><strong>{DEMO_HOLDER_INTEL.snipers}</strong><span>First-block and low-latency buyers</span></article>
-        <article><small>First 70 still holding</small><strong>{DEMO_HOLDER_INTEL.first70Holding.toFixed(1)}%</strong><span>Retention from earliest buyers</span></article>
+        <article><small>Creator allocation</small><strong>Purchased only</strong><span>No free creator tokens are minted</span></article>
+        <article><small>Top 10 concentration</small><strong>—</strong><span>Awaiting indexed holder balances</span></article>
+        <article><small>Bundled / linked</small><strong>—</strong><span>Only provable links may be enforced</span></article>
+        <article><small>Insider wallets</small><strong>—</strong><span>Indexer not connected</span></article>
+        <article><small>Sniper wallets</small><strong>—</strong><span>Indexer not connected</span></article>
+        <article><small>First 70 still holding</small><strong>—</strong><span>Awaiting real launch history</span></article>
         <p>Wallet labels are analytical signals—not accusations. Only provable creator links are used for enforcement.</p>
       </div>}
 
-      {tab === "Holders" && <div className="terminal-table terminal-holders-table"><div className="terminal-table-head"><span>Rank / Wallet</span><span>Share</span><span>7d PnL</span><span>Bought</span><span>Sold</span></div>{DEMO_HOLDERS.map((holder, index) => <div key={holder.wallet}><span><b>#{index + 1} {holder.wallet}</b><small>{holder.label}</small></span><span>{holder.share.toFixed(1)}%</span><span className={holder.pnl >= 0 ? "positive" : "negative"}>{holder.pnl >= 0 ? "+" : ""}{holder.pnl.toFixed(2)} ETH</span><span>{holder.bought.toFixed(2)} ETH</span><span>{holder.sold.toFixed(2)} ETH</span></div>)}</div>}
+      {tab === "Holders" && <TerminalEmpty copy="Real holder balances will appear after the Robinhood Chain indexer is connected." />}
 
       {tab === "Token info" && <div className="terminal-token-info">
         <article><small>Contract</small><strong>{token.contractAddress ?? "Awaiting deployment"}</strong><button disabled={!token.contractAddress}>Copy</button></article>
         <article><small>Liquidity</small><strong>{(token.liquidityEth ?? 0).toFixed(2)} ETH</strong><span>Shared BattlePool</span></article>
         <article><small>Perp open interest</small><strong>{money(token.openInterest)}</strong><span>{token.longs.toFixed(0)}% long</span></article>
         <article><small>Bonding progress</small><strong>{token.graduation.toFixed(1)}%</strong><span>Migration preserves token address</span></article>
-        <article><small>Pair age</small><strong>47 minutes</strong><span>Robinhood Chain demo</span></article>
-        <article><small>Security</small><strong className="positive">No critical warnings</strong><span>Demo review data</span></article>
+        <article><small>Pair age</small><strong>{token.launchedMinutesAgo < 60 ? `${Math.max(0, Math.floor(token.launchedMinutesAgo))} minutes` : `${Math.floor(token.launchedMinutesAgo / 60)} hours`}</strong><span>Confirmed launch registry</span></article>
+        <article><small>Network</small><strong>{token.chainId === 4_663 ? "Robinhood mainnet" : "Robinhood testnet"}</strong><span>{token.launchBlock ? `Block #${token.launchBlock}` : "Awaiting confirmation"}</span></article>
         <p>{token.description}</p>
       </div>}
     </section>

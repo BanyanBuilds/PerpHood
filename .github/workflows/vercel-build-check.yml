@@ -1,4 +1,4 @@
-name: PERPHOOD V53 Build Gate
+name: PERPHOOD V54 Build Gate
 
 on:
   push:
@@ -23,7 +23,7 @@ jobs:
           cache: npm
       - name: Install locked dependencies
         run: npm ci
-      - name: Run V53 portable build guards
-        run: npm run test:v53-fast
+      - name: Run V54 production-launch guards
+        run: npm run test:v54-fast
       - name: Build the Next.js application
         run: npm run build

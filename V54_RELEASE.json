@@ -1,0 +1,16 @@
+{
+  "name": "perphood-v54-production-launch-full-project",
+  "version": "54.0.0",
+  "milestone": "Real Robinhood Chain launch source",
+  "factoryContract": "contracts/src/PerpHoodLaunchFactoryV54.sol",
+  "databaseMigration": "supabase/v54_production_launch.sql",
+  "launcher": "components/LaunchPanel.tsx",
+  "discoveryEndpoint": "/api/v54/discovery",
+  "testCommand": "npm run test:v54",
+  "deploymentCommands": {
+    "testnet": "npm run chain:v54:testnet",
+    "mainnet": "npm run chain:v54:mainnet"
+  },
+  "mainnetLocked": true,
+  "realFundsApproved": false
+}

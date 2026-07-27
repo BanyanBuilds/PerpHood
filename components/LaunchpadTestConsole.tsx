@@ -1,189 +1,116 @@
 "use client";
 
 import Link from "next/link";
-import {
-  Activity,
-  AlertTriangle,
-  ArrowUpRight,
-  Check,
-  CircleDollarSign,
-  Database,
-  FlaskConical,
-  Gauge,
-  Play,
-  RefreshCcw,
-  Rocket,
-  ShieldCheck,
-  Swords,
-  Users,
-  Wallet,
-  XCircle,
-} from "lucide-react";
-import { useMemo, useState } from "react";
-import { LAUNCHPAD_TEST_MODE, LAUNCHPAD_VERSION } from "@/lib/launchpad";
-import type { MarketScenario, Token } from "@/lib/types";
-import { money } from "@/lib/format";
-import { TokenAvatar } from "./TokenAvatar";
-import { useMarkets } from "./MarketProvider";
+import { Activity, ArrowUpRight, Database, RefreshCcw, Rocket, ShieldCheck } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-function gateValue(value: number | string, key: string) {
-  if (typeof value === "string") return value;
-  if (key === "market-cap") return money(value);
-  if (key === "trader-distribution") return Math.round(value).toLocaleString("en-US");
-  return `${value.toFixed(value < 0.1 ? 4 : 3)} ETH`;
+type LaunchRow = {
+  chain_id: number;
+  network: "testnet" | "mainnet";
+  factory_address: string;
+  market_address: string;
+  token_address: string;
+  creator_address: string;
+  transaction_hash: string;
+  block_number: number;
+  name: string;
+  symbol: string;
+  image_url: string;
+  metadata_uri: string;
+  creator_buy_wei: string;
+  creator_tokens_out_wad: string;
+  market_cap_eth_wad: string;
+  status: string;
+};
+
+function short(value: string) {
+  return value.length > 18 ? `${value.slice(0, 9)}…${value.slice(-7)}` : value;
+}
+
+function explorer(row: LaunchRow) {
+  return row.chain_id === 4_663 ? "https://robinhoodchain.blockscout.com" : "https://explorer.testnet.chain.robinhood.com";
+}
+
+function formatUnits(value: string, decimals = 18, precision = 6) {
+  const amount = BigInt(value || "0");
+  const base = 10n ** BigInt(decimals);
+  const whole = amount / base;
+  const fraction = (amount % base).toString().padStart(decimals, "0").slice(0, precision).replace(/0+$/, "");
+  return fraction ? `${whole}.${fraction}` : whole.toString();
 }
 
 export function LaunchpadTestConsole() {
-  const {
-    tokens,
-    events,
-    positions,
-    balanceEth,
-    connected,
-    toggleWallet,
-    fundTradingAccount,
-    getMigrationSnapshot,
-    advanceLaunchpadMarket,
-    migrateToken,
-    runScenario,
-    resetLocalData,
-  } = useMarkets();
-  const markets = useMemo(() => tokens.filter((token) => token.launchpadVersion || token.isCustom || token.slug === "perphood-demo"), [tokens]);
-  const [selectedSlug, setSelectedSlug] = useState(markets[0]?.slug ?? "perphood-demo");
-  const [status, setStatus] = useState("Choose a market, run controlled test flow, then verify every migration gate.");
-  const selected = markets.find((token) => token.slug === selectedSlug) ?? markets[0];
-  const snapshot = selected ? getMigrationSnapshot(selected) : null;
-  const selectedEvents = events.filter((event) => event.slug === selected?.slug).slice(0, 12);
-  const selectedPositions = positions.filter((position) => position.slug === selected?.slug);
+  const [rows, setRows] = useState<LaunchRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const act = (label: string, action: () => unknown) => {
+  const refresh = useCallback(async () => {
+    setLoading(true);
+    setError("");
     try {
-      action();
-      setStatus(`${label} submitted successfully.`);
-    } catch (error) {
-      setStatus(error instanceof Error ? error.message : `${label} failed.`);
+      const response = await fetch("/api/v54/launches?limit=100", { cache: "no-store" });
+      const body = await response.json() as { ok?: boolean; launches?: LaunchRow[]; error?: string };
+      if (!response.ok || !body.ok) throw new Error(body.error || "Launch registry could not be loaded.");
+      setRows(body.launches ?? []);
+    } catch (nextError) {
+      setError(nextError instanceof Error ? nextError.message : "Launch registry could not be loaded.");
+    } finally {
+      setLoading(false);
     }
-  };
+  }, []);
 
-  const scenario = (kind: MarketScenario, label: string) => act(label, () => runScenario(selected.slug, kind));
+  useEffect(() => { void refresh(); }, [refresh]);
 
-  if (!selected || !snapshot) return <main className="v41-console-page"><div className="terminal-loading">No launchpad market is available.</div></main>;
+  const totals = useMemo(() => ({
+    tokens: rows.length,
+    testnet: rows.filter((row) => row.chain_id === 46_630).length,
+    mainnet: rows.filter((row) => row.chain_id === 4_663).length,
+  }), [rows]);
 
-  return (
-    <main className="v41-console-page">
-      <header className="v41-console-head">
-        <div>
-          <span className="eyebrow"><FlaskConical size={14} /> {LAUNCHPAD_VERSION.toUpperCase()}</span>
-          <h1>Launchpad Test Console</h1>
-          <p>Local-only lifecycle testing. No wallet deployment, chain transaction, or public-money readiness is implied.</p>
-        </div>
-        <div className="v41-console-head-actions">
-          <span className={LAUNCHPAD_TEST_MODE ? "online" : "offline"}><i />{LAUNCHPAD_TEST_MODE ? "TEST MODE ACTIVE" : "DISABLED"}</span>
-          <Link href="/terminal?panel=launch"><Rocket size={14} />Open launcher</Link>
-          <Link href="/admin/launchpad/sandbox"><FlaskConical size={14} />Chain sandbox</Link>
-          <Link href={`/market/${selected.slug}`}>Open market<ArrowUpRight size={14} /></Link>
-        </div>
-      </header>
-
-      <section className="v41-console-metrics">
-        <article><Rocket size={17} /><span><small>Test markets</small><b>{markets.length}</b></span></article>
-        <article><CircleDollarSign size={17} /><span><small>Trading balance</small><b>{balanceEth.toFixed(4)} ETH</b></span></article>
-        <article><Swords size={17} /><span><small>Open positions</small><b>{positions.length}</b></span></article>
-        <article><ShieldCheck size={17} /><span><small>Migration ready</small><b>{markets.filter((token) => getMigrationSnapshot(token).ready).length}</b></span></article>
-      </section>
-
-      <div className="v41-console-grid">
-        <aside className="v41-console-markets">
-          <header><span><Database size={15} />Market registry</span><small>{markets.length} local records</small></header>
-          <div>
-            {markets.map((token) => {
-              const item = getMigrationSnapshot(token);
-              return <button type="button" key={token.slug} className={token.slug === selected.slug ? "active" : ""} onClick={() => setSelectedSlug(token.slug)}>
-                <TokenAvatar token={token} size="md" />
-                <span><strong>${token.symbol}</strong><small>{token.name}</small></span>
-                <em className={item.phase}>{item.phase}</em>
-                <b>{item.marketCapProgress.toFixed(0)}%</b>
-              </button>;
-            })}
-          </div>
-          <footer>
-            {!connected ? <button type="button" onClick={toggleWallet}><Wallet size={14} />Connect local account</button> : <button type="button" onClick={() => fundTradingAccount(1)}><CircleDollarSign size={14} />Add 1 test ETH</button>}
-            <button type="button" onClick={() => { resetLocalData(); setStatus("Local launchpad state reset to the bundled demo market."); }}><RefreshCcw size={14} />Reset local data</button>
-          </footer>
-        </aside>
-
-        <section className="v41-console-main">
-          <header className="v41-selected-market">
-            <TokenAvatar token={selected} size="lg" />
-            <span><strong>{selected.name} <b>${selected.symbol}</b></strong><small>{selected.slug} · creator {selected.creatorWallet}</small></span>
-            <em className={snapshot.phase}>{snapshot.phase}</em>
-          </header>
-
-          <div className="v41-progress-pair">
-            <article>
-              <span><small>Market-cap progress</small><b>{money(snapshot.marketCapUsd)} / {money(snapshot.targetMarketCapUsd)}</b></span>
-              <div><i style={{ width: `${snapshot.marketCapProgress}%` }} /></div>
-              <small>{snapshot.marketCapProgress.toFixed(1)}%</small>
-            </article>
-            <article>
-              <span><small>Real WETH progress</small><b>{snapshot.realWethEth.toFixed(3)} / {snapshot.requiredRealWethEth.toFixed(3)} ETH</b></span>
-              <div><i style={{ width: `${snapshot.liquidityProgress}%` }} /></div>
-              <small>{snapshot.liquidityProgress.toFixed(1)}%</small>
-            </article>
-          </div>
-
-          <div className="v41-gate-grid">
-            {snapshot.gates.map((gate) => <article key={gate.key} className={gate.passed ? "passed" : "blocked"}>
-              {gate.passed ? <Check size={16} /> : <XCircle size={16} />}
-              <span><strong>{gate.label}</strong><small>{gate.detail}</small></span>
-              <b>{gateValue(gate.current, gate.key)}<small>needs {gateValue(gate.required, gate.key)}</small></b>
-            </article>)}
-          </div>
-
-          <div className="v41-test-actions">
-            <header><Play size={15} /><span><strong>Controlled lifecycle actions</strong><small>These mutate only the local simulator.</small></span></header>
-            <div>
-              <button type="button" onClick={() => act("Distributed test flow", () => advanceLaunchpadMarket(selected.slug))}><Users size={14} />Advance to target</button>
-              <button type="button" onClick={() => scenario("whale-buy", "Whale buy")}><Activity size={14} />Whale buy</button>
-              <button type="button" onClick={() => scenario("whale-sell", "Whale sell")}><Activity size={14} />Whale sell</button>
-              <button type="button" onClick={() => scenario("liquidation-cascade", "Liquidation cascade")}><AlertTriangle size={14} />Cascade</button>
-              <button type="button" onClick={() => scenario("oracle-wick", "Oracle wick")}><Gauge size={14} />Oracle wick</button>
-              <button type="button" className="primary" disabled={!snapshot.ready || snapshot.phase === "migrated" || snapshot.phase === "migrating"} onClick={() => act("Migration", () => migrateToken(selected.slug))}><ShieldCheck size={14} />Migrate safely</button>
-            </div>
-          </div>
-
-          <div className="v41-console-ledger">
-            <header><Database size={15} /><span><strong>Market ledger</strong><small>{selectedPositions.length} open positions · {selectedEvents.length} recent events</small></span></header>
-            <div>
-              {selectedEvents.length === 0 && <p>No events recorded for this market yet.</p>}
-              {selectedEvents.map((event) => <article key={event.id}>
-                <span><b>{event.action.replaceAll("-", " ")}</b><small>{event.actor ?? "System"}</small></span>
-                <strong>{event.amountEth.toFixed(4)} ETH</strong>
-                <em>{money(event.marketCap)}</em>
-                <small>{event.note}</small>
-              </article>)}
-            </div>
-          </div>
-        </section>
-
-        <aside className="v41-console-checklist">
-          <header><ShieldCheck size={15} />Alpha readiness checklist</header>
-          {[
-            ["Token identity", Boolean(selected.normalizedSymbol && selected.metadataLockedAt)],
-            ["One-billion supply", selected.totalSupply === 1_000_000_000],
-            ["Inclusive launch spend", Boolean(selected.launchTotalSpendEth && selected.launchGasReserveEth !== undefined)],
-            ["Creator buy recorded", Boolean(selected.creatorGenesisBuyEth && selected.creatorGenesisBuyEth > 0)],
-            ["Creator perps blocked", Boolean(selected.creatorWallet)],
-            ["Unified BattlePool", selected.battlePoolVersion === "v43-unified-settlement" || Boolean(selected.battlePoolVersion)],
-            ["Migration target", Boolean(selected.migrationTargetMarketCapUsd)],
-            ["Zero bad debt", (selected.badDebtEth ?? 0) === 0],
-            ["Event trail", selectedEvents.length > 0],
-          ].map(([label, passed]) => <span key={String(label)} className={passed ? "passed" : "pending"}>{passed ? <Check size={14} /> : <AlertTriangle size={14} />}{String(label)}</span>)}
-          <div className="v41-console-warning"><AlertTriangle size={15} /><span><strong>Still not public-money ready</strong><small>V43 now executes unified local spot and perps settlement. Canonical WETH custody, production session balances, keeper redundancy, audits, and recovery drills remain external milestones.</small></span></div>
-        </aside>
+  return <main className="v41-console-page">
+    <header className="v41-console-head">
+      <div>
+        <span className="eyebrow"><Rocket size={14}/> V54 REAL LAUNCH REGISTRY</span>
+        <h1>Robinhood Chain launches</h1>
+        <p>Only canonically confirmed factory deployments are shown. No local simulator, bundled token, fake balance, or fabricated transaction is included.</p>
       </div>
+      <div className="v41-console-head-actions">
+        <Link href="/terminal?panel=launch"><Rocket size={14}/>Launch token</Link>
+        <button type="button" onClick={() => void refresh()} disabled={loading}><RefreshCcw size={14}/>Refresh registry</button>
+      </div>
+    </header>
 
-      <footer className="v41-console-status" aria-live="polite">{status}</footer>
-    </main>
-  );
+    <section className="v41-console-metrics">
+      <article><Database size={17}/><span><small>Confirmed markets</small><b>{totals.tokens}</b></span></article>
+      <article><Activity size={17}/><span><small>Testnet</small><b>{totals.testnet}</b></span></article>
+      <article><ShieldCheck size={17}/><span><small>Mainnet</small><b>{totals.mainnet}</b></span></article>
+      <article><Rocket size={17}/><span><small>Registry source</small><b>On-chain</b></span></article>
+    </section>
+
+    {error && <section className="v42-sandbox-notice"><ShieldCheck size={18}/><span><strong>Registry unavailable</strong><small>{error}</small></span></section>}
+
+    <section className="v41-console-main">
+      <header className="v41-selected-market"><Database size={18}/><span><strong>Confirmed token contracts</strong><small>Factory receipt, token identity, metadata hash, and one-billion supply are verified before insertion.</small></span></header>
+      <div className="v41-console-ledger">
+        <div>
+          {!loading && rows.length === 0 && <p>No real PERPHOOD markets have been launched yet.</p>}
+          {loading && <p>Reading the confirmed launch registry…</p>}
+          {rows.map((row) => {
+            const base = explorer(row);
+            return <article key={`${row.chain_id}-${row.token_address}`}>
+              <span><b>${row.symbol} · {row.name}</b><small>{row.network} · block {row.block_number.toLocaleString("en-US")}</small></span>
+              <strong>{formatUnits(row.creator_buy_wei)} ETH genesis buy</strong>
+              <em>{formatUnits(row.creator_tokens_out_wad, 18, 2)} tokens</em>
+              <small>Token {short(row.token_address)} · Market {short(row.market_address)}</small>
+              <span>
+                <a href={`${base}/address/${row.token_address}`} target="_blank" rel="noreferrer">Token <ArrowUpRight size={11}/></a>
+                <a href={`${base}/address/${row.market_address}`} target="_blank" rel="noreferrer">Market <ArrowUpRight size={11}/></a>
+                <a href={`${base}/tx/${row.transaction_hash}`} target="_blank" rel="noreferrer">Transaction <ArrowUpRight size={11}/></a>
+              </span>
+            </article>;
+          })}
+        </div>
+      </div>
+    </section>
+  </main>;
 }

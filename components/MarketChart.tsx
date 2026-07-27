@@ -324,7 +324,7 @@ export function MarketChart({ token, onLiveSnapshot }: { token: Token; onLiveSna
     volume: latest.volume,
   } : undefined;
   const formatDisplay = (value: number | undefined) => preferences.displayMode === "marketcap" ? `$${compact(value)}` : price(value);
-  const feedLabel = source === "battlepool" ? `BATTLEPOOL LIVE #${sequence}` : source === "demo" ? `DEMO REPLAY #${sequence}` : state === "live" ? "LIVE" : state === "disabled" ? "FEED NOT CONFIGURED" : state.toUpperCase();
+  const feedLabel = source === "battlepool" ? `BATTLEPOOL LIVE #${sequence}` : state === "live" ? "LIVE" : state === "disabled" ? "FEED NOT CONFIGURED" : state.toUpperCase();
   const moreRange = MORE_TIMEFRAMES.some((item) => item.label === preferences.range) ? preferences.range : "";
 
   useEffect(() => {

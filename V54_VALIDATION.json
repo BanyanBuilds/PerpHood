@@ -1,0 +1,47 @@
+{
+  "version": "V54",
+  "milestone": "real-robinhood-chain-production-launch-path",
+  "generatedAt": "2026-07-27T18:04:23.318851+00:00",
+  "status": "SOURCE_COMPLETE_TESTNET_DEPLOYMENT_BLOCKED",
+  "passed": {
+    "v48QuickPresets": "13/13",
+    "v48LeftSidecars": "13/13",
+    "v49ExactCurveVectors": 3001,
+    "v49ShortScenarios": 20,
+    "v49CloseOrderPermutations": 24,
+    "v50FragmentationVectors": 96,
+    "v50OscillationCycles": 500,
+    "v50StatefulTransitions": 24576,
+    "v50Liquidations": 2747,
+    "v50ClosingPermutations": 5760,
+    "v51OrderingAssault": "PASS",
+    "v53UserState": "PASS",
+    "v54ProductionAssertions": "41/41",
+    "typescriptSyntaxFiles": 298
+  },
+  "built": [
+    "fixed one-billion-supply ERC-20",
+    "real native-ETH exponent-five spot market",
+    "permissionless launch factory",
+    "0.001 ETH inclusive client launch budget",
+    "connected-wallet mint transaction",
+    "Supabase token metadata and verified launch registry",
+    "canonical on-chain receipt and token verification",
+    "real terminal spot buy and sell",
+    "public V54 discovery feed",
+    "hosted demo-market removal"
+  ],
+  "notExecutedHere": [
+    "npm ci",
+    "Next.js production build",
+    "Solidity compilation",
+    "Foundry V54 tests",
+    "Robinhood Chain testnet deployment",
+    "injected-wallet end-to-end launch",
+    "second-wallet buy/sell",
+    "Blockscout source verification",
+    "GMGN discovery"
+  ],
+  "publicFundsApproved": false,
+  "mainnetEnabledByDefault": false
+}

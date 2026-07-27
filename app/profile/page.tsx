@@ -57,6 +57,7 @@ export default function ProfilePage() {
   const {
     connected,
     toggleWallet,
+    walletAddress,
     balanceEth,
     positions,
     holdings,
@@ -87,9 +88,9 @@ export default function ProfilePage() {
     const realized = closedTrades.filter((trade) => trade.direction !== "spot").reduce((sum, trade) => sum + trade.pnlEth, 0);
     const unrealized = positions.reduce((sum, position) => sum + getPositionPnl(position).pnlEth, 0);
     const spotInvested = holdings.reduce((sum, holding) => sum + holding.investedEth, 0);
-    const customTokens = tokens.filter((token) => token.isCustom);
+    const customTokens = tokens.filter((token) => walletAddress && token.creatorWallet?.toLowerCase() === walletAddress.toLowerCase());
     return { realized, unrealized, total: realized + unrealized, spotInvested, customTokens };
-  }, [closedTrades, getPositionPnl, holdings, positions, tokens]);
+  }, [closedTrades, getPositionPnl, holdings, positions, tokens, walletAddress]);
 
   const selectTab = (next: ProfileTab) => {
     setTab(next);
@@ -100,7 +101,7 @@ export default function ProfilePage() {
 
   return <><Header /><main className="profile-page page-shell">
     <section className="profile-identity-card glass-panel">
-      <div className="profile-identity-main"><span className="profile-avatar large">PH</span><span><small>PERPHOOD PROFILE</small><h1>0x71C…88F</h1><p><i />Connected to Robinhood Chain</p></span></div>
+      <div className="profile-identity-main"><span className="profile-avatar large">PH</span><span><small>PERPHOOD PROFILE</small><h1>{walletAddress ? `${walletAddress.slice(0, 8)}…${walletAddress.slice(-6)}` : "Connected wallet"}</h1><p><i />Connected EVM wallet</p></span></div>
       <div className="profile-identity-badges"><span><ShieldCheck size={14} />Single wallet</span><span><Zap size={14} />Gas sponsor eligible</span><span><LockKeyhole size={14} />Session protected</span></div>
       <Link href="/terminal"><KeyButton tone="dark"><LayoutDashboard size={16} />Open terminal</KeyButton></Link>
     </section>

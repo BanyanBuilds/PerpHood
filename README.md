@@ -1,3 +1,13 @@
+# PERPHOOD V54 — Real Robinhood Chain Launch Path
+
+V54 removes the hosted demo market and builds the first real connected-wallet minting path: a fixed one-billion-supply ERC-20, native-ETH bonding-curve spot market, canonical Supabase metadata/registry verification, explorer receipts, real terminal Buy/Sell, and a public indexer discovery feed.
+
+**Current state:** source complete for the controlled testnet minting milestone; factory not yet deployed. Mainnet and public funds remain locked.
+
+Start with [PRODUCTION_LAUNCH_V54.md](PRODUCTION_LAUNCH_V54.md), [V54_BUILD_NOTES.md](V54_BUILD_NOTES.md), and [V54_VALIDATION.md](V54_VALIDATION.md).
+
+---
+
 # PERPHOOD V53 — Supabase User-State Synchronization
 
 V53 is the current development baseline. It adds settings-only cross-device synchronization for Markets/Movers presets, saved three-left-sidecar workspaces, likes, watchlists, and per-market alerts. Local storage remains the automatic fallback, and the recovery key has no authority over funds, wallets, sessions, orders, or BattlePool settlement.

@@ -507,9 +507,16 @@ export function TerminalHub() {
   const openTrade = async (token: Token, side: Direction, sourceCategory?: TerminalCategoryKey) => {
     const inferredCategory: TerminalCategoryKey = sourceCategory ?? (token.launchState === "graduated" || token.graduation >= 100 ? "migrated" : token.launchedMinutesAgo <= 30 ? "new" : "cooking");
     const executionProfile = categorySettings[inferredCategory];
-    const contractExecution = (token.chainDeploymentMode === "anvil-v43" || token.chainDeploymentMode === "anvil-v45") && Boolean(token.chainMarketAddress);
+    const contractExecution = (token.chainDeploymentMode === "anvil-v43" || token.chainDeploymentMode === "anvil-v45" || token.chainDeploymentMode === "robinhood-testnet-v54" || token.chainDeploymentMode === "robinhood-mainnet-v54") && Boolean(token.chainMarketAddress);
 
     if (pendingQuickAction) return;
+
+    const v54SpotOnly = token.chainDeploymentMode === "robinhood-testnet-v54" || token.chainDeploymentMode === "robinhood-mainnet-v54";
+    if (v54SpotOnly && side !== "buy") {
+      setBuyNotice(`${token.symbol} is live for real spot trading. Long and Short unlock only after the audited BattlePool deployment.`);
+      window.setTimeout(() => setBuyNotice(""), 3600);
+      return;
+    }
 
     if (side !== "buy") {
       const preset = getQuickPerpPreset(executionProfile, side);

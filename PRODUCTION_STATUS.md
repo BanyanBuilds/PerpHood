@@ -1,3 +1,30 @@
+# V54 production status
+
+## Built
+
+- No bundled/demo market in the hosted product.
+- Connected-wallet Robinhood Chain launch transaction.
+- Fixed one-billion-supply ERC-20 and real native-ETH spot curve.
+- Canonically verified metadata, factory receipt, deployed token identity, and launch registry.
+- Real spot Buy/Sell integration and current contract-state hydration.
+- Public launch discovery feed for external indexers.
+
+## Blocking actual minting
+
+- V54 Solidity compilation and Foundry tests must run on the developer machine.
+- The V54 factory must be deployed and verified on Robinhood Chain testnet.
+- The resulting factory address must be added to Vercel.
+- A real creator launch and independent second-wallet Buy/Sell must reconcile.
+
+## Explicitly locked
+
+- Robinhood Chain mainnet deployment.
+- Real public funds.
+- V54 leverage/Long/Short.
+- Any claim of GMGN support before external discovery is observed or an integration is accepted.
+
+---
+
 # V53 Current Status
 
 PERPHOOD V53 adds a cross-device Supabase/Postgres path for low-frequency user settings only. Independent Markets/Movers Buy/Long/Short presets, saved layouts with up to three left sidecars, likes, watchlists, and bounded alert history now merge by section timestamp and survive device changes through a 256-bit recovery key. Local storage remains the automatic fallback.
