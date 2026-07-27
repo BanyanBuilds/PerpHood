@@ -1,6 +1,6 @@
 import { createHash, randomUUID } from "node:crypto";
 import { mkdirSync, readFileSync, statSync } from "node:fs";
-import { dirname, resolve } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
 import { openV48Database } from "./v48-database.ts";
 import { v47DatabasePath } from "./v47-database.ts";
 
@@ -9,7 +9,12 @@ function sqlString(value: string) { return `'${value.replaceAll("'", "''")}'`; }
 export function createV48DatabaseSnapshot(input: { sourcePath?: string; destinationPath?: string; metadata?: Record<string, unknown> } = {}) {
   const sourcePath = input.sourcePath ?? v47DatabasePath();
   const snapshotId = randomUUID();
-  const destinationPath = resolve(input.destinationPath ?? `.perphood/backups/v48-${new Date().toISOString().replaceAll(":", "-")}-${snapshotId}.sqlite`);
+  const filename = `v48-${new Date().toISOString().replaceAll(":", "-")}-${snapshotId}.sqlite`;
+  const destinationPath = process.env.VERCEL
+    ? join("/tmp/perphood/backups", input.destinationPath ? basename(input.destinationPath) : filename)
+    : input.destinationPath
+      ? resolve(/* turbopackIgnore: true */ input.destinationPath)
+      : join(process.cwd(), ".perphood", "backups", filename);
   mkdirSync(dirname(destinationPath), { recursive: true });
   const db = openV48Database(sourcePath);
   let sourceBlock = 0;

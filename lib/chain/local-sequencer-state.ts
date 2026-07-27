@@ -110,7 +110,10 @@ async function reconcilePending(state: PersistedSequencerState, chainState: Loca
   return state;
 }
 
-export async function loadSequencerState(contractAddress: Hex, chainState: LocalBattleState) {
+export async function loadSequencerState(
+  contractAddress: Hex,
+  chainState: LocalBattleState,
+): Promise<PersistedSequencerState> {
   const cacheKey = key(contractAddress);
   let state = runtime.cache.get(cacheKey) ?? null;
   if (!state) {

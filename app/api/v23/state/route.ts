@@ -3,6 +3,7 @@ import { DEFAULT_LOCAL_RPC, readLocalBattleState } from "@/lib/chain/local-battl
 import { loadSequencerState } from "@/lib/chain/local-sequencer-state.ts";
 import { battlePriceEth, freeWeth, positionObligationsWeth, shortInventoryUtilization } from "@/lib/battle-pool.ts";
 import type { Hex } from "@/lib/chain/abi.ts";
+import type { Position } from "@/lib/types.ts";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -22,7 +23,7 @@ export async function GET(request: Request) {
     const chain = await readLocalBattleState(rpcUrl, contractAddress);
     const state = await loadSequencerState(contractAddress, chain);
     const positions = owner
-      ? state.positions.filter((position) => !position.owner || position.owner.toLowerCase() === owner)
+      ? state.positions.filter((position: Position) => !position.owner || position.owner.toLowerCase() === owner)
       : state.positions;
     return NextResponse.json({
       ok: true,
