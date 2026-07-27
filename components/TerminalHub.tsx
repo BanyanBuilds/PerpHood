@@ -616,7 +616,7 @@ export function TerminalHub() {
   const floatingPanels = openPanels.filter((panel) => panelPlacement[panel] === "floating");
 
   const panelTitle = (panel: DrawerKind) => panel === "launch"
-    ? "Launch market"
+    ? "Launch Token"
     : panel === "x-launch-feed"
       ? "X Launch Feed"
       : panel.replaceAll("-", " ");
@@ -661,7 +661,7 @@ export function TerminalHub() {
   };
 
   return (
-    <main className={`terminal-hub-page ${leftPanels.length ? "has-left-docks" : ""} ${rightPanels.length ? "has-right-docks" : ""} ${compactMode ? "compact-mode" : "comfortable-mode"} ${showSignals ? "show-signals" : "hide-signals"}`}>
+    <main className={`terminal-hub-page ${leftPanels.length ? "has-left-docks" : ""} ${rightPanels.length ? "has-right-docks" : ""} ${rightPanels.includes("launch") ? "has-launch-right-dock" : ""} ${compactMode ? "compact-mode" : "comfortable-mode"} ${showSignals ? "show-signals" : "hide-signals"}`}>
       <section className="perphood-command-bar">
         <div className="perphood-command-left">
           <Link href="/" className="perphood-command-brand" aria-label="LEVERAGE X home">
@@ -761,7 +761,7 @@ export function TerminalHub() {
           {TERMINAL_TOOLS.filter(([, , , side]) => side === "left").map(([kind, label, Icon]) => <button key={kind} className={openPanels.includes(kind) ? "active" : ""} onClick={() => openTool(kind)} title={label}><Icon size={14} /><b>{label}</b></button>)}
         </div>
         <div className="terminal-tool-center">
-          {bottomDockSettings.showLaunch && <button className={openPanels.includes("launch") ? "active launch-tool" : "launch-tool"} onClick={() => openTool("launch")}><PlusCircle size={14} /><b>Launch BattlePool</b></button>}
+          {bottomDockSettings.showLaunch && <button className={openPanels.includes("launch") ? "active launch-tool" : "launch-tool"} onClick={() => openTool("launch")}><PlusCircle size={14} /><b>Launch Token</b></button>}
           {bottomDockSettings.showEngine && <><span><CircleDollarSign size={13} /><b>Shared curve</b></span><span><ShieldCheck size={13} /><b>Engine online</b></span></>}
         </div>
         <div className="terminal-tool-right">

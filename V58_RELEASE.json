@@ -1,0 +1,23 @@
+{
+  "name": "leverage X",
+  "version": "58.0.0",
+  "release": "Launch Token UI",
+  "networkTarget": "Robinhood Chain Mainnet",
+  "chainId": 4663,
+  "factoryDeployedByThisPackage": false,
+  "publicTradingEnabledByThisPackage": false,
+  "changes": [
+    "Launch Token naming",
+    "professional non-modal token creation workspace",
+    "wider right-docked and floating launcher",
+    "clean transparent LX vector and regenerated icon family"
+  ],
+  "validation": {
+    "v55RealTerminal": "70/70",
+    "v55VercelRegression": "12/12",
+    "v56MainnetCandidate": "26/26",
+    "v57ProfileDrawer": "15/15",
+    "v58LaunchTokenUI": "21/21",
+    "typescriptSyntaxFiles": 315
+  }
+}

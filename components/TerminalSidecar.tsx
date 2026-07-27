@@ -30,7 +30,7 @@ export function TerminalSidecar({ id, title, placement, floatingIndex = 0, dockS
   const moveDrag = (event: PointerEvent<HTMLDivElement>) => {
     const drag = dragState.current;
     if (!drag || drag.pointerId !== event.pointerId) return;
-    const width = 390;
+    const width = id === "launch" ? 720 : 390;
     const height = 260;
     const x = Math.min(Math.max(8, drag.originX + event.clientX - drag.startX), Math.max(8, window.innerWidth - width - 8));
     const y = Math.min(Math.max(58, drag.originY + event.clientY - drag.startY), Math.max(58, window.innerHeight - height - 38));

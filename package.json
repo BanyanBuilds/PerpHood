@@ -1,6 +1,6 @@
 {
-  "name": "leveragex-v57-mainnet-ui",
-  "version": "57.0.0",
+  "name": "leveragex-v58-launch-token-ui",
+  "version": "58.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -194,7 +194,10 @@
     "test:v56": "npm run test:v55 && npm run test:v56-static",
     "test:v57-ui": "node --experimental-strip-types scripts/v57-profile-drawer-smoke.mts",
     "test:v57-fast": "npm run test:v56-fast && npm run test:v57-ui && npm run test:syntax",
-    "test:v57": "npm run test:v56 && npm run test:v57-ui && npm run test:syntax"
+    "test:v57": "npm run test:v56 && npm run test:v57-ui && npm run test:syntax",
+    "test:v58-ui": "node --experimental-strip-types scripts/v58-launch-token-ui-smoke.mts",
+    "test:v58-fast": "npm run test:v57-fast && npm run test:v58-ui && npm run test:syntax",
+    "test:v58": "npm run test:v56 && npm run test:v57-ui && npm run test:v58-ui && npm run test:syntax"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.14",

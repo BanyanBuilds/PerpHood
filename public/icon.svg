@@ -1,24 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Leverage X">
   <defs>
-    <linearGradient id="lx-main" x1="72" y1="70" x2="448" y2="442" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#00CFE8"/>
-      <stop offset="0.48" stop-color="#25E5B9"/>
-      <stop offset="1" stop-color="#B1FF52"/>
-    </linearGradient>
-    <linearGradient id="lx-side" x1="70" y1="118" x2="366" y2="440" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#00C8EA"/>
-      <stop offset="1" stop-color="#38E7AD"/>
-    </linearGradient>
-    <linearGradient id="lx-right" x1="312" y1="202" x2="454" y2="68" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#45EDA1"/>
-      <stop offset="1" stop-color="#A8FF55"/>
+    <linearGradient id="lx" x1="68" y1="88" x2="448" y2="426" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#08CFE4"/>
+      <stop offset="0.52" stop-color="#35E7B1"/>
+      <stop offset="1" stop-color="#A8FF61"/>
     </linearGradient>
   </defs>
-  <path d="M87 80h112l252 362H337L87 80Z" fill="#07110F" opacity=".85" transform="translate(10 8)"/>
-  <path d="M74 126l72 72v168h158l57 76H74V126Z" fill="url(#lx-side)"/>
-  <path d="M146 240v92h90l-47-68-43-24Z" fill="#111313" opacity=".96"/>
-  <path d="M82 70h112l252 370H332L82 70Z" fill="url(#lx-main)"/>
-  <path d="M312 184 390 70h68L354 230l-42-46Z" fill="url(#lx-right)"/>
-  <path d="m246 286 69 98-39 48-71-102 41-44Z" fill="url(#lx-side)"/>
-  <path d="M94 70h100l7 10H101L94 70Z" fill="#B9FFF4" opacity=".35"/>
+  <g fill="url(#lx)">
+    <path d="M78 135 139 196v174h155l57 72H78V135Z"/>
+    <path d="M84 70h106l250 372H334L84 70Z"/>
+    <path d="m316 184 76-114h66L357 236l-41-52Z"/>
+    <path d="m197 350 51-59 51 63-26 28h-99l23-32Z"/>
+  </g>
 </svg>

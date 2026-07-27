@@ -20,7 +20,7 @@ export function Hero() {
         <p>Spot buyers, leveraged longs, spot sellers, and leveraged shorts fight through one real TOKEN/WETH BattlePool.</p>
         <div className="hero-actions">
           <Link href="#markets"><KeyButton tone="dark"><BarChart3 size={18} />Explore Markets</KeyButton></Link>
-          <Link href="/terminal?panel=launch"><KeyButton><Plus size={18} />Launch BattlePool</KeyButton></Link>
+          <Link href="/terminal?panel=launch"><KeyButton><Plus size={18} />Launch Token</KeyButton></Link>
         </div>
         <div className="hero-tags"><span>0.25 ETH genesis FDV</span><span>0.30% execution fee</span><span>Real shared price impact</span></div>
       </div>

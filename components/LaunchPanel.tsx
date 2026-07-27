@@ -86,6 +86,7 @@ export function LaunchPanel({
   const [website, setWebsite] = useState("");
   const [xHandle, setXHandle] = useState("");
   const [telegram, setTelegram] = useState("");
+  const [socialOpen, setSocialOpen] = useState(false);
   const [migrationTargetMarketCapUsd, setMigrationTargetMarketCapUsd] = useState(45_000);
   const [status, setStatus] = useState("Connect an EVM wallet and prepare the first real Robinhood Chain launch.");
   const [busy, setBusy] = useState(false);
@@ -311,143 +312,217 @@ export function LaunchPanel({
 
   const steps: LaunchStep[] = ["identity", "funding", "review"];
 
+  const activeStepIndex = steps.indexOf(step);
+
   return (
-    <section className={`v41-launchpad ${compact ? "compact" : ""}`}>
-      <header className="v41-launchpad-head">
+    <section className={`lx-launchpad ${compact ? "compact" : ""}`}>
+      <header className="lx-launch-head">
         <div>
-          <span className="eyebrow"><Rocket size={13} /> LEVERAGE X V55 REAL ROBINHOOD CHAIN LAUNCH</span>
-          <h2>Mint a real one-billion-supply memecoin.</h2>
-          <p>Connected-wallet deployment, public ERC-20 transfers, real bonding-curve spot trading, and no free creator allocation.</p>
+          <span className="lx-launch-kicker"><Rocket size={13} /> CREATE ON LEVERAGE X</span>
+          <h2>Launch Token</h2>
+          <p>Create a real Robinhood Chain token. Coin details and artwork become permanent after launch.</p>
         </div>
-        <span className="v41-test-badge">{network.name.toUpperCase()}</span>
+        <span className="lx-launch-network"><i />{network.name}</span>
       </header>
 
       {initialDraft && (
-        <div className="terminal-launch-source">
-          <RadioTower size={16} />
-          <span>Draft imported from X Launch Feed. The creator must verify every field.</span>
+        <div className="lx-launch-import">
+          <RadioTower size={15} />
+          <span>Draft imported from X Launch Feed. Review every field before signing.</span>
           <button type="button" onClick={onClearDraft} aria-label="Clear launch draft"><X size={14} /></button>
         </div>
       )}
 
-      <nav className="v41-launch-steps" aria-label="Launch steps">
+      <nav className="lx-launch-progress" aria-label="Token launch progress">
         {steps.map((item, index) => (
-          <button key={item} type="button" className={step === item ? "active" : ""} onClick={() => index <= steps.indexOf(step) && setStep(item)}>
-            <span>{index + 1}</span>{item}
+          <button
+            key={item}
+            type="button"
+            className={`${step === item ? "active" : ""} ${index < activeStepIndex ? "complete" : ""}`}
+            onClick={() => index <= activeStepIndex && setStep(item)}
+          >
+            <span>{index < activeStepIndex ? <Check size={12} /> : index + 1}</span>
+            <b>{item === "identity" ? "Coin details" : item === "funding" ? "Launch setup" : "Review"}</b>
           </button>
         ))}
       </nav>
 
-      <div className="v41-launch-body">
+      <div className="lx-launch-body">
         {step === "identity" && (
-          <div className="v41-launch-grid identity">
-            <article className="v41-art-picker">
-              <span>Token artwork <small>required · max 4 MB</small></span>
-              <div className="v41-art-preview">
-                {artwork ? <img src={artwork.imageDataUrl} alt={`${ticker || "Token"} artwork preview`} /> : <b>{emoji}</b>}
-              </div>
-              <label className="v41-upload-button">
-                <Upload size={14} /> {busy ? "PROCESSING…" : artwork ? "REPLACE ARTWORK" : "UPLOAD ARTWORK"}
-                <input type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif" disabled={busy} onChange={(event) => void readArtwork(event.target.files?.[0])} />
-              </label>
-              <div className="v41-emoji-row">
-                {EMOJIS.map((item) => <button key={item} type="button" className={emoji === item ? "active" : ""} onClick={() => { setEmoji(item); resetPrepared(); }}>{item}</button>)}
-              </div>
-            </article>
+          <div className="lx-launch-create-grid">
+            <div className="lx-launch-form-column">
+              <section className="lx-launch-section lx-launch-details">
+                <header>
+                  <div><strong>Coin details</strong><small>Choose carefully—these cannot be changed once the coin is created.</small></div>
+                  <span>{[name, ticker, description, artwork].filter(Boolean).length}/4</span>
+                </header>
 
-            <div className="v41-fields">
-              <label><span>Name <small>2–64 characters</small></span><input value={name} maxLength={64} onChange={(event) => { setName(event.target.value); resetPrepared(); }} placeholder="Robinhood Rocket" /></label>
-              <label><span>Ticker <small>1–12 letters/numbers</small></span><input value={ticker} maxLength={12} onChange={(event) => { setTicker(event.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "")); resetPrepared(); }} placeholder="ROCKET" /></label>
-              <label><span>Description <small>stored in public metadata</small></span><textarea value={description} maxLength={1000} onChange={(event) => { setDescription(event.target.value); resetPrepared(); }} placeholder="What is this token and community about?" /></label>
-              <div className="v41-field-pair three">
-                <label><span>Website</span><input value={website} onChange={(event) => { setWebsite(event.target.value); resetPrepared(); }} placeholder="https://" /></label>
-                <label><span>X</span><input value={xHandle} onChange={(event) => { setXHandle(event.target.value); resetPrepared(); }} placeholder="@handle" /></label>
-                <label><span>Telegram</span><input value={telegram} onChange={(event) => { setTelegram(event.target.value); resetPrepared(); }} placeholder="t.me/" /></label>
-              </div>
-              {ogPreview.exact && <div className="v41-near-match"><AlertTriangle size={15} /> Exact or near-exact identity already exists: ${ogPreview.exact.symbol}.</div>}
-              {!ogPreview.exact && ogPreview.near && <div className="v41-near-match"><ImagePlus size={15} /> Artwork is {ogPreview.near.similarity.toFixed(1)}% similar to ${ogPreview.near.token.symbol}.</div>}
+                <div className="lx-launch-field-pair">
+                  <label>
+                    <span>Coin name <small>{name.length}/64</small></span>
+                    <input value={name} maxLength={64} onChange={(event) => { setName(event.target.value); resetPrepared(); }} placeholder="Name your coin" />
+                  </label>
+                  <label>
+                    <span>Ticker <small>{ticker.length}/12</small></span>
+                    <div className="lx-launch-ticker-input"><b>$</b><input value={ticker} maxLength={12} onChange={(event) => { setTicker(event.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "")); resetPrepared(); }} placeholder="SYMBOL" /></div>
+                  </label>
+                </div>
+
+                <label>
+                  <span>Description <small>{description.length}/1000</small></span>
+                  <textarea value={description} maxLength={1000} onChange={(event) => { setDescription(event.target.value); resetPrepared(); }} placeholder="Tell traders what this token and community are about." />
+                </label>
+
+                <button type="button" className={`lx-launch-social-toggle ${socialOpen ? "open" : ""}`} onClick={() => setSocialOpen((open) => !open)}>
+                  <span><ExternalLink size={14} /><b>Add social links</b><small>Optional</small></span>
+                  <ArrowRight size={14} />
+                </button>
+
+                {socialOpen && (
+                  <div className="lx-launch-social-fields">
+                    <label><span>Website</span><input value={website} onChange={(event) => { setWebsite(event.target.value); resetPrepared(); }} placeholder="https://yourcoin.com" /></label>
+                    <label><span>X</span><input value={xHandle} onChange={(event) => { setXHandle(event.target.value); resetPrepared(); }} placeholder="https://x.com/handle" /></label>
+                    <label><span>Telegram</span><input value={telegram} onChange={(event) => { setTelegram(event.target.value); resetPrepared(); }} placeholder="https://t.me/community" /></label>
+                  </div>
+                )}
+
+                {ogPreview.exact && <div className="lx-launch-warning"><AlertTriangle size={15} /><span>Exact or near-exact identity already exists: <b>${ogPreview.exact.symbol}</b>.</span></div>}
+                {!ogPreview.exact && ogPreview.near && <div className="lx-launch-warning"><ImagePlus size={15} /><span>Artwork is <b>{ogPreview.near.similarity.toFixed(1)}%</b> similar to ${ogPreview.near.token.symbol}.</span></div>}
+              </section>
+
+              <section className="lx-launch-section lx-launch-permanence">
+                <LockKeyhole size={16} />
+                <span><strong>Permanent token data</strong><small>Name, ticker, artwork, description, and social links are committed with the launch metadata.</small></span>
+              </section>
             </div>
+
+            <aside className="lx-launch-media-column">
+              <section className="lx-launch-section lx-launch-media">
+                <header>
+                  <div><strong>Token artwork</strong><small>Square artwork is recommended. GIFs remain animated.</small></div>
+                  <span>MAX 4 MB</span>
+                </header>
+
+                <label className={`lx-launch-dropzone ${artwork ? "has-art" : ""}`}>
+                  {artwork ? (
+                    <img src={artwork.imageDataUrl} alt={`${ticker || "Token"} artwork preview`} />
+                  ) : (
+                    <span><ImagePlus size={28} /><strong>Select an image or GIF</strong><small>PNG, JPG, WEBP, GIF, or AVIF</small></span>
+                  )}
+                  <input type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif" disabled={busy} onChange={(event) => void readArtwork(event.target.files?.[0])} />
+                  <em><Upload size={13} />{busy ? "Processing…" : artwork ? "Replace artwork" : "Upload artwork"}</em>
+                </label>
+
+                <div className="lx-launch-emoji-row" aria-label="Artwork placeholders">
+                  <small>Quick placeholders</small>
+                  <div>{EMOJIS.map((item) => <button key={item} type="button" className={emoji === item ? "active" : ""} onClick={() => { setEmoji(item); resetPrepared(); }}>{item}</button>)}</div>
+                </div>
+              </section>
+
+              <section className="lx-launch-preview">
+                <small>LIVE PREVIEW</small>
+                <div className="lx-launch-preview-art">{artwork ? <img src={artwork.imageDataUrl} alt="Coin preview" /> : <b>{emoji}</b>}</div>
+                <div>
+                  <strong>{name.trim() || "Your coin"}</strong>
+                  <span>${ticker || "SYMBOL"}</span>
+                  <p>{description.trim() || "A preview of how the coin will appear across Leverage X."}</p>
+                </div>
+                <footer><span><i />Robinhood Chain</span><b>1B supply</b></footer>
+              </section>
+            </aside>
           </div>
         )}
 
         {step === "funding" && (
-          <div className="v41-funding-layout">
-            <article className="v41-budget-card">
-              <header><Fuel size={21} /><span><strong>Fixed launch budget</strong><small>Gas + creator purchase combined</small></span></header>
-              <div className="v41-budget-breakdown">
-                <span><Coins size={15} /><small>Total wallet budget</small><b>{totalBudgetEth().toFixed(3)} ETH</b></span>
-                <span><Fuel size={15} /><small>Maximum gas cost</small><b>{budget ? formatEthWei(budget.maximumGasCostWei) : "estimated before signing"}</b></span>
-                <span><Wallet size={15} /><small>Creator curve purchase</small><b>{budget ? `${creatorBuyEthFromBudget(budget).toFixed(6)} ETH` : "budget minus max gas"}</b></span>
+          <div className="lx-launch-setup-grid">
+            <section className="lx-launch-section lx-launch-economics">
+              <header><div><strong>Launch economics</strong><small>The creator’s total launch spend includes network gas.</small></div><Fuel size={18} /></header>
+              <div className="lx-launch-metric-list">
+                <span><small>Total wallet cap</small><b>{totalBudgetEth().toFixed(3)} ETH</b></span>
+                <span><small>Maximum gas cost</small><b>{budget ? formatEthWei(budget.maximumGasCostWei) : "Calculated before signing"}</b></span>
+                <span><small>Creator token purchase</small><b>{budget ? `${creatorBuyEthFromBudget(budget).toFixed(6)} ETH` : "Budget minus gas"}</b></span>
+                <span><small>Free creator allocation</small><b>0 tokens</b></span>
+                <span><small>Fixed token supply</small><b>1,000,000,000</b></span>
+                <span><small>Opening FDV</small><b>0.25 ETH</b></span>
               </div>
-              <p className="v54-launch-note">The wallet transaction is capped so gas plus the creator purchase cannot exceed 0.001 ETH under the submitted gas settings.</p>
-            </article>
+              <div className="lx-launch-callout"><Coins size={16} /><span><strong>0.001 ETH means 0.001 ETH total.</strong><small>Gas is reserved first; the remainder becomes the creator’s opening curve purchase.</small></span></div>
+            </section>
 
-            <article className="v41-migration-card">
-              <header><ShieldCheck size={21} /><span><strong>Network and factory</strong><small>Robinhood Chain mainnet · controlled canary launch</small></span></header>
+            <section className="lx-launch-section lx-launch-chain-setup">
+              <header><div><strong>Chain and market setup</strong><small>Review the production network before connecting.</small></div><ShieldCheck size={18} /></header>
               <label><span>Network</span><select value={networkKey} onChange={(event) => { setNetworkKey(event.target.value as RobinhoodNetworkKey); resetPrepared(); }}>
                 <option value="mainnet" disabled={!MAINNET_ENABLED}>Robinhood Chain Mainnet · 4663 {MAINNET_ENABLED ? "" : "(deployment locked)"}</option>
               </select></label>
-              <label><span>Migration target display</span><select value={migrationTargetMarketCapUsd} onChange={(event) => { setMigrationTargetMarketCapUsd(Number(event.target.value)); resetPrepared(); }}>
-                {[30_000, 45_000, 69_000, 100_000].map((value) => <option key={value} value={value}>${value.toLocaleString("en-US")}</option>)}
+              <label><span>Migration target</span><select value={migrationTargetMarketCapUsd} onChange={(event) => { setMigrationTargetMarketCapUsd(Number(event.target.value)); resetPrepared(); }}>
+                {[30_000, 45_000, 69_000, 100_000].map((value) => <option key={value} value={value}>${value.toLocaleString("en-US")} market cap</option>)}
               </select></label>
-              <div className="v41-migration-estimate">
-                <span><small>Factory</small><b>{factoryReady ? compactAddress(network.factoryAddress) : "NOT DEPLOYED"}</b></span>
-                <span><small>Fixed supply</small><b>1,000,000,000</b></span>
-                <span><small>Creator free allocation</small><b>0</b></span>
-                <span><small>Opening FDV</small><b>0.25 ETH</b></span>
+              <div className="lx-launch-chain-status">
+                <span><small>Factory</small><b className={factoryReady ? "ready" : "locked"}>{factoryReady ? compactAddress(network.factoryAddress) : "Not deployed"}</b></span>
+                <span><small>Wallet</small><b>{walletAccount ? compactAddress(walletAccount) : "Not connected"}</b></span>
+                <span><small>Deployment mode</small><b>Closed canary</b></span>
               </div>
-            </article>
+              <KeyButton type="button" tone="ghost" disabled={busy} onClick={() => void connectWallet()}><Wallet size={14} />{walletAccount ? "Reconnect wallet" : "Connect wallet"}</KeyButton>
+              {!factoryReady && <div className="lx-launch-warning"><AlertTriangle size={15} /><span>The mainnet factory must be deployed and configured before token creation can be signed.</span></div>}
+            </section>
           </div>
         )}
 
         {step === "review" && (
-          <div className="v41-review-layout">
-            <article className="v41-review-token">
-              <div className="v41-review-art">{artwork ? <img src={artwork.imageDataUrl} alt="Token artwork" /> : emoji}</div>
-              <span><strong>{name} <b>${ticker}</b></strong><small>{description}</small><small>{network.name}</small></span>
-              <OgBadge token={{ slug: "preview", name, symbol: ticker, emoji, hue: 48, cap: 0, price: 0, change24h: 0, graduation: 0, longs: 50, volume24h: 0, openInterest: 0, funding: 0, launchedMinutesAgo: 0, description, ogStatus: ogPreview.exact ? "copy" : "og", firstSeenSlug: ogPreview.exact?.slug }} />
-            </article>
-            <div className="v41-review-ledger">
-              <span><small>Wallet</small><b>{compactAddress(walletAccount)}</b></span>
-              <span><small>Total cap</small><b>0.001 ETH</b></span>
-              <span><small>Maximum gas</small><b>{budget ? formatEthWei(budget.maximumGasCostWei) : "—"}</b></span>
-              <span><small>Creator buy</small><b>{budget ? `${creatorBuyEthFromBudget(budget).toFixed(6)} ETH` : "—"}</b></span>
-              <span><small>Factory</small><b>{compactAddress(network.factoryAddress)}</b></span>
-              <span><small>Metadata</small><b>{prepared ? "UPLOADED" : "NOT PREPARED"}</b></span>
-            </div>
-            <article className="v41-launch-rules">
-              <span><Check size={15} /> One billion tokens minted once</span>
-              <span><Check size={15} /> Entire supply begins in the market contract</span>
-              <span><Check size={15} /> Creator only receives purchased tokens</span>
-              <span><Check size={15} /> Creator address permanently perps-restricted</span>
-              <span><LockKeyhole size={15} /> No server-held creator private key</span>
-              <span><ShieldCheck size={15} /> Registry accepts only verified receipts</span>
-            </article>
+          <div className="lx-launch-review-grid">
+            <section className="lx-launch-section lx-launch-final-preview">
+              <header><div><strong>Review token</strong><small>This is the final identity that will be submitted.</small></div><OgBadge token={{ slug: "preview", name, symbol: ticker, emoji, hue: 48, cap: 0, price: 0, change24h: 0, graduation: 0, longs: 50, volume24h: 0, openInterest: 0, funding: 0, launchedMinutesAgo: 0, description, ogStatus: ogPreview.exact ? "copy" : "og", firstSeenSlug: ogPreview.exact?.slug }} /></header>
+              <div className="lx-launch-final-token">
+                <div>{artwork ? <img src={artwork.imageDataUrl} alt="Final token artwork" /> : emoji}</div>
+                <span><strong>{name}</strong><b>${ticker}</b><small>{description}</small></span>
+              </div>
+              <div className="lx-launch-review-links">
+                {website && <span>Website <b>{website}</b></span>}
+                {xHandle && <span>X <b>{xHandle}</b></span>}
+                {telegram && <span>Telegram <b>{telegram}</b></span>}
+                {!website && !xHandle && !telegram && <span>No optional social links added.</span>}
+              </div>
+            </section>
+
+            <section className="lx-launch-section lx-launch-signing-review">
+              <header><div><strong>Signing review</strong><small>Verify every destination and limit before approving your wallet.</small></div><ShieldCheck size={18} /></header>
+              <div className="lx-launch-metric-list compact">
+                <span><small>Wallet</small><b>{compactAddress(walletAccount)}</b></span>
+                <span><small>Total launch cap</small><b>0.001 ETH</b></span>
+                <span><small>Maximum gas</small><b>{budget ? formatEthWei(budget.maximumGasCostWei) : "—"}</b></span>
+                <span><small>Creator purchase</small><b>{budget ? `${creatorBuyEthFromBudget(budget).toFixed(6)} ETH` : "—"}</b></span>
+                <span><small>Factory</small><b>{compactAddress(network.factoryAddress)}</b></span>
+                <span><small>Metadata</small><b>{prepared ? "Prepared" : "Not prepared"}</b></span>
+              </div>
+              <div className="lx-launch-checks">
+                <span><Check size={14} />One billion tokens minted once</span>
+                <span><Check size={14} />Entire supply begins in the market contract</span>
+                <span><Check size={14} />Creator receives purchased tokens only</span>
+                <span><Check size={14} />Creator wallet cannot trade perps on its token</span>
+                <span><LockKeyhole size={14} />No server-held creator private key</span>
+                <span><ShieldCheck size={14} />Only verified receipts enter the registry</span>
+              </div>
+            </section>
+
             {receipt && (
-              <article className="v54-launch-receipt">
-                <strong>{registrySaved ? "Real token confirmed and indexed" : "Token confirmed on-chain · registry pending"}</strong>
+              <section className="lx-launch-section lx-launch-receipt">
+                <header><div><strong>{registrySaved ? "Token confirmed and indexed" : "Token confirmed on-chain"}</strong><small>{registrySaved ? "The market is now eligible for the live indexer." : "Registry verification is still pending."}</small></div><Check size={18} /></header>
                 <span>Token <a href={receipt.explorerTokenUrl} target="_blank" rel="noreferrer">{receipt.tokenAddress} <ExternalLink size={12} /></a></span>
                 <span>Market <a href={receipt.explorerMarketUrl} target="_blank" rel="noreferrer">{receipt.marketAddress} <ExternalLink size={12} /></a></span>
                 <span>Transaction <a href={receipt.explorerTransactionUrl} target="_blank" rel="noreferrer">{receipt.transactionHash} <ExternalLink size={12} /></a></span>
-              </article>
+              </section>
             )}
           </div>
         )}
       </div>
 
-      <footer className="v41-launch-footer">
-        <div className="terminal-launch-status">{busy && <LoaderCircle size={13} className="v54-spin" />} {status}</div>
+      <footer className="lx-launch-footer">
+        <div className="lx-launch-status">{busy && <LoaderCircle size={13} className="v54-spin" />}<span>{status}</span></div>
         <div>
-          {step !== "identity" && <KeyButton type="button" tone="ghost" compact disabled={busy} onClick={() => setStep(step === "review" ? "funding" : "identity")}><ArrowLeft size={13} /> BACK</KeyButton>}
-          {step === "identity" && <KeyButton type="button" tone="green" compact disabled={!identityReady || busy} onClick={() => setStep("funding")}>FUNDING <ArrowRight size={13} /></KeyButton>}
-          {step === "funding" && (
-            <>
-              <KeyButton type="button" tone="ghost" compact disabled={busy} onClick={() => void connectWallet()}><Wallet size={13} /> CONNECT</KeyButton>
-              <KeyButton type="button" tone="green" compact disabled={!identityReady || !factoryReady || busy} onClick={() => void prepareLaunch()}>{busy ? "PREPARING…" : "PREPARE REAL LAUNCH"} <ArrowRight size={13} /></KeyButton>
-            </>
-          )}
-          {step === "review" && !receipt && <KeyButton type="button" tone="green" compact disabled={!prepared || !budget || busy} onClick={() => void submitLaunch()}><Rocket size={13} /> {busy ? "CONFIRMING…" : "MINT ON ROBINHOOD CHAIN"}</KeyButton>}
-          {step === "review" && receipt && !registrySaved && <KeyButton type="button" tone="green" compact disabled={busy} onClick={() => void retryRegistry()}><ShieldCheck size={13} /> {busy ? "VERIFYING…" : "RETRY REGISTRY VERIFY"}</KeyButton>}
+          {step !== "identity" && <KeyButton type="button" tone="ghost" compact disabled={busy} onClick={() => setStep(step === "review" ? "funding" : "identity")}><ArrowLeft size={13} />Back</KeyButton>}
+          {step === "identity" && <KeyButton type="button" tone="green" compact disabled={!identityReady || busy} onClick={() => setStep("funding")}>Continue <ArrowRight size={13} /></KeyButton>}
+          {step === "funding" && <KeyButton type="button" tone="green" compact disabled={!identityReady || !factoryReady || busy} onClick={() => void prepareLaunch()}>{busy ? "Preparing…" : "Prepare launch"} <ArrowRight size={13} /></KeyButton>}
+          {step === "review" && !receipt && <KeyButton type="button" tone="green" compact disabled={!prepared || !budget || busy} onClick={() => void submitLaunch()}><Rocket size={13} />{busy ? "Confirming…" : "Launch token"}</KeyButton>}
+          {step === "review" && receipt && !registrySaved && <KeyButton type="button" tone="green" compact disabled={busy} onClick={() => void retryRegistry()}><ShieldCheck size={13} />{busy ? "Verifying…" : "Retry registry"}</KeyButton>}
         </div>
       </footer>
     </section>

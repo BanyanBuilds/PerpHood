@@ -5,7 +5,7 @@ const css = fs.readFileSync("app/globals.css", "utf8");
 const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
 
 const checks: Array<[string, boolean]> = [
-  ["V57 package version", pkg.version === "57.0.0"],
+  ["V57+ package version", Number(pkg.version.split(".")[0]) >= 57],
   ["non-modal drawer root", component.includes('className="lx-profile-drawer"')],
   ["legacy opaque backdrop removed from component", !component.includes("profile-sidebar-backdrop")],
   ["outside press closes without interception layer", component.includes('document.addEventListener("pointerdown", closeOnOutsidePress, true)')],

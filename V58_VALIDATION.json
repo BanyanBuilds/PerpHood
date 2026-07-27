@@ -1,0 +1,16 @@
+{
+  "version": "58.0.0",
+  "validatedAt": "2026-07-27",
+  "checks": {
+    "v55RealTerminal": "70/70",
+    "v55VercelRegression": "12/12",
+    "v56MainnetCandidate": "26/26",
+    "v57ProfileDrawer": "15/15",
+    "v58LaunchTokenUI": "21/21",
+    "typescriptSyntaxFiles": 315
+  },
+  "nextBuild": {
+    "ran": false,
+    "reason": "Dependency installation could not retrieve an uncached npm package from the packaging environment gateway."
+  }
+}
