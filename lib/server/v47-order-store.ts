@@ -1,5 +1,3 @@
-import { readFile } from "node:fs/promises";
-import { resolve } from "node:path";
 import type { V46SignedOrder, V46StoredOrder } from "../chain/v46-order.ts";
 import { openV47Database, v47DatabasePath, withV47Transaction } from "./v47-database.ts";
 
@@ -135,29 +133,4 @@ export async function v46OrderStoreStats() {
     const updatedAt = Number((db.prepare("SELECT COALESCE(MAX(updated_at),0) AS updatedAt FROM indexed_orders").get() as { updatedAt: number | bigint }).updatedAt);
     return { path: v47DatabasePath(), revision: total, updatedAt, total, counts, mode: "sqlite-transactional" };
   } finally { db.close(); }
-}
-
-export async function migrateV46JsonOrdersToV47(path = resolve(process.env.V46_ORDER_STORE_PATH ?? ".perphood/v46-orders.json")) {
-  try {
-    const raw = await readFile(path, "utf8");
-    const parsed = JSON.parse(raw) as { orders?: V46StoredOrder[] };
-    if (!Array.isArray(parsed.orders)) return { imported: 0, skipped: 0, source: path };
-    let imported = 0;
-    let skipped = 0;
-    const db = openV47Database();
-    try {
-      withV47Transaction(db, () => {
-        for (const order of parsed.orders ?? []) {
-          const existing = getById(db, order.intent.orderId);
-          if (existing) { skipped += 1; continue; }
-          storeOrder(db, order);
-          imported += 1;
-        }
-      });
-    } finally { db.close(); }
-    return { imported, skipped, source: path };
-  } catch (error) {
-    if ((error as { code?: string }).code === "ENOENT") return { imported: 0, skipped: 0, source: path };
-    throw error;
-  }
 }

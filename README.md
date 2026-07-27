@@ -6,6 +6,9 @@
 
 Start with:
 
+- `LEVERAGEX_MASTER_SPEC.md` — authoritative product decisions from the continuous PerpHood 1–3 project
+- `LEVERAGEX_TAKEOVER_AUDIT_V55.md` — current implementation truth and priority sequence
+- `V55_VERCEL_DEPLOY_FIX.md` — latest deployment repair
 - `LEVERAGEX_REAL_TRADING_TERMINAL_V55.md`
 - `V55_TESTNET_DEPLOYMENT.md`
 - `V55_BUILD_NOTES.md`

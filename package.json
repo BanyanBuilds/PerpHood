@@ -180,10 +180,11 @@
     "test:v54-fast": "node --experimental-strip-types scripts/v54-production-launch-smoke.mts && npm run test:syntax",
     "chain:deploy:v55": "node --experimental-strip-types scripts/v55-deploy-robinhood.mts",
     "chain:test:v55": "forge test --match-path contracts/test/LeverageXLaunchFactoryV55.t.sol -vvv",
-    "test:v55-fast": "node --experimental-strip-types scripts/v55-real-terminal-smoke.mts && npm run test:syntax",
+    "test:v55-fast": "node --experimental-strip-types scripts/v55-real-terminal-smoke.mts && npm run test:v55-vercel && npm run test:syntax",
     "test:v55": "npm run test:v48-quick-presets && npm run test:v48-left-sidecars && npm run test:v49-math && npm run test:v50-adversarial && npm run test:v50-stateful && npm run test:v51-ordering && npm run test:v53-user-state && npm run test:v55-fast",
     "chain:v55:testnet": "node --experimental-strip-types scripts/v55-deploy-robinhood.mts testnet",
-    "chain:v55:mainnet": "node --experimental-strip-types scripts/v55-deploy-robinhood.mts mainnet"
+    "chain:v55:mainnet": "node --experimental-strip-types scripts/v55-deploy-robinhood.mts mainnet",
+    "test:v55-vercel": "node --experimental-strip-types scripts/v55-vercel-deploy-fix-smoke.mts"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.14",

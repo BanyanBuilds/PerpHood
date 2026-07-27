@@ -1,9 +1,11 @@
 "use client";
 
 import { BookOpen, DatabaseZap } from "lucide-react";
-import type { Direction, Token } from "@/lib/types";
+import type { Token } from "@/lib/types";
 
-export function TerminalOrderBook({ token, onQuick }: { token: Token; onQuick: (side: Direction) => void }) {
+type SpotAction = "buy" | "sell";
+
+export function TerminalOrderBook({ token, onQuick }: { token: Token; onQuick: (side: SpotAction) => void }) {
   return (
     <section className="terminal-orderbook glass-panel" aria-label="Market depth">
       <header className="orderbook-header">

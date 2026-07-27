@@ -1,6 +1,6 @@
 import { setTimeout as sleep } from "node:timers/promises";
 import { runV47IndexerCycle } from "../lib/server/v47-indexer.ts";
-import { migrateV46JsonOrdersToV47 } from "../lib/server/v47-order-store.ts";
+import { migrateV46JsonOrdersToV47 } from "../lib/server/v47-order-migration.ts";
 
 const mode = process.argv[2] ?? "watch";
 const intervalMs = Math.max(500, Number(process.env.V47_INDEXER_INTERVAL_MS ?? 1_500));
