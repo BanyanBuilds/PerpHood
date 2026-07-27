@@ -30,13 +30,13 @@ export default function LeaderboardPage() {
       <Link href="/terminal"><KeyButton tone="dark"><Zap size={15} />Open terminal</KeyButton></Link>
     </section>
 
-    {!hasSettledData && <section className="empty-state glass-panel"><span>◎</span><h2>No settled leaderboard data</h2><p>Rankings will populate from verified PERPHOOD perpetual executions. No generated traders or fabricated P&amp;L are shown.</p></section>}
+    {!hasSettledData && <section className="empty-state glass-panel"><span>◎</span><h2>No settled leaderboard data</h2><p>Rankings will populate from verified LEVERAGE X perpetual executions. No generated traders or fabricated P&amp;L are shown.</p></section>}
 
     <section className="leaderboard-table perps-leaderboard-table glass-panel">
       <div className="leaderboard-table-head"><span>Rank / Trader</span><span>Total perp P&amp;L</span><span>Realized P&amp;L</span><span>Unrealized P&amp;L</span><span>Open perps</span></div>
-      <div className="leaderboard-table-body">{hasSettledData && <article className="is-user"><span><b>—</b><i>◎</i><em><strong>Connected wallet</strong><small>PERPHOOD Trader</small></em></span><span>{signedEth(total)}</span><span>{signedEth(realized)}</span><span>{signedEth(unrealized)}</span><span>{positions.length}</span></article>}</div>
+      <div className="leaderboard-table-body">{hasSettledData && <article className="is-user"><span><b>—</b><i>◎</i><em><strong>Connected wallet</strong><small>LEVERAGE X Trader</small></em></span><span>{signedEth(total)}</span><span>{signedEth(realized)}</span><span>{signedEth(unrealized)}</span><span>{positions.length}</span></article>}</div>
     </section>
 
-    <section className="league-rules glass-panel"><div><ShieldCheck size={22} /><span><strong>P&amp;L-only ranking</strong><small>No volume farming, XP bonuses, spot gains, or launch activity can move a wallet up the table.</small></span></div><div><Swords size={22} /><span><strong>Realized + unrealized</strong><small>Open positions use executable shared-pool close quotes; closing moves that result into realized P&amp;L.</small></span></div><div><Trophy size={22} /><span><strong>Verified executions only</strong><small>Only settled PERPHOOD perpetual activity is eligible.</small></span></div></section>
+    <section className="league-rules glass-panel"><div><ShieldCheck size={22} /><span><strong>P&amp;L-only ranking</strong><small>No volume farming, XP bonuses, spot gains, or launch activity can move a wallet up the table.</small></span></div><div><Swords size={22} /><span><strong>Realized + unrealized</strong><small>Open positions use executable shared-pool close quotes; closing moves that result into realized P&amp;L.</small></span></div><div><Trophy size={22} /><span><strong>Verified executions only</strong><small>Only settled LEVERAGE X perpetual activity is eligible.</small></span></div></section>
   </main><MobileDock /></>;
 }

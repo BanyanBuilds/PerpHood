@@ -1,0 +1,19 @@
+{
+  "name": "Leverage X V55 \u2014 Real Trading Terminal",
+  "package": "leveragex-v55-real-trading-terminal",
+  "version": "55.0.0",
+  "brand": "Leverage X",
+  "domain": "leverageX.fun",
+  "release_date": "2026-07-27",
+  "baseline": "Leverage X V54 production launch path",
+  "portable_validation": "PASS",
+  "production_build": "PENDING_VERCEL",
+  "contract_deployment": "NOT_DEPLOYED",
+  "real_coin_minted": false,
+  "mainnet_locked": true,
+  "supabase_migration": "supabase/v55_production_launch.sql",
+  "factory_contract": "contracts/src/LeverageXLaunchFactoryV55.sol",
+  "deployment_script": "scripts/v55-deploy-robinhood.mts",
+  "testnet_guide": "V55_TESTNET_DEPLOYMENT.md",
+  "notes": "No demo markets are bundled. V55 remains a source and validation release until the factory compiles, passes Foundry, and is deployed to Robinhood Chain testnet."
+}

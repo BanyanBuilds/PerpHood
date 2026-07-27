@@ -1,4 +1,4 @@
-# PERPHOOD V20 Economics — Adaptive BattlePool Working Model
+# LEVERAGE X V20 Economics — Adaptive BattlePool Working Model
 
 ## One market, one counterparty
 

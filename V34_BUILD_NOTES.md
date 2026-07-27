@@ -1,4 +1,4 @@
-# PerpHood V34 — Clean Status Hierarchy
+# Leverage X V34 — Clean Status Hierarchy
 
 V34 removes fake button styling from read-only terminal information.
 

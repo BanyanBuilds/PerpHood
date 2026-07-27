@@ -1,4 +1,4 @@
-# PERPHOOD V22 validation
+# LEVERAGE X V22 validation
 
 Validation run: 2026-07-24
 

@@ -1,4 +1,4 @@
-# PERPHOOD V51 — Compiler-Backed Chain Assault
+# LEVERAGE X V51 — Compiler-Backed Chain Assault
 
 V51 moves the V50 settlement guarantees from model-only verification toward hostile compiled-contract execution. The milestone adds deadline and slippage constraints to every terminal and keeper position path, adversarial Solidity actors, a reproducible Foundry assault profile, and a complete Anvil lifecycle runner.
 

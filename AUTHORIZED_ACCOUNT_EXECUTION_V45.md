@@ -1,8 +1,8 @@
-# PERPHOOD V45 — Authorized Account Execution
+# LEVERAGE X V45 — Authorized Account Execution
 
 ## Purpose
 
-V45 removes the wallet-confirmation requirement from normal local trading without handing withdrawal authority to the PERPHOOD sequencer. It places a fully backed account router above the V43 unified BattlePool and supports two execution paths:
+V45 removes the wallet-confirmation requirement from normal local trading without handing withdrawal authority to the LEVERAGE X sequencer. It places a fully backed account router above the V43 unified BattlePool and supports two execution paths:
 
 1. **Authorized session path:** the browser signs a bounded P-256 intent and the local sequencer sponsors the transaction.
 2. **Direct owner path:** the connected wallet calls the account router directly when no session exists, when the relay is unavailable, or when the user wants to revoke, close, or withdraw independently.

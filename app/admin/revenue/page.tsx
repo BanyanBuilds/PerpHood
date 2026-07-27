@@ -64,7 +64,7 @@ export default function RevenuePage() {
       <article className="revenue-ledger glass-panel"><header><span><FlaskConical size={18} /><strong>Required extraction gates</strong></span><b>All must pass</b></header><LedgerText label="Randomized solvency" note="No treasury share until action-sequence fuzzing remains green." /><LedgerText label="Bank-run closeability" note="Every spot and leveraged exit path must remain payable." /><LedgerText label="Contract invariants" note="Fixed-point Solidity implementation must conserve assets exactly." /><LedgerText label="Independent audits" note="Economic and smart-contract reviewers approve the route." /><footer><span>Current treasury share</span><strong>0%</strong></footer></article>
     </section>
 
-    <section className="revenue-policy-note glass-panel"><ShieldCheck size={20} /><span><strong>Solvency before revenue</strong><small>PERPHOOD does not reward creators merely for deploying coins. V20 keeps fees in the shared BattlePool until testing proves a treasury extraction can never weaken instant settlement.</small></span><Waves size={20} /></section>
+    <section className="revenue-policy-note glass-panel"><ShieldCheck size={20} /><span><strong>Solvency before revenue</strong><small>LEVERAGE X does not reward creators merely for deploying coins. V20 keeps fees in the shared BattlePool until testing proves a treasury extraction can never weaken instant settlement.</small></span><Waves size={20} /></section>
   </main></>;
 }
 

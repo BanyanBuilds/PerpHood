@@ -57,7 +57,7 @@ export function V51ChainAssaultConsole() {
   return <main className="v51-assault-page">
     <header className="v51-assault-hero">
       <div>
-        <span><Swords size={18}/>PERPHOOD V51</span>
+        <span><Swords size={18}/>LEVERAGE X V51</span>
         <h1>Compiler-Backed Chain Assault</h1>
         <p>Stale-quote rollback, hostile receivers, reentrancy actors, forced-balance attacks, gas ceilings, and compiled invariant campaigns.</p>
       </div>

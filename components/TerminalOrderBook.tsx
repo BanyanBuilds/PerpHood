@@ -12,7 +12,7 @@ export function TerminalOrderBook({ token, onQuick }: { token: Token; onQuick: (
       <div className="tracker-empty">
         <DatabaseZap size={22} />
         <strong>Canonical depth is not indexed yet</strong>
-        <p>PERPHOOD will not fabricate bids, asks, spread, or liquidity rows.</p>
+        <p>LEVERAGE X will not fabricate bids, asks, spread, or liquidity rows.</p>
         {token.chainMarketAddress && <div className="depth-actions"><button onClick={() => onQuick("buy")}>Spot buy</button><button onClick={() => onQuick("sell")}>Spot sell</button></div>}
       </div>
     </section>

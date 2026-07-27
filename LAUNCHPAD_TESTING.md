@@ -1,4 +1,4 @@
-# PerpHood V42 Launchpad Test Sandbox
+# Leverage X V42 Launchpad Test Sandbox
 
 V42 keeps the complete browser creator-to-migration lifecycle and adds an executable Anvil launch/spot-curve path. It remains local-only, does not deploy to Robinhood Chain, and must not accept public funds.
 

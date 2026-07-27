@@ -1,4 +1,4 @@
-# PERPHOOD V43 Build Notes — Unified BattlePool Settlement
+# LEVERAGE X V43 Build Notes — Unified BattlePool Settlement
 
 V43 removes the largest architectural split in V42: the launchpad and spot curve no longer stop where leveraged settlement begins. `LaunchpadMarketV43` now owns one ordered state for spot buys, spot sells, collateralized longs, inventory-backed shorts, manual closes, and liquidations.
 

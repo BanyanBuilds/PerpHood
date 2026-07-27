@@ -27,7 +27,7 @@ export function isV53SupabaseConfigured() {
 
 export function parseV53RecoveryKey(request: Request) {
   const value = request.headers.get("x-perphood-sync-key")?.trim() ?? "";
-  if (!KEY_PATTERN.test(value)) throw new Error("A valid PERPHOOD V53 settings recovery key is required.");
+  if (!KEY_PATTERN.test(value)) throw new Error("A valid LEVERAGE X V53 settings recovery key is required.");
   return value;
 }
 

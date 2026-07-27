@@ -1,10 +1,10 @@
-# PerpHood V38 — Live Alerts + Spacious Terminal
+# Leverage X V38 — Live Alerts + Spacious Terminal
 
-V38 keeps the clean Padre-structured / GMGN-chart selected-market workspace and restores the main PerpHood Markets/Movers terminal at `/`.
+V38 keeps the clean Padre-structured / GMGN-chart selected-market workspace and restores the main Leverage X Markets/Movers terminal at `/`.
 
 ## Main terminal restoration
 
-- `/` once again renders the PerpHood Markets/Movers terminal.
+- `/` once again renders the Leverage X Markets/Movers terminal.
 - The build still contains exactly one deliberate `$HOOD` demo token.
 - `$HOOD` appears in New Pairs and opens the full chart workspace when clicked.
 - The chart remains available at `/market/perphood-demo`.

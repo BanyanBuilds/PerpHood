@@ -1,14 +1,20 @@
 "use client";
 
-import { Gauge, Settings2, ShieldCheck, SlidersHorizontal, Zap } from "lucide-react";
+import { Gauge, RadioTower, Settings2, ShieldCheck, SlidersHorizontal, TimerReset, Zap } from "lucide-react";
 import { useCallback, useRef, useState } from "react";
 import {
   applyFeePreset,
+  getActionSlippagePercent,
+  getExecutionPreset,
   normalizeCategorySettings,
+  updateExecutionPreset,
   type CategoryTradingSettings,
   type DefaultLeverage,
-  type FeePreset,
+  type ExecutionRoute,
+  type MevMode,
+  type QuickPresetKey,
   type TerminalCategoryKey,
+  type TradeActionProfile,
 } from "@/lib/terminal-settings";
 import { useOutsideDismiss } from "./useOutsideDismiss";
 
@@ -19,8 +25,11 @@ type Props = {
   onChange: (next: CategoryTradingSettings) => void;
 };
 
-const FEE_PRESETS: FeePreset[] = ["economy", "fast", "turbo", "custom"];
+const PRESETS: QuickPresetKey[] = ["P1", "P2", "P3"];
 const LEVERAGE: DefaultLeverage[] = [2, 5, 10, 20];
+const ACTIONS: TradeActionProfile[] = ["buy", "sell", "long", "short", "close"];
+const ROUTES: ExecutionRoute[] = ["standard", "fast", "assault", "protected"];
+const MEV_MODES: MevMode[] = ["auto", "protected", "public", "redundant"];
 
 function NumericField({ label, value, onChange, suffix, step = 0.01, min = 0, max }: { label: string; value: number; onChange: (value: number) => void; suffix?: string; step?: number; min?: number; max?: number }) {
   return <label className="category-setting-field"><span>{label}</span><div><input type="number" inputMode="decimal" value={value} min={min} max={max} step={step} onChange={(event) => onChange(Number(event.target.value))} />{suffix && <small>{suffix}</small>}</div></label>;
@@ -28,78 +37,124 @@ function NumericField({ label, value, onChange, suffix, step = 0.01, min = 0, ma
 
 export function TerminalCategorySettings({ category, label, value, onChange }: Props) {
   const [open, setOpen] = useState(false);
-  const [tab, setTab] = useState<"trade" | "filters" | "display">("trade");
+  const [tab, setTab] = useState<"trade" | "filters" | "guards">("trade");
+  const [action, setAction] = useState<TradeActionProfile>("buy");
   const buttonRef = useRef<HTMLButtonElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
   const close = useCallback(() => setOpen(false), []);
   useOutsideDismiss([buttonRef, popoverRef], close, open);
 
-  const patch = (next: Partial<CategoryTradingSettings>) => onChange(normalizeCategorySettings({ ...value, ...next }));
-  const chooseFeePreset = (preset: FeePreset) => onChange(normalizeCategorySettings(applyFeePreset(value, preset)));
+  const normalized = normalizeCategorySettings(value);
+  const activePreset = normalized.activePreset;
+  const execution = getExecutionPreset(normalized, activePreset);
+  const patch = (next: Partial<CategoryTradingSettings>) => onChange(normalizeCategorySettings({ ...normalized, ...next }));
+  const patchExecution = (next: Parameters<typeof updateExecutionPreset>[2]) => onChange(updateExecutionPreset(normalized, activePreset, next));
+  const selectPreset = (preset: QuickPresetKey) => onChange(applyFeePreset(normalized, preset));
+  const setActionSlippage = (slippage: number) => {
+    if (action === "buy") return patchExecution({ buySlippagePercent: slippage });
+    if (action === "sell") return patchExecution({ sellSlippagePercent: slippage });
+    if (action === "long") return patchExecution({ longSlippagePercent: slippage });
+    if (action === "short") return patchExecution({ shortSlippagePercent: slippage });
+    return patchExecution({ closeSlippagePercent: slippage });
+  };
 
   return <>
-    <button ref={buttonRef} className={open ? "active category-settings-trigger" : "category-settings-trigger"} onClick={() => setOpen((current) => !current)} title={`${label} presets and filters`} aria-label={`Open ${label} settings`}><Settings2 size={14} /></button>
-    {open && <div ref={popoverRef} className="category-settings-popover" data-category={category}>
-      <header><span><strong>{label}</strong><small>Independent saved execution profile</small></span><em>{value.quickLongEnabled ? `L ${value.quickLongLeverage}×` : "L OFF"} · {value.quickShortEnabled ? `S ${value.quickShortLeverage}×` : "S OFF"}</em></header>
+    <button ref={buttonRef} className={open ? "active category-settings-trigger" : "category-settings-trigger"} onClick={() => setOpen((current) => !current)} title={`${label} execution presets and filters`} aria-label={`Open ${label} settings`}><Settings2 size={14} /></button>
+    {open && <div ref={popoverRef} className="category-settings-popover v55-execution-settings" data-category={category}>
+      <header>
+        <span><strong>{label} Quick Trade</strong><small>Independent Buy · Sell · Long · Short · Close profile</small></span>
+        <em>{activePreset} · {execution.executionRoute}</em>
+      </header>
+
+      <div className="v55-preset-switcher" aria-label="Execution preset">
+        {PRESETS.map((preset) => {
+          const profile = getExecutionPreset(normalized, preset);
+          return <button key={preset} className={activePreset === preset ? "active" : ""} onClick={() => selectPreset(preset)}>
+            <b>{preset}</b><small>{profile.executionRoute} · {profile.maxNetworkFeeEth.toFixed(5)} ETH</small>
+          </button>;
+        })}
+      </div>
+
       <nav>
         <button className={tab === "trade" ? "active" : ""} onClick={() => setTab("trade")}><Zap size={13} />Trade</button>
         <button className={tab === "filters" ? "active" : ""} onClick={() => setTab("filters")}><SlidersHorizontal size={13} />Filters</button>
-        <button className={tab === "display" ? "active" : ""} onClick={() => setTab("display")}><Gauge size={13} />Guards</button>
+        <button className={tab === "guards" ? "active" : ""} onClick={() => setTab("guards")}><Gauge size={13} />Guards</button>
       </nav>
 
       {tab === "trade" && <div className="category-settings-body">
-        <NumericField label="Quick spot buy" value={value.quickBuyEth} onChange={(quickBuyEth) => patch({ quickBuyEth })} suffix="ETH" step={0.001} min={0.0001} max={100} />
-
-        <QuickPerpPresetEditor
-          side="long"
-          enabled={value.quickLongEnabled}
-          collateral={value.quickLongCollateralEth}
-          leverage={value.quickLongLeverage}
-          onEnabled={(quickLongEnabled) => patch({ quickLongEnabled })}
-          onCollateral={(quickLongCollateralEth) => patch({ quickLongCollateralEth })}
-          onLeverage={(quickLongLeverage) => patch({ quickLongLeverage })}
-        />
-        <QuickPerpPresetEditor
-          side="short"
-          enabled={value.quickShortEnabled}
-          collateral={value.quickShortCollateralEth}
-          leverage={value.quickShortLeverage}
-          onEnabled={(quickShortEnabled) => patch({ quickShortEnabled })}
-          onCollateral={(quickShortCollateralEth) => patch({ quickShortCollateralEth })}
-          onLeverage={(quickShortLeverage) => patch({ quickShortLeverage })}
-        />
-
-        <div className="category-setting-block"><span>Fee preset</span><div className="segmented-setting">{FEE_PRESETS.map((preset) => <button key={preset} className={value.feePreset === preset ? "active" : ""} onClick={() => chooseFeePreset(preset)}>{preset}</button>)}</div></div>
-        <div className="category-setting-pair">
-          <NumericField label="Buy priority" value={value.buyPriorityFeeEth} onChange={(buyPriorityFeeEth) => patch({ buyPriorityFeeEth, feePreset: "custom" })} suffix="ETH" step={0.00001} />
-          <NumericField label="Sell priority" value={value.sellPriorityFeeEth} onChange={(sellPriorityFeeEth) => patch({ sellPriorityFeeEth, feePreset: "custom" })} suffix="ETH" step={0.00001} />
+        <div className="v55-action-tabs" aria-label="Action settings">
+          {ACTIONS.map((item) => <button key={item} className={action === item ? `active ${item}` : item} onClick={() => setAction(item)}>{item}</button>)}
         </div>
-        <div className="category-setting-pair">
-          <NumericField label="Buy slippage" value={value.buySlippagePercent} onChange={(buySlippagePercent) => patch({ buySlippagePercent, slippageMode: "custom", autoSlippage: false })} suffix="%" step={0.5} min={0.1} max={100} />
-          <NumericField label="Sell slippage" value={value.sellSlippagePercent} onChange={(sellSlippagePercent) => patch({ sellSlippagePercent, slippageMode: "custom", autoSlippage: false })} suffix="%" step={0.5} min={0.1} max={100} />
+
+        <section className="v55-quick-amounts">
+          <NumericField label="Quick spot buy" value={normalized.quickBuyEth} onChange={(quickBuyEth) => patch({ quickBuyEth })} suffix="ETH" step={0.001} min={0.0001} max={100} />
+          <QuickPerpPresetEditor
+            side="long"
+            enabled={normalized.quickLongEnabled}
+            collateral={normalized.quickLongCollateralEth}
+            leverage={normalized.quickLongLeverage}
+            onEnabled={(quickLongEnabled) => patch({ quickLongEnabled })}
+            onCollateral={(quickLongCollateralEth) => patch({ quickLongCollateralEth })}
+            onLeverage={(quickLongLeverage) => patch({ quickLongLeverage })}
+          />
+          <QuickPerpPresetEditor
+            side="short"
+            enabled={normalized.quickShortEnabled}
+            collateral={normalized.quickShortCollateralEth}
+            leverage={normalized.quickShortLeverage}
+            onEnabled={(quickShortEnabled) => patch({ quickShortEnabled })}
+            onCollateral={(quickShortCollateralEth) => patch({ quickShortCollateralEth })}
+            onLeverage={(quickShortLeverage) => patch({ quickShortLeverage })}
+          />
+        </section>
+
+        <section className="v55-execution-grid">
+          <ToggleRow label="Automatic slippage" value={execution.autoSlippage} onChange={(autoSlippage) => patchExecution({ autoSlippage })} />
+          <NumericField label={`${action[0].toUpperCase()}${action.slice(1)} slippage`} value={getActionSlippagePercent(execution, action)} onChange={setActionSlippage} suffix="%" step={0.25} min={0.1} max={100} />
+          <ToggleRow label="Automatic network fee" value={execution.autoNetworkFee} onChange={(autoNetworkFee) => patchExecution({ autoNetworkFee })} />
+          <NumericField label="Maximum network fee" value={execution.maxNetworkFeeEth} onChange={(maxNetworkFeeEth) => patchExecution({ maxNetworkFeeEth, autoNetworkFee: false })} suffix="ETH" step={0.000001} min={0} max={1} />
+          <NumericField label="Quote deadline" value={execution.deadlineSeconds} onChange={(deadlineSeconds) => patchExecution({ deadlineSeconds })} suffix="sec" step={1} min={5} max={300} />
+          <NumericField label="Maximum price impact" value={execution.maxPriceImpactPercent} onChange={(maxPriceImpactPercent) => patchExecution({ maxPriceImpactPercent })} suffix="%" step={0.5} min={0.1} max={100} />
+        </section>
+
+        <div className="category-setting-block">
+          <span><RadioTower size={13} />Execution Boost</span>
+          <div className="segmented-setting v55-route-setting">{ROUTES.map((route) => <button key={route} className={execution.executionRoute === route ? "active" : ""} onClick={() => patchExecution({ executionRoute: route })}>{route}</button>)}</div>
         </div>
-        <p className="category-settings-note"><ShieldCheck size={14} />Quick Long and Quick Short are disabled until their individual preset switch is enabled. A disabled row button never opens a panel and never sends a transaction.</p>
+        <div className="category-setting-block">
+          <span><ShieldCheck size={13} />MEV route preference</span>
+          <div className="segmented-setting v55-route-setting">{MEV_MODES.map((mode) => <button key={mode} className={execution.mevMode === mode ? "active" : ""} onClick={() => patchExecution({ mevMode: mode })}>{mode}</button>)}</div>
+        </div>
+
+        <p className="category-settings-note"><ShieldCheck size={14} /><span><b>No fake bribes.</b> Robinhood Chain ordering is not sold through a tip field. Execution Boost controls verified routing preferences; connected-wallet V55 trades still use the wallet&apos;s active RPC and enforce fresh min-output slippage.</span></p>
+        <p className="category-settings-note"><TimerReset size={14} />Quick Long and Quick Short remain disabled until their exact amount-and-leverage preset is enabled. Markets and Movers never open a trading sidecar.</p>
       </div>}
 
       {tab === "filters" && <div className="category-settings-body">
         <div className="category-setting-pair">
-          <NumericField label="Minimum market cap" value={value.minMarketCap} onChange={(minMarketCap) => patch({ minMarketCap })} suffix="$" step={1000} />
-          <NumericField label="Minimum liquidity" value={value.minLiquidityEth} onChange={(minLiquidityEth) => patch({ minLiquidityEth })} suffix="ETH" step={0.1} />
+          <NumericField label="Minimum market cap" value={normalized.minMarketCap} onChange={(minMarketCap) => patch({ minMarketCap })} suffix="$" step={1000} />
+          <NumericField label="Minimum liquidity" value={normalized.minLiquidityEth} onChange={(minLiquidityEth) => patch({ minLiquidityEth })} suffix="ETH" step={0.1} />
         </div>
         <div className="category-setting-pair">
-          <NumericField label="Minimum holders" value={value.minHolders} onChange={(minHolders) => patch({ minHolders })} step={1} />
-          <NumericField label="Maximum age" value={value.maxAgeMinutes} onChange={(maxAgeMinutes) => patch({ maxAgeMinutes })} suffix="min · 0 off" step={5} />
+          <NumericField label="Minimum holders" value={normalized.minHolders} onChange={(minHolders) => patch({ minHolders })} step={1} />
+          <NumericField label="Maximum age" value={normalized.maxAgeMinutes} onChange={(maxAgeMinutes) => patch({ maxAgeMinutes })} suffix="min · 0 off" step={5} />
         </div>
-        <ToggleRow label="Positive momentum only" value={value.positiveOnly} onChange={(positiveOnly) => patch({ positiveOnly })} />
-        <ToggleRow label="OG coins only" value={value.ogOnly} onChange={(ogOnly) => patch({ ogOnly })} />
-        <ToggleRow label="Hide high wallet concentration" value={value.hideHighConcentration} onChange={(hideHighConcentration) => patch({ hideHighConcentration })} />
+        <ToggleRow label="Positive momentum only" value={normalized.positiveOnly} onChange={(positiveOnly) => patch({ positiveOnly })} />
+        <ToggleRow label="OG coins only" value={normalized.ogOnly} onChange={(ogOnly) => patch({ ogOnly })} />
+        <ToggleRow label="Hide high wallet concentration" value={normalized.hideHighConcentration} onChange={(hideHighConcentration) => patch({ hideHighConcentration })} />
       </div>}
 
-      {tab === "display" && <div className="category-settings-body">
-        <ToggleRow label="Automatic slippage" value={value.autoSlippage} onChange={(autoSlippage) => patch({ autoSlippage, slippageMode: autoSlippage ? "auto" : "custom" })} />
-        <ToggleRow label="MEV / sandwich protection" value={value.mevProtection} onChange={(mevProtection) => patch({ mevProtection })} icon />
-        <NumericField label="Maximum price impact" value={value.maxPriceImpactPercent} onChange={(maxPriceImpactPercent) => patch({ maxPriceImpactPercent })} suffix="%" step={0.5} min={0.1} max={100} />
-        <p className="category-settings-note"><ShieldCheck size={14} />These values are saved only for <b>{label}</b>. Other columns keep their own execution and discovery profile.</p>
+      {tab === "guards" && <div className="category-settings-body">
+        <div className="v55-guard-summary">
+          <span><small>Preset</small><strong>{activePreset}</strong></span>
+          <span><small>Route</small><strong>{execution.executionRoute}</strong></span>
+          <span><small>MEV</small><strong>{execution.mevMode}</strong></span>
+          <span><small>Quote TTL</small><strong>{execution.deadlineSeconds}s</strong></span>
+        </div>
+        <ToggleRow label="MEV protection required when available" value={execution.mevMode !== "public"} onChange={(enabled) => patchExecution({ mevMode: enabled ? "auto" : "public" })} />
+        <NumericField label="Maximum network fee" value={execution.maxNetworkFeeEth} onChange={(maxNetworkFeeEth) => patchExecution({ maxNetworkFeeEth })} suffix="ETH" step={0.000001} />
+        <NumericField label="Maximum price impact" value={execution.maxPriceImpactPercent} onChange={(maxPriceImpactPercent) => patchExecution({ maxPriceImpactPercent })} suffix="%" step={0.5} min={0.1} max={100} />
+        <p className="category-settings-note"><ShieldCheck size={14} />These values are saved only for <b>{label}</b>. Every other Markets and Movers column keeps its own P1/P2/P3 execution profile.</p>
       </div>}
     </div>}
   </>;
@@ -135,6 +190,6 @@ function QuickPerpPresetEditor({
   </section>;
 }
 
-function ToggleRow({ label, value, onChange, icon = false }: { label: string; value: boolean; onChange: (value: boolean) => void; icon?: boolean }) {
-  return <button className="category-toggle-row" onClick={() => onChange(!value)}><span>{icon && <ShieldCheck size={14} />}{label}</span><i className={value ? "on" : ""}><b /></i></button>;
+function ToggleRow({ label, value, onChange }: { label: string; value: boolean; onChange: (value: boolean) => void }) {
+  return <button className="category-toggle-row" onClick={() => onChange(!value)}><span>{label}</span><i className={value ? "on" : ""}><b /></i></button>;
 }

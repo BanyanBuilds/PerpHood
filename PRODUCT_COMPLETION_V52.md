@@ -1,4 +1,4 @@
-# PERPHOOD V52 — Product Completion Inventory
+# LEVERAGE X V52 — Product Completion Inventory
 
 V52 changes the development process from milestone accumulation to one honest product inventory. The canonical machine-readable inventory lives in `lib/v52-product-completion.ts` and is displayed at `/admin/completion`.
 
@@ -23,7 +23,7 @@ V52 changes the development process from milestone accumulation to one honest pr
 
 ## Current release gate
 
-V52 intentionally reports that PERPHOOD is not approved for public funds or testnet use. The principal blockers are:
+V52 intentionally reports that LEVERAGE X is not approved for public funds or testnet use. The principal blockers are:
 
 1. Compiled Solidity campaigns have not yet been run in the assembly environment.
 2. On-chain session-signature verification is unfinished.

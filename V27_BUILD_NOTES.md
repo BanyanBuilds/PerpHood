@@ -1,4 +1,4 @@
-# PERPHOOD V27 — Readable Terminal + Independent Quick Buys
+# LEVERAGE X V27 — Readable Terminal + Independent Quick Buys
 
 ## Typography correction
 

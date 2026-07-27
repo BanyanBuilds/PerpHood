@@ -1,4 +1,4 @@
-# PerpHood V34 Validation
+# Leverage X V34 Validation
 
 - Concise dynamic `Hz` readout: PASS
 - No FPS/display sublabels in the readout: PASS

@@ -1,11 +1,11 @@
 @echo off
 setlocal
 cd /d "%~dp0"
-title PERPHOOD Local App
+title LEVERAGE X Local App
 
 echo.
 echo ========================================
-echo   PERPHOOD - Local Development
+echo   LEVERAGE X - Local Development
 echo ========================================
 echo.
 
@@ -26,7 +26,7 @@ if not exist node_modules\next\package.json (
 )
 
 echo.
-echo Starting PERPHOOD at http://localhost:3000
+echo Starting LEVERAGE X at http://localhost:3000
 echo Press Ctrl+C to stop the app.
 start "" http://localhost:3000
 call npm run dev

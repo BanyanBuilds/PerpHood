@@ -1,0 +1,168 @@
+
+> leveragex-v55-real-trading-terminal@55.0.0 test:v55
+> npm run test:v48-quick-presets && npm run test:v48-left-sidecars && npm run test:v49-math && npm run test:v50-adversarial && npm run test:v50-stateful && npm run test:v51-ordering && npm run test:v53-user-state && npm run test:v55-fast
+
+
+> leveragex-v55-real-trading-terminal@55.0.0 test:v48-quick-presets
+> node --experimental-strip-types scripts/v48-quick-preset-smoke.mts
+
+(node:24544) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V48.1 in-place Quick Buy/Long/Short preset smoke passed (13/13).
+
+> leveragex-v55-real-trading-terminal@55.0.0 test:v48-left-sidecars
+> node --experimental-strip-types scripts/v48-left-sidecars-smoke.mts
+
+(node:24567) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V48.2 three-left-sidecar smoke passed (13/13).
+
+> leveragex-v55-real-trading-terminal@55.0.0 test:v49-math
+> node --experimental-strip-types scripts/v49-settlement-math-smoke.mts
+
+(node:24590) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+{
+  "version": "v49-settlement-math-verification",
+  "exactCurveVectors": 3001,
+  "maximumCostUnderRoundWei": "802",
+  "maximumPriceUnderRoundWei": "0",
+  "shortScenarios": 20,
+  "closeOrderPermutations": 24,
+  "maximumPermutationPayoutWei": "2037926464517932997",
+  "guaranteedLiabilityWei": "2105225039082663937",
+  "result": "PASS"
+}
+
+> leveragex-v55-real-trading-terminal@55.0.0 test:v50-adversarial
+> node --experimental-strip-types scripts/v50-adversarial-math-smoke.mts
+
+(node:24613) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+{
+  "version": "v50-adversarial-math",
+  "fragmentationVectors": 96,
+  "oscillationCycles": 500,
+  "lastShortFloorPayoutWei": "508918767753352682",
+  "lastShortFloorPnlWei": "458918767753352682",
+  "portfolios": 48,
+  "closePermutations": 5760,
+  "maximumPortfolioPayoutWei": "374702706168796240",
+  "result": "PASS"
+}
+
+> leveragex-v55-real-trading-terminal@55.0.0 test:v50-stateful
+> node --experimental-strip-types scripts/v50-stateful-invariants-smoke.mts
+
+(node:24636) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+{
+  "version": "v50-stateful-invariants",
+  "seeds": 64,
+  "stepsPerSeed": 384,
+  "attempted": 24576,
+  "executed": 24080,
+  "rejected": 496,
+  "liquidations": 2747,
+  "maximumOpenPositions": 20,
+  "maximumObligationsEth": 3.2571270399423304,
+  "result": "PASS"
+}
+
+> leveragex-v55-real-trading-terminal@55.0.0 test:v51-ordering
+> node --experimental-strip-types scripts/v51-ordering-assault-smoke.mts
+
+(node:24659) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V51 ordering assault passed: stale buy, short-entry, close-payout, deadline/rollback bounds are deterministic.
+
+> leveragex-v55-real-trading-terminal@55.0.0 test:v53-user-state
+> node --experimental-strip-types scripts/v53-user-state-smoke.mts
+
+(node:24682) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+V53 user-state smoke passed: section-level conflict resolution, no-op suppression, normalization, workspace persistence and recovery-key validation.
+
+> leveragex-v55-real-trading-terminal@55.0.0 test:v55-fast
+> node --experimental-strip-types scripts/v55-real-terminal-smoke.mts && npm run test:syntax
+
+(node:24705) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+Leverage X V55 real terminal smoke passed (70/70).
+  ✓ package uses the Leverage X V55 identity
+  ✓ package version is V55
+  ✓ V55 Robinhood deployment command exists
+  ✓ V55 Foundry contract test command exists
+  ✓ public/leveragex-logo.png is packaged
+  ✓ public/favicon.ico is packaged
+  ✓ public/favicon-16.png is packaged
+  ✓ public/favicon-32.png is packaged
+  ✓ public/apple-touch-icon.png is packaged
+  ✓ public/icon-192.png is packaged
+  ✓ public/icon-512.png is packaged
+  ✓ public/leveragex-og.jpg is packaged
+  ✓ site metadata uses leverageX.fun and the shared brand source
+  ✓ browser and Apple icons are registered
+  ✓ installable web manifest uses Leverage X
+  ✓ terminal logo uses the official Leverage X asset
+  ✓ Leverage X V55 launch factory exists
+  ✓ Leverage X fixed-supply ERC-20 exists
+  ✓ Leverage X native-ETH spot market exists
+  ✓ V55 token supply is exactly one billion
+  ✓ inclusive 0.001 ETH launch budget remains locked
+  ✓ creator remains permanently perps-restricted
+  ✓ factory and market publish canonical indexer events
+  ✓ V55 deployment script targets the correct compiled contract
+  ✓ mainnet deployment is locked and RPC chain ID is verified
+  ✓ Supabase uses the Leverage X V55 launch registry
+  ✓ Supabase uses the Leverage X token-media bucket
+  ✓ launch registry deduplicates canonical token addresses
+  ✓ V55 metadata, registry, and discovery APIs exist
+  ✓ launcher uses the V55 APIs
+  ✓ terminal discovers confirmed V55 markets
+  ✓ new has an active P1/P2/P3 profile
+  ✓ new execution profile has bounded network fee and deadline
+  ✓ cooking has an active P1/P2/P3 profile
+  ✓ cooking execution profile has bounded network fee and deadline
+  ✓ migrated has an active P1/P2/P3 profile
+  ✓ migrated execution profile has bounded network fee and deadline
+  ✓ movers has an active P1/P2/P3 profile
+  ✓ movers execution profile has bounded network fee and deadline
+  ✓ liked has an active P1/P2/P3 profile
+  ✓ liked execution profile has bounded network fee and deadline
+  ✓ market-cap has an active P1/P2/P3 profile
+  ✓ market-cap execution profile has bounded network fee and deadline
+  ✓ P1/P2/P3 include distinct execution routes
+  ✓ action-specific slippage is deterministic
+  ✓ terminal exposes honest Robinhood execution routing rather than fake bribes
+  ✓ terminal profiles expose fee, impact, and stale-quote limits
+  ✓ quick Long/Short remain preset-only
+  ✓ selected-market ticket uses P1/P2/P3
+  ✓ selected-market ticket previews maximum debit
+  ✓ selected-market ticket separates protocol and network fees
+  ✓ selected-market ticket blocks trust when canonical market data is stale
+  ✓ selected-market ticket exposes authoritative market states
+  ✓ token intelligence distinguishes indexed evidence from immutable native-token facts
+  ✓ real spot execution enforces selected fee, impact, and slippage limits
+  ✓ wallet execution estimates gas before enforcing its fee ceiling
+  ✓ real execution reports quote, wallet request, and submitted transaction phases
+  ✓ terminal provider maps real chain callbacks into lifecycle phases
+  ✓ transaction lifecycle includes Quote
+  ✓ transaction lifecycle includes Wallet
+  ✓ transaction lifecycle includes Submitted
+  ✓ transaction lifecycle includes Confirmed
+  ✓ transaction lifecycle includes Reconciled
+  ✓ transaction lifecycle includes Indexed
+  ✓ terminal renders the transaction lifecycle tracker
+  ✓ terminal exposes emergency trading controls
+  ✓ three-left-sidecar requirement remains guarded
+  ✓ hosted product starts with no demo token rows
+  ✓ visible runtime source contains no legacy PERPHOOD brand
+  ✓ hosted runtime contains no bundled demo market identifiers
+
+> leveragex-v55-real-trading-terminal@55.0.0 test:syntax
+> node --experimental-strip-types scripts/typescript-syntax-smoke.mts
+
+(node:24728) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+TypeScript/TSX syntax smoke passed for 305 files.

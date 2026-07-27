@@ -83,9 +83,9 @@ export function V52CompletionConsole() {
   return <main className="v52-completion-page">
     <header className="v52-completion-hero">
       <div>
-        <span><Workflow size={18}/>PERPHOOD V52</span>
+        <span><Workflow size={18}/>LEVERAGE X V52</span>
         <h1>Product Completion &amp; Scale Foundation</h1>
-        <p>An honest inventory of what is implemented, what is only connected locally, what remains a prototype, and what must exist before PERPHOOD can serve real users or funds.</p>
+        <p>An honest inventory of what is implemented, what is only connected locally, what remains a prototype, and what must exist before LEVERAGE X can serve real users or funds.</p>
       </div>
       <div className="v52-safety-lock">
         <ShieldCheck size={23}/>

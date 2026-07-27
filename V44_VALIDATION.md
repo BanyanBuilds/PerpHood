@@ -1,4 +1,4 @@
-# PERPHOOD V44 Validation
+# LEVERAGE X V44 Validation
 
 Date: July 25, 2026
 

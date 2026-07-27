@@ -15,10 +15,10 @@ type FeePreset = "P1" | "P2" | "P3";
 const AMOUNTS = [0.01, 0.025, 0.05, 0.1];
 const LEVERAGES = [2, 5, 10, 20];
 
-const FEE_PRESETS: Record<FeePreset, { priority: string; slippage: string }> = {
-  P1: { priority: "0.01 ETH", slippage: "10%" },
-  P2: { priority: "0.03 ETH", slippage: "10%" },
-  P3: { priority: "0.10 ETH", slippage: "10%" },
+const FEE_PRESETS: Record<FeePreset, { maxNetworkFeeEth: number; slippagePercent: number; route: "Standard" | "Fast" | "Assault" }> = {
+  P1: { maxNetworkFeeEth: 0.00002, slippagePercent: 3, route: "Standard" },
+  P2: { maxNetworkFeeEth: 0.00005, slippagePercent: 6, route: "Fast" },
+  P3: { maxNetworkFeeEth: 0.0001, slippagePercent: 12, route: "Assault" },
 };
 
 export function WorkspaceTradeTicket({ token, requestedMode, requestedAmount, requestedLeverage, version }: {
@@ -64,21 +64,25 @@ export function WorkspaceTradeTicket({ token, requestedMode, requestedAmount, re
   }, [requestedAmount, requestedLeverage, requestedMode, version]);
 
   useEffect(() => {
-    const stored = localStorage.getItem("perphood-v37-fee-preset") as FeePreset | null;
+    const stored = (localStorage.getItem("leveragex-v55-fee-preset") ?? localStorage.getItem("perphood-v37-fee-preset")) as FeePreset | null;
     if (stored && stored in FEE_PRESETS) setFeePreset(stored);
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("perphood-v37-fee-preset", feePreset);
+    localStorage.setItem("leveragex-v55-fee-preset", feePreset);
   }, [feePreset]);
 
   const v45AccountExecution = token.chainDeploymentMode === "anvil-v45" && Boolean(token.chainMarketAddress);
-  const v54SpotExecution = (token.chainDeploymentMode === "robinhood-testnet-v54" || token.chainDeploymentMode === "robinhood-mainnet-v54") && Boolean(token.chainMarketAddress);
+  const v54SpotExecution = (token.chainDeploymentMode === "robinhood-testnet-v54" || token.chainDeploymentMode === "robinhood-mainnet-v54" || token.chainDeploymentMode === "robinhood-testnet-v55" || token.chainDeploymentMode === "robinhood-mainnet-v55") && Boolean(token.chainMarketAddress);
+  const leverageXNative = token.chainDeploymentMode === "robinhood-testnet-v55" || token.chainDeploymentMode === "robinhood-mainnet-v55";
+  const syncAgeSeconds = token.chainLastSyncedAt ? Math.max(0, Math.floor((Date.now() - token.chainLastSyncedAt) / 1000)) : null;
+  const marketState = token.battlePhase === "paused" ? "PAUSED" : syncAgeSeconds === null ? "INDEXING" : syncAgeSeconds > 45 ? "STALE" : "ACTIVE";
   const sessionExecution = v45AccountExecution && hasLocalV45Session();
   const contractExecution = (token.chainDeploymentMode === "anvil-v43" || v45AccountExecution || v54SpotExecution) && Boolean(token.chainMarketAddress);
   const durableOrderExecution = sessionExecution;
   const availableBalance = v45AccountExecution ? balanceEth : contractExecution ? walletBalanceEth : balanceEth;
   const executionBusy = contractExecution && chainExecution.slug === token.slug && (chainExecution.phase === "wallet" || chainExecution.phase === "pending");
+  const selectedExecution = FEE_PRESETS[feePreset];
   const risk = getMarketRisk(token);
   const side: Direction = mode === "buy" || mode === "sell" ? "buy" : mode;
   const activeLeverage = Math.min(leverage, Math.max(2, risk.maxLeverage));
@@ -93,33 +97,32 @@ export function WorkspaceTradeTicket({ token, requestedMode, requestedAmount, re
   const beActivationCap = mode === "long" ? quote.markCap * (1 + breakevenActivation / 100) : quote.markCap * (1 - breakevenActivation / 100);
 
   const safety = {
-    holders: token.uniqueTraders ?? 0,
-    top10Share: token.linkedWalletConcentration ?? 0,
-    creatorShare: 0,
-    insiders: 0,
-    snipers: 0,
-    first70Holding: 0,
-    bundledShare: 0,
-    liquidityProviders: token.chainMarketAddress ? 1 : 0,
+    holders: token.uniqueTraders,
+    top10Share: token.linkedWalletConcentration,
+    liquidityProviders: token.chainMarketAddress ? 1 : undefined,
   };
   const safetyWarnings = [
-    safety.top10Share > 25 ? "Concentrated holders" : null,
-    safety.creatorShare > 8 ? "High creator holding" : null,
-    safety.bundledShare > 10 ? "Bundled supply" : null,
+    typeof safety.top10Share === "number" && safety.top10Share > 25 ? "Concentrated linked-wallet evidence" : null,
     (token.badDebtEth ?? 0) > 0 ? "BattlePool bad debt" : null,
+    marketState === "STALE" ? "Market data is stale" : null,
+    marketState === "PAUSED" ? "Market is paused" : null,
   ].filter(Boolean);
 
   const quoteRows = useMemo(() => {
     if (mode === "buy") return [
-      ["Execution", money(token.cap)],
-      ["Pool fee", `${fee.toFixed(5)} ETH`],
-      ["Liquidity", `${(token.liquidityEth ?? 0).toFixed(2)} ETH`],
-      ["Pressure", "Real spot buy"],
+      ["Current MC", money(token.cap)],
+      ["Protocol fee", `${fee.toFixed(6)} ETH`],
+      ["Max network", `${selectedExecution.maxNetworkFeeEth.toFixed(6)} ETH`],
+      ["Max debit", `${(amount + fee + selectedExecution.maxNetworkFeeEth).toFixed(6)} ETH`],
+      ["Slippage", `${selectedExecution.slippagePercent}%`],
+      ["Route", selectedExecution.route],
     ];
     if (mode === "sell") return [
       ["Invested", `${totalSpotInvested.toFixed(4)} ETH`],
       ["Tokens", totalSpotTokens ? totalSpotTokens.toLocaleString(undefined, { maximumFractionDigits: 0 }) : "0"],
-      ["Settlement", "Instant WETH"],
+      ["Max network", `${selectedExecution.maxNetworkFeeEth.toFixed(6)} ETH`],
+      ["Slippage", `${selectedExecution.slippagePercent}%`],
+      ["Route", selectedExecution.route],
       ["Pressure", "Real spot sell"],
     ];
     return [
@@ -128,7 +131,7 @@ export function WorkspaceTradeTicket({ token, requestedMode, requestedAmount, re
       ["Liquidation", money(quote.liquidationCap)],
       ["Price impact", `${quote.priceImpactPercent.toFixed(3)}%`],
     ];
-  }, [fee, mode, quote, token.cap, token.liquidityEth, totalSpotInvested, totalSpotTokens]);
+  }, [amount, fee, mode, quote, selectedExecution, token.cap, totalSpotInvested, totalSpotTokens]);
 
   const submit = async () => {
     if (!connected && !contractExecution) {
@@ -154,7 +157,7 @@ export function WorkspaceTradeTicket({ token, requestedMode, requestedAmount, re
       }
       if (mode === "buy") {
         setNotice(v54SpotExecution ? "Confirm the real Robinhood Chain spot buy in your wallet…" : sessionExecution ? "Relaying the signed V45 spot-buy intent…" : contractExecution ? "Confirm the V43 spot buy in your wallet…" : "Executing spot buy…");
-        const holding = await buySpot(token.slug, amount);
+        const holding = await buySpot(token.slug, amount, selectedExecution.route === "Standard" ? "maker" : "market", { slippageBps: Math.round(selectedExecution.slippagePercent * 100), maxNetworkFeeEth: selectedExecution.maxNetworkFeeEth, maxPriceImpactPercent: 18 });
         setNotice(contractExecution ? `Confirmed in block ${holding.chainBlockNumber}.` : `Bought ${amount.toFixed(3)} ETH of ${token.symbol}.`);
         return;
       }
@@ -170,7 +173,7 @@ export function WorkspaceTradeTicket({ token, requestedMode, requestedAmount, re
   const sellAcrossHoldings = async (fraction: number) => {
     try {
       setNotice(v54SpotExecution ? "Approve the ERC-20 if needed, then confirm the Robinhood Chain sell…" : sessionExecution ? "Relaying the signed V45 spot-sell intent…" : contractExecution ? "Approve if needed, then confirm the V43 sell…" : "Selling spot position…");
-      for (const holding of marketHoldings) await sellHolding(holding.id, fraction);
+      for (const holding of marketHoldings) await sellHolding(holding.id, fraction, { slippageBps: Math.round(selectedExecution.slippagePercent * 100), maxNetworkFeeEth: selectedExecution.maxNetworkFeeEth, maxPriceImpactPercent: 18 });
       setNotice(`Sold ${(fraction * 100).toFixed(0)}% of the ${token.symbol} spot position.`);
     } catch (error) {
       setNotice(error instanceof Error ? error.message : "Spot sell failed.");
@@ -183,7 +186,7 @@ export function WorkspaceTradeTicket({ token, requestedMode, requestedAmount, re
   return <aside className="v37-trade-ticket">
     <div className="v37-ticket-presets">
       <span>{(["P1", "P2", "P3"] as FeePreset[]).map((preset) => <button type="button" key={preset} className={feePreset === preset ? "active" : ""} onClick={() => setFeePreset(preset)}>{preset}</button>)}</span>
-      <button type="button" className="v37-fee-summary" onClick={() => setAdvanced((value) => !value)}><Settings2 size={14} />{FEE_PRESETS[feePreset].priority} · {FEE_PRESETS[feePreset].slippage}</button>
+      <button type="button" className="v37-fee-summary" onClick={() => setAdvanced((value) => !value)}><Settings2 size={14} />{selectedExecution.maxNetworkFeeEth.toFixed(5)} ETH · {selectedExecution.slippagePercent}%</button>
     </div>
 
     <div className="v37-side-tabs">
@@ -210,27 +213,40 @@ export function WorkspaceTradeTicket({ token, requestedMode, requestedAmount, re
 
     {mode !== "buy" && mode !== "sell" && <p className="v37-risk-note"><Info size={14} /><span><b>{risk.label} · {risk.score.toFixed(0)}/100</b><small>{quote.allowed ? `${quote.liquidationDistancePercent.toFixed(2)}% to liquidation` : quote.reason}</small></span></p>}
 
+    {v54SpotExecution && <section className="v55-market-truth">
+      <header><span><ShieldCheck size={15} /><b>Executable market truth</b></span><em className={marketState.toLowerCase()}>{marketState}</em></header>
+      <div>
+        <span><small>Chain</small><strong>{token.chainId ?? "—"}</strong></span>
+        <span><small>Last block</small><strong>{token.chainLastBlock?.toLocaleString() ?? "Indexing"}</strong></span>
+        <span><small>Chain sync</small><strong>{syncAgeSeconds === null ? "Pending" : `${syncAgeSeconds}s ago`}</strong></span>
+        <span><small>Real ETH reserve</small><strong>{(token.realWethBalance ?? 0).toFixed(6)} ETH</strong></span>
+        <span><small>Curve sold</small><strong>{(token.circulatingSpotTokens ?? 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}</strong></span>
+        <span><small>Curve remaining</small><strong>{(token.curveTokenReserve ?? 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}</strong></span>
+      </div>
+      {marketState !== "ACTIVE" && <p>Quick execution is only trustworthy after a fresh canonical contract read. Stale or paused markets must not be treated as normally tradable.</p>}
+    </section>}
+
     <section className={`v37-token-safety ${safetyOpen ? "open" : ""}`}>
       <button type="button" className="v37-safety-head" onClick={() => setSafetyOpen((value) => !value)}>
         <span>{safetyWarnings.length ? <AlertTriangle size={15} /> : <ShieldCheck size={15} />}<b>Token safety</b><small>{safetyWarnings.length ? `${safetyWarnings.length} warning${safetyWarnings.length === 1 ? "" : "s"}` : "Checks look healthy"}</small></span>
         <ChevronDown size={15} className={safetyOpen ? "open" : ""} />
       </button>
       {safetyOpen && <div className="v37-safety-grid">
-        <span><small>Top 10</small><strong className={safety.top10Share > 25 ? "warning" : ""}>{safety.top10Share.toFixed(1)}%</strong></span>
-        <span><small>Dev holding</small><strong className={safety.creatorShare > 8 ? "warning" : ""}>{safety.creatorShare.toFixed(1)}%</strong></span>
-        <span><small>Insiders</small><strong>{safety.insiders}</strong></span>
-        <span><small>Bundles</small><strong className={safety.bundledShare > 10 ? "warning" : ""}>{safety.bundledShare.toFixed(1)}%</strong></span>
-        <span><small>Snipers</small><strong>{safety.snipers}</strong></span>
-        <span><small>Fresh buyers</small><strong>{safety.holders.toLocaleString()}</strong></span>
-        <span><small>Mint authority</small><strong className="positive">Off</strong></span>
-        <span><small>Freeze authority</small><strong className="positive">Off</strong></span>
-        <span><small>Liquidity</small><strong className="positive">BattlePool</strong></span>
+        <span><small>Linked-wallet concentration</small><strong className={(safety.top10Share ?? 0) > 25 ? "warning" : ""}>{typeof safety.top10Share === "number" ? `${safety.top10Share.toFixed(1)}%` : "Not indexed"}</strong></span>
+        <span><small>Unique traders</small><strong>{typeof safety.holders === "number" ? safety.holders.toLocaleString() : "Not indexed"}</strong></span>
+        <span><small>Contract source</small><strong>{leverageXNative ? "Leverage X V55" : "Verify explorer"}</strong></span>
+        <span><small>Fixed supply</small><strong className={leverageXNative ? "positive" : ""}>{leverageXNative ? "1,000,000,000" : "Verify"}</strong></span>
+        <span><small>Additional mint</small><strong className={leverageXNative ? "positive" : ""}>{leverageXNative ? "Impossible" : "Unknown"}</strong></span>
+        <span><small>Transfer tax</small><strong className={leverageXNative ? "positive" : ""}>{leverageXNative ? "None" : "Unknown"}</strong></span>
+        <span><small>Blacklist / freeze</small><strong className={leverageXNative ? "positive" : ""}>{leverageXNative ? "None" : "Unknown"}</strong></span>
+        <span><small>Creator free allocation</small><strong className={leverageXNative ? "positive" : ""}>{leverageXNative ? "None" : "Unknown"}</strong></span>
+        <span><small>Creator perps</small><strong className={leverageXNative ? "positive" : ""}>{leverageXNative ? "Blocked" : "Unknown"}</strong></span>
       </div>}
     </section>
 
     <KeyButton className="v37-submit" tone={mode === "sell" || mode === "short" ? "red" : "green"} disabled={disabled} onClick={mode === "sell" ? () => void sellAcrossHoldings(1) : () => void submit()}><Zap size={17} />{executionBusy ? sessionExecution ? "Relaying intent…" : "Awaiting wallet…" : connected || contractExecution ? cta : "Connect wallet"}</KeyButton>
-    <div className="v37-ticket-foot"><span>Fee {feePreset}</span><span>MEV guard on</span><span>One BattlePool</span></div>
-    {contractExecution && <div className={`v44-execution-strip ${chainExecution.phase}`}><span><b>{v54SpotExecution ? "V54 ROBINHOOD SPOT" : sessionExecution ? orderMode === "market" ? "V45 SESSION" : "V46 KEEPER ORDER" : "V43 CONTRACT"}</b><small>{sessionExecution ? `Sponsored sequencer · seq ${token.chainStateSequence ?? "—"}` : walletAddress ? `${walletAddress.slice(0, 6)}…${walletAddress.slice(-4)} · seq ${token.chainStateSequence ?? "—"}` : "Wallet connects on first trade"}</small></span><em>{chainExecution.slug === token.slug ? chainExecution.phase.toUpperCase() : "READY"}</em></div>}
+    <div className="v37-ticket-foot"><span>{feePreset} · {selectedExecution.route}</span><span>{selectedExecution.slippagePercent}% slippage</span><span>{selectedExecution.maxNetworkFeeEth.toFixed(5)} ETH max fee</span></div>
+    {contractExecution && <div className={`v44-execution-strip ${chainExecution.phase}`}><span><b>{v54SpotExecution ? "LEVERAGE X ROBINHOOD SPOT" : sessionExecution ? orderMode === "market" ? "V45 SESSION" : "V46 KEEPER ORDER" : "V43 CONTRACT"}</b><small>{sessionExecution ? `Sponsored sequencer · seq ${token.chainStateSequence ?? "—"}` : walletAddress ? `${walletAddress.slice(0, 6)}…${walletAddress.slice(-4)} · seq ${token.chainStateSequence ?? "—"}` : "Wallet connects on first trade"}</small></span><em>{chainExecution.slug === token.slug ? chainExecution.phase.toUpperCase() : "READY"}</em></div>}
     {notice && <div className="v37-ticket-notice">{notice}</div>}
   </aside>;
 }

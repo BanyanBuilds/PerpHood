@@ -32,7 +32,7 @@ import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState, type ComponentType } from "react";
 import type { Direction, Token } from "@/lib/types";
 import type { XLaunchDraft } from "@/lib/x-launch-feed";
-import { DEFAULT_CATEGORY_SETTINGS, getQuickPerpPreset, normalizeCategorySettings, type CategoryTradingSettings, type TerminalCategoryKey, type TerminalCategorySettingsMap } from "@/lib/terminal-settings";
+import { DEFAULT_CATEGORY_SETTINGS, getActiveExecutionPreset, getQuickPerpPreset, normalizeCategorySettings, type CategoryTradingSettings, type TerminalCategoryKey, type TerminalCategorySettingsMap } from "@/lib/terminal-settings";
 import { MOVERS_WEIGHTS, rankMovers, stabilizeMoversRanking, type MoversScore } from "@/lib/movers-engine";
 import { analyzeMarket } from "@/lib/market-intelligence";
 import { LaunchPanel } from "./LaunchPanel";
@@ -46,6 +46,7 @@ import { TerminalSearchOverlay } from "./TerminalSearchOverlay";
 import { TerminalPositionWatchStrip, type PositionWatchStripSettings } from "./TerminalPositionWatchStrip";
 import { FloatingPnlWidget } from "./FloatingPnlWidget";
 import { TerminalCategorySettings } from "./TerminalCategorySettings";
+import { TransactionLifecycleTracker } from "./TransactionLifecycleTracker";
 import { TerminalSidecar, type SidecarPlacement } from "./TerminalSidecar";
 import { ProfileMenu } from "./ProfileMenu";
 import { useOutsideDismiss } from "./useOutsideDismiss";
@@ -194,11 +195,11 @@ function RankedColumnHeader({
       <div className="trench-column-controls">
         <label className="column-market-search"><Search size={15} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search" /></label>
         <QuickAmountEditor value={settings.quickBuyEth} onCommit={(quickBuyEth) => onSettingsChange({ ...settings, quickBuyEth })} label={title} />
-        {kind === "movers" && <button className={algorithmOpen ? "active movers-algo-button" : "movers-algo-button"} onClick={() => setAlgorithmOpen(!algorithmOpen)} title="How PerpHood Movers is ranked"><Info size={14} /></button>}
+        {kind === "movers" && <button className={algorithmOpen ? "active movers-algo-button" : "movers-algo-button"} onClick={() => setAlgorithmOpen(!algorithmOpen)} title="How Leverage X Movers is ranked"><Info size={14} /></button>}
         <TerminalCategorySettings category={kind} label={title} value={settings} onChange={onSettingsChange} />
       </div>
       {kind === "movers" && algorithmOpen && <div className="movers-algo-popover">
-        <header><strong>PerpHood Movers score</strong><small>Fast participation beats one-wallet volume.</small></header>
+        <header><strong>Leverage X Movers score</strong><small>Fast participation beats one-wallet volume.</small></header>
         <div className="movers-algo-grid">
           <span><b>{MOVERS_WEIGHTS.transactionVelocity}%</b>Transactions</span>
           <span><b>{MOVERS_WEIGHTS.netWethInflow}%</b>Net WETH</span>
@@ -256,7 +257,7 @@ function QuickAmountEditor({ value, onCommit, label }: { value: number; onCommit
 
 export function TerminalHub() {
   const params = useSearchParams();
-  const { tokens, events, balanceEth, positions, buySpot, openPosition, connected, toggleWallet } = useMarkets();
+  const { tokens, events, balanceEth, positions, pendingOrders, chainExecution, buySpot, openPosition, closePosition, cancelOrder, connected, toggleWallet } = useMarkets();
   const userState = useUserState();
   const { mode: renderMode, setMode: setRenderMode, effectiveFps, measuredFps, quality, hardwareLabel, manualOverdrive } = useTerminalPerformance();
   const [openPanels, setOpenPanels] = useState<DrawerKind[]>(() => {
@@ -285,6 +286,8 @@ export function TerminalHub() {
   const [stripSettings, setStripSettings] = useState<PositionWatchStripSettings>({ showPositions: true, showWatchlist: true, showPnl: true, showMarketCap: true, maxPositions: 8, maxWatchlist: 10, compact: false });
   const [bottomDockSettings, setBottomDockSettings] = useState({ showConnection: true, showLaunch: true, showEngine: true, showLabels: true, compact: false });
   const [bottomSettingsOpen, setBottomSettingsOpen] = useState(false);
+  const [emergencyOpen, setEmergencyOpen] = useState(false);
+  const [quickActionsDisabled, setQuickActionsDisabled] = useState(false);
   const [pnlWidgetOpen, setPnlWidgetOpen] = useState(true);
   const [rankingTick, setRankingTick] = useState(0);
   const moverOrderRef = useRef<MoversScore[]>([]);
@@ -293,10 +296,14 @@ export function TerminalHub() {
   const settingsPopoverRef = useRef<HTMLDivElement>(null);
   const bottomSettingsButtonRef = useRef<HTMLButtonElement>(null);
   const bottomSettingsPopoverRef = useRef<HTMLDivElement>(null);
+  const emergencyButtonRef = useRef<HTMLButtonElement>(null);
+  const emergencyPopoverRef = useRef<HTMLDivElement>(null);
   const closeSettings = useCallback(() => setSettingsOpen(false), []);
   useOutsideDismiss([settingsButtonRef, settingsPopoverRef], closeSettings, settingsOpen);
   const closeBottomSettings = useCallback(() => setBottomSettingsOpen(false), []);
   useOutsideDismiss([bottomSettingsButtonRef, bottomSettingsPopoverRef], closeBottomSettings, bottomSettingsOpen);
+  const closeEmergency = useCallback(() => setEmergencyOpen(false), []);
+  useOutsideDismiss([emergencyButtonRef, emergencyPopoverRef], closeEmergency, emergencyOpen);
 
   useEffect(() => {
     const timer = window.setInterval(() => setRankingTick((value) => value + 1), 1000);
@@ -507,11 +514,17 @@ export function TerminalHub() {
   const openTrade = async (token: Token, side: Direction, sourceCategory?: TerminalCategoryKey) => {
     const inferredCategory: TerminalCategoryKey = sourceCategory ?? (token.launchState === "graduated" || token.graduation >= 100 ? "migrated" : token.launchedMinutesAgo <= 30 ? "new" : "cooking");
     const executionProfile = categorySettings[inferredCategory];
-    const contractExecution = (token.chainDeploymentMode === "anvil-v43" || token.chainDeploymentMode === "anvil-v45" || token.chainDeploymentMode === "robinhood-testnet-v54" || token.chainDeploymentMode === "robinhood-mainnet-v54") && Boolean(token.chainMarketAddress);
+    const executionPreset = getActiveExecutionPreset(executionProfile);
+    const contractExecution = (token.chainDeploymentMode === "anvil-v43" || token.chainDeploymentMode === "anvil-v45" || token.chainDeploymentMode === "robinhood-testnet-v54" || token.chainDeploymentMode === "robinhood-mainnet-v54" || token.chainDeploymentMode === "robinhood-testnet-v55" || token.chainDeploymentMode === "robinhood-mainnet-v55") && Boolean(token.chainMarketAddress);
 
     if (pendingQuickAction) return;
+    if (quickActionsDisabled) {
+      setBuyNotice("Quick actions are disabled from Emergency Controls. Re-enable them before submitting a preset trade.");
+      window.setTimeout(() => setBuyNotice(""), 3400);
+      return;
+    }
 
-    const v54SpotOnly = token.chainDeploymentMode === "robinhood-testnet-v54" || token.chainDeploymentMode === "robinhood-mainnet-v54";
+    const v54SpotOnly = token.chainDeploymentMode === "robinhood-testnet-v54" || token.chainDeploymentMode === "robinhood-mainnet-v54" || token.chainDeploymentMode === "robinhood-testnet-v55" || token.chainDeploymentMode === "robinhood-mainnet-v55";
     if (v54SpotOnly && side !== "buy") {
       setBuyNotice(`${token.symbol} is live for real spot trading. Long and Short unlock only after the audited BattlePool deployment.`);
       window.setTimeout(() => setBuyNotice(""), 3600);
@@ -544,18 +557,42 @@ export function TerminalHub() {
     try {
       if (side === "buy") {
         const amount = executionProfile.quickBuyEth;
-        await buySpot(token.slug, amount, executionProfile.feePreset === "economy" ? "maker" : "market");
-        setBuyNotice(`Bought ${amount.toFixed(3)} ETH of ${token.symbol} · stayed on ${workspaceView === "movers" ? "Movers" : "Markets"}`);
+        await buySpot(token.slug, amount, executionPreset.profile.executionRoute === "standard" ? "maker" : "market", { slippageBps: Math.round(executionPreset.profile.buySlippagePercent * 100), maxNetworkFeeEth: executionPreset.profile.maxNetworkFeeEth, maxPriceImpactPercent: executionPreset.profile.maxPriceImpactPercent });
+        setBuyNotice(`Bought ${amount.toFixed(3)} ETH of ${token.symbol} · ${executionPreset.key} ${executionPreset.profile.executionRoute} · stayed on ${workspaceView === "movers" ? "Movers" : "Markets"}`);
       } else {
         const preset = getQuickPerpPreset(executionProfile, side);
-        await openPosition(token.slug, side, preset.leverage, preset.collateralEth, { feeTier: executionProfile.feePreset === "economy" ? "maker" : "market" });
-        setBuyNotice(`Opened ${preset.collateralEth.toFixed(3)} ETH ${preset.leverage}× ${side.toUpperCase()} on ${token.symbol} · preset sent`);
+        await openPosition(token.slug, side, preset.leverage, preset.collateralEth, { feeTier: executionPreset.profile.executionRoute === "standard" ? "maker" : "market" });
+        setBuyNotice(`Opened ${preset.collateralEth.toFixed(3)} ETH ${preset.leverage}× ${side.toUpperCase()} on ${token.symbol} · ${executionPreset.key} preset sent`);
       }
     } catch (error) {
       setBuyNotice(error instanceof Error ? error.message : `Quick ${side} failed`);
     } finally {
       setPendingQuickAction(null);
       window.setTimeout(() => setBuyNotice(""), 3200);
+    }
+  };
+
+  const cancelAllOrders = async () => {
+    setEmergencyOpen(false);
+    try {
+      for (const order of pendingOrders) await cancelOrder(order.id);
+      setBuyNotice(pendingOrders.length ? `Cancelled ${pendingOrders.length} open order${pendingOrders.length === 1 ? "" : "s"}.` : "No open orders to cancel.");
+    } catch (error) {
+      setBuyNotice(error instanceof Error ? error.message : "Cancel All failed.");
+    } finally {
+      window.setTimeout(() => setBuyNotice(""), 3600);
+    }
+  };
+
+  const closeAllPositions = async () => {
+    setEmergencyOpen(false);
+    try {
+      for (const position of positions) await closePosition(position.id, 1);
+      setBuyNotice(positions.length ? `Submitted full closes for ${positions.length} position${positions.length === 1 ? "" : "s"}.` : "No open positions to close.");
+    } catch (error) {
+      setBuyNotice(error instanceof Error ? error.message : "Close All failed.");
+    } finally {
+      window.setTimeout(() => setBuyNotice(""), 4200);
     }
   };
 
@@ -627,11 +664,11 @@ export function TerminalHub() {
     <main className={`terminal-hub-page ${leftPanels.length ? "has-left-docks" : ""} ${rightPanels.length ? "has-right-docks" : ""} ${compactMode ? "compact-mode" : "comfortable-mode"} ${showSignals ? "show-signals" : "hide-signals"}`}>
       <section className="perphood-command-bar">
         <div className="perphood-command-left">
-          <Link href="/" className="perphood-command-brand" aria-label="PERPHOOD home">
+          <Link href="/" className="perphood-command-brand" aria-label="LEVERAGE X home">
             <BrandMark size={38} />
-            <strong>PERPHOOD</strong>
+            <strong>LEVERAGE X</strong>
           </Link>
-          <nav className="perphood-workspace-tabs" aria-label="PerpHood views">
+          <nav className="perphood-workspace-tabs" aria-label="Leverage X views">
             <button className={workspaceView === "markets" ? "active" : ""} onClick={() => setWorkspaceView("markets")}>Markets</button>
             <button className={workspaceView === "movers" ? "active" : ""} onClick={() => setWorkspaceView("movers")}><TrendingUp size={15} />Movers</button>
           </nav>
@@ -651,7 +688,7 @@ export function TerminalHub() {
           <button ref={settingsButtonRef} className={settingsOpen ? "active terminal-settings-button" : "terminal-settings-button"} onClick={() => setSettingsOpen(!settingsOpen)} aria-label="Open terminal settings"><Settings2 size={17} /></button>
           {connected && <button onClick={() => ensurePanelOpen("positions")} className="header-fund-button perphood-fund-button"><Plus size={15}/><span>Fund</span></button>}
           <KeyButton compact className={connected ? "profile-key perphood-account-button" : "perphood-account-button"} onClick={handleWalletButton}>
-            {connected ? <><span className="profile-key-avatar">PH</span><span className="perphood-account-balance"><strong>{balanceEth.toFixed(3)} ETH</strong><small>Account</small></span></> : <><WalletCards size={17} />Connect Wallet</>}
+            {connected ? <><span className="profile-key-avatar">LX</span><span className="perphood-account-balance"><strong>{balanceEth.toFixed(3)} ETH</strong><small>Account</small></span></> : <><WalletCards size={17} />Connect Wallet</>}
           </KeyButton>
         </div>
         {settingsOpen && <div ref={settingsPopoverRef} className="terminal-settings-popover">
@@ -672,6 +709,7 @@ export function TerminalHub() {
         onTrade={(token, side) => { void openTrade(token, side); }}
       />
 
+      <TransactionLifecycleTracker execution={chainExecution} />
       {profileOpen && <ProfileMenu onClose={() => setProfileOpen(false)} onOpenPnl={() => setPnlWidgetOpen(true)} />}
       {buyNotice && <div className="terminal-buy-notice">{buyNotice}</div>}
       {pnlWidgetOpen && <FloatingPnlWidget onClose={() => setPnlWidgetOpen(false)} />}
@@ -689,8 +727,8 @@ export function TerminalHub() {
               const list = resolveColumn(kind);
               return <section className="trench-column" key={kind}>
                 <ColumnHeader kind={kind} title={columnTitle} subtitle={subtitle} count={list.length} query={queries[kind]} setQuery={(value) => setQueries((current) => ({ ...current, [kind]: value }))} sortMode={sortMode[kind]} setSortMode={(value) => setSortMode((current) => ({ ...current, [kind]: value }))} settings={categorySettings[kind]} onSettingsChange={(value) => updateCategorySettings(kind, value)} />
-                <div className="trench-token-scroll">{list.length ? list.map((token) => <TerminalTokenRow key={`${kind}-${token.slug}`} token={token} compactMode={compactMode} quickBuyEth={categorySettings[kind].quickBuyEth} quickLongPreset={getQuickPerpPreset(categorySettings[kind], "long")} quickShortPreset={getQuickPerpPreset(categorySettings[kind], "short")} pendingSide={pendingQuickAction?.slug === token.slug ? pendingQuickAction.side : null} quickActionsLocked={Boolean(pendingQuickAction)} onTrade={(market, side) => { void openTrade(market, side, kind); }} liked={likedTokens.includes(token.slug)} likes={likesFor(token, likedTokens.includes(token.slug))} onLike={() => setLikedTokens((current) => current.includes(token.slug) ? current.filter((slug) => slug !== token.slug) : [...current, token.slug])} />) : <div className="trench-empty"><Search size={22} /><strong>No live markets yet</strong><span>Connect the Robinhood Chain indexer or launch the first token. PERPHOOD will never invent market data.</span></div>}</div>
-                <footer className="trench-column-footer"><span><i />Awaiting feed</span><b>{list.length} markets</b><em>BUY {categorySettings[kind].quickBuyEth.toFixed(3)} · L {categorySettings[kind].quickLongEnabled ? `${categorySettings[kind].quickLongCollateralEth.toFixed(3)}@${categorySettings[kind].quickLongLeverage}×` : "OFF"} · S {categorySettings[kind].quickShortEnabled ? `${categorySettings[kind].quickShortCollateralEth.toFixed(3)}@${categorySettings[kind].quickShortLeverage}×` : "OFF"}</em></footer>
+                <div className="trench-token-scroll">{list.length ? list.map((token) => <TerminalTokenRow key={`${kind}-${token.slug}`} token={token} compactMode={compactMode} quickBuyEth={categorySettings[kind].quickBuyEth} quickLongPreset={getQuickPerpPreset(categorySettings[kind], "long")} quickShortPreset={getQuickPerpPreset(categorySettings[kind], "short")} pendingSide={pendingQuickAction?.slug === token.slug ? pendingQuickAction.side : null} quickActionsLocked={Boolean(pendingQuickAction)} onTrade={(market, side) => { void openTrade(market, side, kind); }} liked={likedTokens.includes(token.slug)} likes={likesFor(token, likedTokens.includes(token.slug))} onLike={() => setLikedTokens((current) => current.includes(token.slug) ? current.filter((slug) => slug !== token.slug) : [...current, token.slug])} />) : <div className="trench-empty"><Search size={22} /><strong>No live markets yet</strong><span>Connect the Robinhood Chain indexer or launch the first token. LEVERAGE X will never invent market data.</span></div>}</div>
+                <footer className="trench-column-footer"><span><i />Awaiting feed</span><b>{list.length} markets</b><em>{categorySettings[kind].activePreset} · BUY {categorySettings[kind].quickBuyEth.toFixed(3)} · L {categorySettings[kind].quickLongEnabled ? `${categorySettings[kind].quickLongCollateralEth.toFixed(3)}@${categorySettings[kind].quickLongLeverage}×` : "OFF"} · S {categorySettings[kind].quickShortEnabled ? `${categorySettings[kind].quickShortCollateralEth.toFixed(3)}@${categorySettings[kind].quickShortLeverage}×` : "OFF"}</em></footer>
               </section>;
             })}
           </section>
@@ -706,8 +744,8 @@ export function TerminalHub() {
               const quickAmount = profile.quickBuyEth;
               return <section className={`trench-column mover-rank-column ${kind}`} key={kind}>
                 <RankedColumnHeader kind={kind} title={columnTitle} subtitle={subtitle} count={list.length} query={moverQueries[kind]} setQuery={(value) => setMoverQueries((current) => ({ ...current, [kind]: value }))} settings={profile} onSettingsChange={(value) => updateCategorySettings(kind, value)} />
-                <div className="trench-token-scroll">{list.length ? list.map((token, index) => <div className="mover-ranked-row" key={`${kind}-${token.slug}`}><span className="mover-live-rank">#{index + 1}</span><TerminalTokenRow token={token} compactMode={compactMode} quickBuyEth={quickAmount} quickLongPreset={getQuickPerpPreset(profile, "long")} quickShortPreset={getQuickPerpPreset(profile, "short")} pendingSide={pendingQuickAction?.slug === token.slug ? pendingQuickAction.side : null} quickActionsLocked={Boolean(pendingQuickAction)} onTrade={(market, side) => { void openTrade(market, side, kind); }} liked={likedTokens.includes(token.slug)} likes={likesFor(token, likedTokens.includes(token.slug))} moverScore={moverScoreBySlug.get(token.slug)} onLike={() => setLikedTokens((current) => current.includes(token.slug) ? current.filter((slug) => slug !== token.slug) : [...current, token.slug])} /></div>) : <div className="trench-empty"><TrendingUp size={22} /><strong>No ranked markets yet</strong><span>Rankings appear as soon as the Robinhood Chain indexer publishes live PerpHood markets.</span></div>}</div>
-                <footer className="trench-column-footer"><span><i />{kind === "movers" ? "Score refresh · 1s" : "Live ranking"}</span><b>{list.length} markets</b><em>BUY {quickAmount.toFixed(3)} · L {profile.quickLongEnabled ? `${profile.quickLongCollateralEth.toFixed(3)}@${profile.quickLongLeverage}×` : "OFF"} · S {profile.quickShortEnabled ? `${profile.quickShortCollateralEth.toFixed(3)}@${profile.quickShortLeverage}×` : "OFF"}</em></footer>
+                <div className="trench-token-scroll">{list.length ? list.map((token, index) => <div className="mover-ranked-row" key={`${kind}-${token.slug}`}><span className="mover-live-rank">#{index + 1}</span><TerminalTokenRow token={token} compactMode={compactMode} quickBuyEth={quickAmount} quickLongPreset={getQuickPerpPreset(profile, "long")} quickShortPreset={getQuickPerpPreset(profile, "short")} pendingSide={pendingQuickAction?.slug === token.slug ? pendingQuickAction.side : null} quickActionsLocked={Boolean(pendingQuickAction)} onTrade={(market, side) => { void openTrade(market, side, kind); }} liked={likedTokens.includes(token.slug)} likes={likesFor(token, likedTokens.includes(token.slug))} moverScore={moverScoreBySlug.get(token.slug)} onLike={() => setLikedTokens((current) => current.includes(token.slug) ? current.filter((slug) => slug !== token.slug) : [...current, token.slug])} /></div>) : <div className="trench-empty"><TrendingUp size={22} /><strong>No ranked markets yet</strong><span>Rankings appear as soon as the Robinhood Chain indexer publishes live Leverage X markets.</span></div>}</div>
+                <footer className="trench-column-footer"><span><i />{kind === "movers" ? "Score refresh · 1s" : "Live ranking"}</span><b>{list.length} markets</b><em>{profile.activePreset} · BUY {quickAmount.toFixed(3)} · L {profile.quickLongEnabled ? `${profile.quickLongCollateralEth.toFixed(3)}@${profile.quickLongLeverage}×` : "OFF"} · S {profile.quickShortEnabled ? `${profile.quickShortCollateralEth.toFixed(3)}@${profile.quickShortLeverage}×` : "OFF"}</em></footer>
               </section>;
             })}
           </section>
@@ -729,7 +767,15 @@ export function TerminalHub() {
         <div className="terminal-tool-right">
           {TERMINAL_TOOLS.filter(([kind, , , side]) => side === "right" && kind !== "launch").map(([kind, label, Icon]) => <button key={kind} className={openPanels.includes(kind) ? "active" : ""} onClick={() => openTool(kind)} title={label}><Icon size={14} /><b>{label}</b></button>)}
           <button className={pnlWidgetOpen ? "active" : ""} onClick={() => setPnlWidgetOpen((open) => !open)} title="Show floating live PNL"><CircleDollarSign size={14} /><b>Live PNL</b></button>
-          <button onClick={() => setOpenPanels([])} title="Close all sidecars"><X size={14} /><b>Close all</b></button>
+          <button onClick={() => setOpenPanels([])} title="Close all sidecars"><X size={14} /><b>Close panels</b></button>
+          <button ref={emergencyButtonRef} className={emergencyOpen || quickActionsDisabled ? "active" : ""} onClick={() => setEmergencyOpen((open) => !open)} title="Emergency trading controls"><ShieldCheck size={14} /><b>Emergency</b></button>
+          {emergencyOpen && <div ref={emergencyPopoverRef} className="v55-emergency-menu">
+            <header><strong>Emergency Controls</strong><small>These controls never fabricate a cancellation or close. Each live order or position must confirm through its authoritative execution path.</small></header>
+            <button className={quickActionsDisabled ? "active" : ""} onClick={() => setQuickActionsDisabled((disabled) => !disabled)}><span>{quickActionsDisabled ? "Enable quick actions" : "Disable quick actions"}</span><b>{quickActionsDisabled ? "LOCKED" : "LIVE"}</b></button>
+            <button className="danger" onClick={() => void cancelAllOrders()}><span>Cancel all orders</span><b>{pendingOrders.length}</b></button>
+            <button className="danger" onClick={() => void closeAllPositions()}><span>Close all positions</span><b>{positions.length}</b></button>
+            <Link href="/funding"><span>Revoke trading session</span><b>OPEN</b></Link>
+          </div>}
           <button ref={bottomSettingsButtonRef} className={bottomSettingsOpen ? "active" : ""} onClick={() => setBottomSettingsOpen((open) => !open)} title="Bottom bar settings"><Settings2 size={14} /></button>
           {bottomSettingsOpen && <div ref={bottomSettingsPopoverRef} className="bottom-dock-settings-popover">
             <header><strong>Bottom utility bar</strong><small>Customize the Padre-style tool dock</small></header>

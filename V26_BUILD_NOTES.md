@@ -1,6 +1,6 @@
-# PERPHOOD V26 — Compact Pro-Terminal Density
+# LEVERAGE X V26 — Compact Pro-Terminal Density
 
-V26 is a visual-density and information-hierarchy pass based on the strongest interaction patterns visible in modern memecoin terminals. It does not copy competitor branding, assets, or proprietary market data. PERPHOOD keeps its own #333 identity, Robinhood-green OG system, BattlePool execution model, and Buy × Long × Sell × Short controls.
+V26 is a visual-density and information-hierarchy pass based on the strongest interaction patterns visible in modern memecoin terminals. It does not copy competitor branding, assets, or proprietary market data. LEVERAGE X keeps its own #333 identity, Robinhood-green OG system, BattlePool execution model, and Buy × Long × Sell × Short controls.
 
 ## Changes
 

@@ -18,7 +18,7 @@ const PRESETS: Record<V48ChainEnvironment, V48ChainConfig> = {
   local: {
     environment: "local",
     chainId: 31_337,
-    name: "PERPHOOD Local Anvil",
+    name: "LEVERAGE X Local Anvil",
     nativeSymbol: "ETH",
     publicRpcUrls: ["http://127.0.0.1:8545"],
     explorerUrl: "",

@@ -1,4 +1,4 @@
-# PERPHOOD V54 — Real Robinhood Chain Launch Path
+# LEVERAGE X V54 — Real Robinhood Chain Launch Path
 
 V54 removes bundled token/demo market data from the hosted product and introduces the first real connected-wallet minting path.
 
@@ -9,7 +9,7 @@ V54 removes bundled token/demo market data from the hosted product and introduce
 3. The browser switches the creator's injected EVM wallet to Robinhood Chain testnet (46630) or, only when explicitly enabled, mainnet (4663).
 4. The browser estimates deployment gas against the configured V54 factory.
 5. The creator's total launch budget remains exactly 0.001 ETH. The submitted creator buy equals 0.001 ETH minus the transaction's configured maximum gas cost.
-6. The creator wallet calls `PerpHoodLaunchFactoryV54.createMarket` directly. No server-held creator key is used.
+6. The creator wallet calls `Leverage XLaunchFactoryV54.createMarket` directly. No server-held creator key is used.
 7. The factory deploys a fixed one-billion-supply ERC-20 and its native-ETH spot market in one transaction.
 8. The complete supply is minted once to the market. The creator receives only tokens bought by the genesis curve purchase.
 9. The server independently verifies the canonical receipt, factory event, deployed token identity, metadata URI/hash, creator, factory, market, and exact supply before writing the public launch registry.
@@ -17,11 +17,11 @@ V54 removes bundled token/demo market data from the hosted product and introduce
 
 ## Contracts
 
-- `contracts/src/PerpHoodLaunchFactoryV54.sol`
-  - `PerpHoodTokenV54`
-  - `PerpHoodSpotMarketV54`
-  - `PerpHoodLaunchFactoryV54`
-- `contracts/test/PerpHoodLaunchFactoryV54.t.sol`
+- `contracts/src/Leverage XLaunchFactoryV54.sol`
+  - `Leverage XTokenV54`
+  - `Leverage XSpotMarketV54`
+  - `Leverage XLaunchFactoryV54`
+- `contracts/test/Leverage XLaunchFactoryV54.t.sol`
 
 The V54 token is a conventional ERC-20 with `name`, `symbol`, `decimals`, `totalSupply`, `balanceOf`, `allowance`, `approve`, `transfer`, and `transferFrom`. It has no owner mint, transfer tax, blacklist, creator allocation, or privileged token withdrawal.
 
@@ -46,7 +46,7 @@ V54 intentionally proves real minting and spot trading before connecting the lev
 - `/api/v54/launches`
 - `/api/v54/discovery`
 
-The discovery feed exposes standard token, factory, market, creator, metadata, transfer, launch, and trade information for external indexers. This improves indexability but does not guarantee that a third-party platform understands PERPHOOD's custom bonding curve.
+The discovery feed exposes standard token, factory, market, creator, metadata, transfer, launch, and trade information for external indexers. This improves indexability but does not guarantee that a third-party platform understands LEVERAGE X's custom bonding curve.
 
 ## Production behavior
 

@@ -13,7 +13,7 @@ export type V52CompletionItem = {
 };
 
 /**
- * Honest source-of-truth inventory for the current PERPHOOD build.
+ * Honest source-of-truth inventory for the current LEVERAGE X build.
  * "Complete" means the current repository implements and guards the behavior;
  * it does not mean audited or approved for public funds.
  */

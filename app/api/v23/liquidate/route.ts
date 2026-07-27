@@ -61,7 +61,7 @@ export async function POST(request: Request) {
     }
     if (cascade.totalBadDebtEth > 1e-10) throw new Error("Liquidation batch would realize bad debt and was halted.");
 
-    const intentHash = keccak256(`PERPHOOD_V23_LIQUIDATION|${chain.sequence + 1}|${chain.stateHash}|${Date.now()}`);
+    const intentHash = keccak256(`LEVERAGE X_V23_LIQUIDATION|${chain.sequence + 1}|${chain.stateHash}|${Date.now()}`);
     const positionsRoot = buildEngineStateRoot("positions", cascade.next, cascade.remainingPositions, intentHash);
     const balancesRoot = buildEngineStateRoot("balances", cascade.next, cascade.remainingPositions, intentHash);
     const priceEth = battlePriceEth(cascade.next);

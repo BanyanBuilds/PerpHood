@@ -1,4 +1,4 @@
-# PERPHOOD V17 — Persistent Terminal Pivot
+# LEVERAGE X V17 — Persistent Terminal Pivot
 
 - `/` is now the terminal and home experience.
 - Launch, positions, alerts, watchlists, wallets, and settings open as terminal drawers.

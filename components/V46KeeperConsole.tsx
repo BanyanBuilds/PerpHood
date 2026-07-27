@@ -63,7 +63,7 @@ export function V46KeeperConsole() {
 
   return <main className="v46-keeper-page">
     <header className="v46-keeper-hero">
-      <div><span><ShieldCheck size={18} />PERPHOOD V46</span><h1>Order &amp; Keeper Network</h1><p>Durable signed orders, trigger evaluation, sponsored settlement, failover, and permissionless BattlePool liquidations.</p></div>
+      <div><span><ShieldCheck size={18} />LEVERAGE X V46</span><h1>Order &amp; Keeper Network</h1><p>Durable signed orders, trigger evaluation, sponsored settlement, failover, and permissionless BattlePool liquidations.</p></div>
       <div className={healthy ? "healthy" : "offline"}>{healthy ? <CheckCircle2 size={18} /> : <XCircle size={18} />}<span><b>{healthy ? "KEEPER READY" : "KEEPER OFFLINE"}</b><small>{String(status?.mode ?? "No status")}</small></span></div>
     </header>
 

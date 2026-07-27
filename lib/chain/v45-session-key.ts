@@ -115,7 +115,7 @@ export async function v45PublicKeyHash(publicJwk: JsonWebKey) {
 export function deriveV45SessionId(owner: string, keyHash: Hex) {
   const normalizedOwner = normalizeAddress(owner);
   const normalizedHash = normalizeBytes32(keyHash, "public-key hash");
-  return keccak256(new TextEncoder().encode(`PERPHOOD_SESSION_V45|${normalizedOwner}|${normalizedHash}`));
+  return keccak256(new TextEncoder().encode(`LEVERAGE X_SESSION_V45|${normalizedOwner}|${normalizedHash}`));
 }
 
 export async function createV45SessionKeyMaterial(): Promise<V45SessionKeyMaterial> {

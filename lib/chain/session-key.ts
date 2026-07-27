@@ -115,7 +115,7 @@ export async function publicKeyHash(publicJwk: JsonWebKey) {
 export function deriveSessionId(owner: string, keyHash: Hex) {
   const normalizedOwner = normalizeAddress(owner);
   const normalizedHash = normalizeBytes32(keyHash, "public-key hash");
-  return keccak256(new TextEncoder().encode(`PERPHOOD_SESSION_V23|${normalizedOwner}|${normalizedHash}`));
+  return keccak256(new TextEncoder().encode(`LEVERAGE X_SESSION_V23|${normalizedOwner}|${normalizedHash}`));
 }
 
 export async function createSessionKeyMaterial(): Promise<SessionKeyMaterial> {

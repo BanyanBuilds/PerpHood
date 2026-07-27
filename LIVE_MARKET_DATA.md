@@ -1,6 +1,6 @@
-# PERPHOOD V16 Live Market Data Contract
+# LEVERAGE X V16 Live Market Data Contract
 
-PERPHOOD does not generate or seed candles. The chart is empty until a real historical or live trade source is configured.
+LEVERAGE X does not generate or seed candles. The chart is empty until a real historical or live trade source is configured.
 
 ## WebSocket
 
@@ -22,7 +22,7 @@ Accepted trade message fields:
 
 ## Historical 1-second candles
 
-Set `NEXT_PUBLIC_MARKET_HISTORY_URL`. PERPHOOD calls:
+Set `NEXT_PUBLIC_MARKET_HISTORY_URL`. LEVERAGE X calls:
 
 `GET <url>?market=<slug>&interval=1s&limit=3000`
 

@@ -1,4 +1,4 @@
-# PERPHOOD V35 — Complete Coin Trading Workspace
+# LEVERAGE X V35 — Complete Coin Trading Workspace
 
 V35 turns the selected-token route into the primary professional trading workspace rather than a loose collection of market widgets.
 
@@ -60,4 +60,4 @@ Spot holdings support partial or complete execution against the actual shared po
 
 ## Visual system
 
-The selected-token workspace now uses the mandatory dark #333-adjacent PerpHood terminal language with readable 11–15 px working typography, sharper panels, and borders reserved for real workspace boundaries and interactive controls.
+The selected-token workspace now uses the mandatory dark #333-adjacent Leverage X terminal language with readable 11–15 px working typography, sharper panels, and borders reserved for real workspace boundaries and interactive controls.

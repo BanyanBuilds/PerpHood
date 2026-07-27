@@ -1,6 +1,6 @@
-# PERPHOOD V28 — Official Gold Logo
+# LEVERAGE X V28 — Official Gold Logo
 
-V28 replaces the temporary feather mark with the user-provided gold PerpHood symbol.
+V28 replaces the temporary feather mark with the user-provided gold Leverage X symbol.
 
 ## Changes
 

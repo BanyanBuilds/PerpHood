@@ -152,7 +152,7 @@ export function TerminalPerformanceProvider({ children }: { children: ReactNode 
 
   const requestedFps = mode === "auto" ? autoTarget(displayHz, Math.min(cap, adaptiveCap)) : mode;
   // Auto respects the detected monitor and device tier. A manual target is intentionally
-  // uncapped: it drives PerpHood's chart/PNL interpolation loop at the requested rate even
+  // uncapped: it drives Leverage X's chart/PNL interpolation loop at the requested rate even
   // when the monitor can physically present fewer frames.
   const effectiveFps = Math.max(30, mode === "auto" ? Math.min(requestedFps, displayHz, cap) : requestedFps);
   const displayFps = Math.max(30, Math.min(effectiveFps, displayHz));

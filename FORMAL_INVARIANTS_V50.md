@@ -1,4 +1,4 @@
-# PERPHOOD V50 — Formal Invariants and Adversarial Settlement
+# LEVERAGE X V50 — Formal Invariants and Adversarial Settlement
 
 V50 turns the V49 settlement formulas into continuously enforced safety properties. The goal is not to claim that the system is mathematically perfect; the goal is to make every critical accounting assumption explicit, machine-checkable, reproducible, and difficult to accidentally weaken.
 

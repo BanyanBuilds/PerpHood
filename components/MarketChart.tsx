@@ -386,7 +386,7 @@ export function MarketChart({ token, onLiveSnapshot }: { token: Token; onLiveSna
             <span>O <b>{formatDisplay(displayedLatest?.open)}</b></span><span>H <b>{formatDisplay(displayedLatest?.high)}</b></span><span>L <b>{formatDisplay(displayedLatest?.low)}</b></span><span>C <b className={(displayedLatest?.close ?? 0) >= (displayedLatest?.open ?? 0) ? "positive" : "negative"}>{formatDisplay(displayedLatest?.close)}</b></span><span>VOL <b>{compact(displayedLatest?.volume)}</b></span>
           </div>}
           <div ref={ref} className="terminal-chart-canvas" />
-          {preferences.showWatermark && <div className="terminal-chart-watermark"><b>{token.symbol}</b><span>PERPHOOD · {preferences.range} · {preferences.displayMode === "marketcap" ? "MARKET CAP" : "TOKEN PRICE"}</span></div>}
+          {preferences.showWatermark && <div className="terminal-chart-watermark"><b>{token.symbol}</b><span>LEVERAGE X · {preferences.range} · {preferences.displayMode === "marketcap" ? "MARKET CAP" : "TOKEN PRICE"}</span></div>}
           {preferences.showLiquidationClusters && <div className="v37-liquidation-clusters" aria-label="Public liquidation clusters"><span className="short" style={{ top: "24%" }}><b>12 shorts</b><small>+7.8% MC</small></span><span className="long" style={{ top: "71%" }}><b>8 longs</b><small>−9.4% MC</small></span></div>}
           {(preferences.showDev || preferences.showSmart || preferences.showSnipers || preferences.showLiquidationClusters) && <div className="chart-wallet-markers" aria-label="Wallet intelligence markers">
             {preferences.showDev && <span className="wallet-mark dev" style={{ left: "18%", top: "63%" }}><b>D</b><em>DEV BUY</em></span>}

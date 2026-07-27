@@ -97,16 +97,16 @@ export function MarketScreen({ slug }: { slug: string }) {
 
   const share = async () => {
     const url = window.location.href;
-    if (navigator.share) await navigator.share({ title: `${token.symbol} on PerpHood`, text: `Trade ${token.symbol} on PerpHood.`, url });
+    if (navigator.share) await navigator.share({ title: `${token.symbol} on Leverage X`, text: `Trade ${token.symbol} on Leverage X.`, url });
     else await navigator.clipboard.writeText(url);
   };
 
-  if (!exists) return <main className="market-unavailable page-shell"><section className="empty-state glass-panel"><span>◎</span><h1>Market unavailable</h1><p>This market is not available from the connected Robinhood Chain data source.</p><Link href="/">Return to PerpHood</Link></section></main>;
+  if (!exists) return <main className="market-unavailable page-shell"><section className="empty-state glass-panel"><span>◎</span><h1>Market unavailable</h1><p>This market is not available from the connected Robinhood Chain data source.</p><Link href="/">Return to Leverage X</Link></section></main>;
 
   return <main className="terminal-page market-workspace-page v37-clean-chart-page">
     <div className="terminal-pair-bar market-workspace-commandbar v37-commandbar">
       <div className="terminal-pair-left">
-        <Link href="/" className="terminal-back" aria-label="Back to PerpHood"><ArrowLeft size={17} /></Link>
+        <Link href="/" className="terminal-back" aria-label="Back to Leverage X"><ArrowLeft size={17} /></Link>
         <TokenAvatar token={token} size="sm" />
         <span className="terminal-pair-name"><strong>{token.symbol}<OgBadge token={token} compact /><em>/WETH</em></strong><small>{token.name}</small></span>
         <span className="terminal-live-price"><b>${liveSnapshot.price.toFixed(10)}</b><small className={token.change24h >= 0 ? "positive" : "negative"}>{percent(token.change24h)}</small></span>

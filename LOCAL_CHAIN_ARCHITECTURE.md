@@ -1,8 +1,8 @@
-# PERPHOOD V21 local-chain architecture
+# LEVERAGE X V21 local-chain architecture
 
 ## Purpose
 
-V21 proves the boundary between PERPHOOD's ultra-fast deterministic execution layer and conservative on-chain custody.
+V21 proves the boundary between LEVERAGE X's ultra-fast deterministic execution layer and conservative on-chain custody.
 
 The local contract does not yet recompute the complete nonlinear BattleCurve. Instead, it enforces the properties that cannot be negotiable even while execution remains sequencer-driven:
 

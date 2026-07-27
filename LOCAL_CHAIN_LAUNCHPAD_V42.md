@@ -50,7 +50,7 @@ Open:
 - Chain sandbox dashboard: `http://localhost:3000/admin/launchpad/sandbox`
 - Lifecycle console: `http://localhost:3000/admin/launchpad`
 
-In the Launcher funding step, choose **Anvil contract**. The wallet submits the creator-buy remainder to the deployed V42 factory. The browser mirrors the confirmed market address, token address, creator address, block number, and transaction hash into the PerpHood terminal record.
+In the Launcher funding step, choose **Anvil contract**. The wallet submits the creator-buy remainder to the deployed V42 factory. The browser mirrors the confirmed market address, token address, creator address, block number, and transaction hash into the Leverage X terminal record.
 
 ## Safety boundary
 

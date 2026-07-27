@@ -79,7 +79,7 @@ import type { V46StoredOrder } from "@/lib/chain/v46-order";
 import { useUserState } from "./UserStateProvider";
 import { injectedProvider } from "@/lib/chain/local-battle-client";
 import { fetchV54LaunchTokens } from "@/lib/v54-launch-registry";
-import { executeV54SpotBuy, executeV54SpotSell, readV54MarketRuntime } from "@/lib/chain/robinhood-v54";
+import { executeV54SpotBuy, executeV54SpotSell, readV54MarketRuntime, type V54ExecutionOptions } from "@/lib/chain/robinhood-v54";
 import type {
   ClosedTrade,
   LaunchTokenInput,
@@ -224,8 +224,8 @@ function computeRiskScore(token: Token) {
 }
 
 export type ChainExecutionState = {
-  mode: "browser-sim" | "v43-contract" | "v45-account" | "v45-session" | "v54-spot";
-  phase: "idle" | "wallet" | "pending" | "confirmed" | "error";
+  mode: "browser-sim" | "v43-contract" | "v45-account" | "v45-session" | "v54-spot" | "v55-spot";
+  phase: "idle" | "quote" | "wallet" | "pending" | "confirmed" | "error";
   action?: string;
   slug?: string;
   account?: string;
@@ -242,7 +242,7 @@ function isContractMarket(token: Token) {
 }
 
 function isV54SpotMarket(token: Token) {
-  return (token.chainDeploymentMode === "robinhood-testnet-v54" || token.chainDeploymentMode === "robinhood-mainnet-v54")
+  return (token.chainDeploymentMode === "robinhood-testnet-v54" || token.chainDeploymentMode === "robinhood-mainnet-v54" || token.chainDeploymentMode === "robinhood-testnet-v55" || token.chainDeploymentMode === "robinhood-mainnet-v55")
     && /^0x[0-9a-fA-F]{40}$/.test(token.chainMarketAddress ?? "")
     && /^0x[0-9a-fA-F]{40}$/.test(token.chainTokenAddress ?? "");
 }
@@ -313,7 +313,7 @@ type MarketContextValue = {
   toggleWatchlist: (slug: string) => void;
   commitToAuction: (slug: string, amountEth: number) => number;
   openPosition: (slug: string, direction: PositionDirection, leverage: number, collateral: number, options?: OpenPositionOptions) => Promise<Position>;
-  buySpot: (slug: string, amountEth: number, feeTier?: "market" | "maker") => Promise<SpotHolding>;
+  buySpot: (slug: string, amountEth: number, feeTier?: "market" | "maker", execution?: Pick<V54ExecutionOptions, "slippageBps" | "maxNetworkFeeEth" | "maxPriceImpactPercent">) => Promise<SpotHolding>;
   placeOrder: (order: Omit<PendingOrder, "id" | "createdAt">) => Promise<PendingOrder>;
   cancelOrder: (id: string) => Promise<void>;
   saveTradePreset: (preset: Omit<TradePreset, "id">) => TradePreset;
@@ -321,7 +321,7 @@ type MarketContextValue = {
   closePosition: (id: string, fraction?: number) => Promise<void>;
   updatePositionRisk: (id: string, options: OpenPositionOptions) => void;
   addCollateral: (id: string, amountEth: number) => Promise<void>;
-  sellHolding: (id: string, fraction?: number) => Promise<void>;
+  sellHolding: (id: string, fraction?: number, execution?: Pick<V54ExecutionOptions, "slippageBps" | "maxNetworkFeeEth" | "maxPriceImpactPercent">) => Promise<void>;
   launchToken: (input: LaunchTokenInput) => Token;
   getMigrationSnapshot: (token: Token) => MigrationSnapshot;
   migrateToken: (slug: string, forceTest?: boolean) => Token;
@@ -416,7 +416,7 @@ export function MarketProvider({ children }: { children: ReactNode }) {
       setBalanceEth(0);
       setConnected(false);
     } catch {
-      // Corrupt local storage should never prevent PERPHOOD from loading.
+      // Corrupt local storage should never prevent LEVERAGE X from loading.
     }
     setHydrated(true);
   }, []);
@@ -560,10 +560,10 @@ export function MarketProvider({ children }: { children: ReactNode }) {
   const beginChainExecution = useCallback((slug: string, action: string, mode: ChainExecutionState["mode"] = "v43-contract") => {
     setChainExecution({
       mode,
-      phase: mode === "v45-session" ? "pending" : "wallet",
+      phase: mode === "v45-session" ? "pending" : (mode === "v54-spot" || mode === "v55-spot") ? "quote" : "wallet",
       action,
       slug,
-      message: mode === "v45-session" ? "Signing the local session intent and sending it to the sponsored sequencer." : mode === "v45-account" ? "Confirm the bounded V45 account action in your wallet." : "Confirm the local-chain transaction in your wallet.",
+      message: mode === "v45-session" ? "Signing the local session intent and sending it to the sponsored sequencer." : mode === "v45-account" ? "Confirm the bounded V45 account action in your wallet." : (mode === "v54-spot" || mode === "v55-spot") ? "Reading the authoritative curve and preparing a fresh executable quote." : "Confirm the local-chain transaction in your wallet.",
       updatedAt: Date.now(),
     });
   }, []);
@@ -588,8 +588,8 @@ export function MarketProvider({ children }: { children: ReactNode }) {
     if (!hydrated) return;
     void refreshV54LaunchRegistry();
     const onLaunch = () => { void refreshV54LaunchRegistry(); };
-    window.addEventListener("perphood:v54-launch-confirmed", onLaunch);
-    return () => window.removeEventListener("perphood:v54-launch-confirmed", onLaunch);
+    window.addEventListener("leveragex:v55-launch-confirmed", onLaunch);
+    return () => window.removeEventListener("leveragex:v55-launch-confirmed", onLaunch);
   }, [hydrated, refreshV54LaunchRegistry]);
 
   useEffect(() => {
@@ -834,7 +834,7 @@ export function MarketProvider({ children }: { children: ReactNode }) {
         leverage: action === "long" || action === "short" ? [2, 5, 10, 20][Math.floor(Math.random() * 4)] : undefined,
         actor: ACTORS[Math.floor(Math.random() * ACTORS.length)],
       });
-      if (graduated) pushEvent({ slug: selected.slug, action: "graduation", amountEth: 0, marketCap: eventCap, actor: "PERPHOOD", note: "Permanent liquidity and risk limits expanded" });
+      if (graduated) pushEvent({ slug: selected.slug, action: "graduation", amountEth: 0, marketCap: eventCap, actor: "LEVERAGE X", note: "Permanent liquidity and risk limits expanded" });
       if (unlockedEvent) pushEvent({ slug: selected.slug, action: "oracle-guard", amountEth: 0, marketCap: eventCap, actor: "Risk engine", note: "Higher leverage tier unlocked" });
     }, delay);
     return () => window.clearInterval(interval);
@@ -1107,23 +1107,42 @@ export function MarketProvider({ children }: { children: ReactNode }) {
     return position;
   }, [balanceEth, beginChainExecution, confirmChainExecution, failChainExecution, getTradeQuote, pushEvent, riskSettings.maintenanceBufferPercent]);
 
-  const buySpot = useCallback(async (slug: string, amountEth: number, feeTier: "market" | "maker" = "market") => {
+  const buySpot = useCallback(async (slug: string, amountEth: number, feeTier: "market" | "maker" = "market", execution: Pick<V54ExecutionOptions, "slippageBps" | "maxNetworkFeeEth" | "maxPriceImpactPercent"> = {}) => {
     void feeTier;
     const token = normalizeToken(tokensRef.current.find((item) => item.slug === slug) ?? TOKENS[0]);
     if (isV54SpotMarket(token)) {
-      if (!token.chainMarketAddress || !token.chainTokenAddress) throw new Error("The V54 market registry is incomplete.");
-      const networkKey = token.chainDeploymentMode === "robinhood-mainnet-v54" ? "mainnet" as const : "testnet" as const;
+      if (!token.chainMarketAddress || !token.chainTokenAddress) throw new Error("The Leverage X V55 market registry is incomplete.");
+      const networkKey = (token.chainDeploymentMode === "robinhood-mainnet-v55" || token.chainDeploymentMode === "robinhood-mainnet-v54") ? "mainnet" as const : "testnet" as const;
       const action = `Buy ${token.symbol}`;
-      beginChainExecution(slug, action, "v54-spot");
+      beginChainExecution(slug, action, token.chainDeploymentMode?.endsWith("v55") ? "v55-spot" : "v54-spot");
       try {
-        const receipt = await executeV54SpotBuy(token.chainMarketAddress, token.chainTokenAddress, amountEth, networkKey);
+        const receipt = await executeV54SpotBuy(token.chainMarketAddress, token.chainTokenAddress, amountEth, networkKey, {
+          ...execution,
+          onQuote: ({ priceImpactPercent }) => setChainExecution({
+            mode: token.chainDeploymentMode?.endsWith("v55") ? "v55-spot" : "v54-spot", phase: "quote", action, slug, account: walletAddress,
+            message: `Fresh executable quote ready · ${priceImpactPercent.toFixed(2)}% price impact.`, updatedAt: Date.now(),
+          }),
+          onWalletRequest: () => setChainExecution({
+            mode: token.chainDeploymentMode?.endsWith("v55") ? "v55-spot" : "v54-spot", phase: "wallet", action, slug, account: walletAddress,
+            message: "Quote passed preset limits. Confirm the transaction in your wallet.", updatedAt: Date.now(),
+          }),
+          onSubmitted: (transactionHash) => setChainExecution({
+            mode: token.chainDeploymentMode?.endsWith("v55") ? "v55-spot" : "v54-spot", phase: "pending", action, slug, account: walletAddress, transactionHash,
+            message: "Transaction submitted. Waiting for Robinhood Chain block confirmation.", updatedAt: Date.now(),
+          }),
+        });
         const runtime = await readV54MarketRuntime(token.chainMarketAddress, networkKey);
         const nextToken = normalizeToken({
           ...token,
           priceEth: runtime.priceEth,
           marketCapEth: runtime.marketCapEth,
           realWethBalance: runtime.realEthBalance,
+          freeWethEth: runtime.realEthBalance,
           poolFeesEth: runtime.feesEth,
+          curveAllocation: 800_000_000,
+          curveTokenReserve: Math.max(0, 800_000_000 - runtime.soldTokens),
+          curveRealTokenReserve: Math.max(0, 800_000_000 - runtime.soldTokens),
+          circulatingSpotTokens: runtime.soldTokens,
           chainLastBlock: receipt.blockNumber,
           chainLastSyncedAt: Date.now(),
           uniqueTraders: Math.max(1, token.uniqueTraders ?? 1),
@@ -1138,7 +1157,7 @@ export function MarketProvider({ children }: { children: ReactNode }) {
           openedAt: Date.now(),
           tokenAmount: fromWad(receipt.tokenAmountWad, 18),
           entryPriceEth: fromWad(receipt.marginalPriceWad, 18),
-          executionMode: "v54-spot",
+          executionMode: token.chainDeploymentMode?.endsWith("v55") ? "v55-spot" : "v54-spot",
           chainMarketAddress: token.chainMarketAddress,
           chainTokenAddress: token.chainTokenAddress,
           chainTransactionHash: receipt.transactionHash,
@@ -1148,11 +1167,11 @@ export function MarketProvider({ children }: { children: ReactNode }) {
         setHoldings(holdingsRef.current);
         setWalletAddress(receipt.account);
         setConnected(true);
-        setChainExecution({ mode: "v54-spot", phase: "confirmed", action, slug, account: receipt.account, transactionHash: receipt.transactionHash, blockNumber: receipt.blockNumber, message: `${action} confirmed on Robinhood Chain in block ${receipt.blockNumber}.`, updatedAt: Date.now() });
-        pushEvent({ slug, action: "spot-buy", amountEth, marketCap: 0, actor: shortWallet(receipt.account), note: `${holding.tokenAmount?.toLocaleString(undefined, { maximumFractionDigits: 0 })} real ERC-20 tokens · ${runtime.marketCapEth.toFixed(6)} ETH market cap`, transactionHash: receipt.transactionHash, blockNumber: receipt.blockNumber, executionMode: "v54-spot" });
+        setChainExecution({ mode: token.chainDeploymentMode?.endsWith("v55") ? "v55-spot" : "v54-spot", phase: "confirmed", action, slug, account: receipt.account, transactionHash: receipt.transactionHash, blockNumber: receipt.blockNumber, message: `${action} confirmed on Robinhood Chain in block ${receipt.blockNumber}.`, updatedAt: Date.now() });
+        pushEvent({ slug, action: "spot-buy", amountEth, marketCap: 0, actor: shortWallet(receipt.account), note: `${holding.tokenAmount?.toLocaleString(undefined, { maximumFractionDigits: 0 })} real ERC-20 tokens · ${runtime.marketCapEth.toFixed(6)} ETH market cap`, transactionHash: receipt.transactionHash, blockNumber: receipt.blockNumber, executionMode: token.chainDeploymentMode?.endsWith("v55") ? "v55-spot" : "v54-spot" });
         return holding;
       } catch (error) {
-        throw failChainExecution(slug, action, error, "v54-spot");
+        throw failChainExecution(slug, action, error, token.chainDeploymentMode?.endsWith("v55") ? "v55-spot" : "v54-spot");
       }
     }
     if (isContractMarket(token)) {
@@ -1444,23 +1463,37 @@ export function MarketProvider({ children }: { children: ReactNode }) {
     pushEvent({ slug: position.slug, action: position.direction, amountEth: safeAmount, marketCap: poolPatch.cap, leverage: position.leverage, actor: "You", note: "Collateral added to the shared BattlePool ledger" });
   }, [balanceEth, pushEvent]);
 
-  const sellHolding = useCallback(async (id: string, fraction = 1) => {
+  const sellHolding = useCallback(async (id: string, fraction = 1, execution: Pick<V54ExecutionOptions, "slippageBps" | "maxNetworkFeeEth" | "maxPriceImpactPercent"> = {}) => {
     const holding = holdingsRef.current.find((item) => item.id === id);
     if (!holding) return;
     const token = normalizeToken(tokensRef.current.find((item) => item.slug === holding.slug) ?? TOKENS[0]);
-    if (holding.executionMode === "v54-spot" || isV54SpotMarket(token)) {
-      if (!holding.tokenAmount || !token.chainMarketAddress || !token.chainTokenAddress) throw new Error("The V54 spot holding is missing canonical token data.");
-      const networkKey = token.chainDeploymentMode === "robinhood-mainnet-v54" ? "mainnet" as const : "testnet" as const;
+    if ((holding.executionMode === "v54-spot" || holding.executionMode === "v55-spot") || isV54SpotMarket(token)) {
+      if (!holding.tokenAmount || !token.chainMarketAddress || !token.chainTokenAddress) throw new Error("The Leverage X spot holding is missing canonical token data.");
+      const networkKey = (token.chainDeploymentMode === "robinhood-mainnet-v55" || token.chainDeploymentMode === "robinhood-mainnet-v54") ? "mainnet" as const : "testnet" as const;
       const safeFraction = clamp(fraction, 0.01, 1);
       const tokenAmount = holding.tokenAmount * safeFraction;
       const investedClosed = holding.investedEth * safeFraction;
       const action = `Sell ${token.symbol}`;
-      beginChainExecution(holding.slug, action, "v54-spot");
+      beginChainExecution(holding.slug, action, token.chainDeploymentMode?.endsWith("v55") ? "v55-spot" : "v54-spot");
       try {
-        const receipt = await executeV54SpotSell(token.chainMarketAddress, token.chainTokenAddress, toWad(tokenAmount.toFixed(18)), networkKey);
+        const receipt = await executeV54SpotSell(token.chainMarketAddress, token.chainTokenAddress, toWad(tokenAmount.toFixed(18)), networkKey, {
+          ...execution,
+          onQuote: ({ priceImpactPercent }) => setChainExecution({
+            mode: token.chainDeploymentMode?.endsWith("v55") ? "v55-spot" : "v54-spot", phase: "quote", action, slug: holding.slug, account: walletAddress,
+            message: `Fresh executable sell quote ready · ${priceImpactPercent.toFixed(2)}% price impact.`, updatedAt: Date.now(),
+          }),
+          onWalletRequest: () => setChainExecution({
+            mode: token.chainDeploymentMode?.endsWith("v55") ? "v55-spot" : "v54-spot", phase: "wallet", action, slug: holding.slug, account: walletAddress,
+            message: "Quote passed preset limits. Approve and confirm through your wallet.", updatedAt: Date.now(),
+          }),
+          onSubmitted: (transactionHash) => setChainExecution({
+            mode: token.chainDeploymentMode?.endsWith("v55") ? "v55-spot" : "v54-spot", phase: "pending", action, slug: holding.slug, account: walletAddress, transactionHash,
+            message: "Sell submitted. Waiting for Robinhood Chain block confirmation.", updatedAt: Date.now(),
+          }),
+        });
         const runtime = await readV54MarketRuntime(token.chainMarketAddress, networkKey);
         const payout = fromWad(receipt.netEthWei, 18);
-        const nextToken = normalizeToken({ ...token, priceEth: runtime.priceEth, marketCapEth: runtime.marketCapEth, realWethBalance: runtime.realEthBalance, poolFeesEth: runtime.feesEth, chainLastBlock: receipt.blockNumber, chainLastSyncedAt: Date.now() });
+        const nextToken = normalizeToken({ ...token, priceEth: runtime.priceEth, marketCapEth: runtime.marketCapEth, realWethBalance: runtime.realEthBalance, freeWethEth: runtime.realEthBalance, poolFeesEth: runtime.feesEth, curveAllocation: 800_000_000, curveTokenReserve: Math.max(0, 800_000_000 - runtime.soldTokens), curveRealTokenReserve: Math.max(0, 800_000_000 - runtime.soldTokens), circulatingSpotTokens: runtime.soldTokens, chainLastBlock: receipt.blockNumber, chainLastSyncedAt: Date.now() });
         tokensRef.current = tokensRef.current.map((item) => item.slug === holding.slug ? nextToken : item);
         setTokens(tokensRef.current);
         if (safeFraction >= 0.999) holdingsRef.current = holdingsRef.current.filter((item) => item.id !== id);
@@ -1468,13 +1501,13 @@ export function MarketProvider({ children }: { children: ReactNode }) {
         setHoldings(holdingsRef.current);
         setWalletAddress(receipt.account);
         setConnected(true);
-        setChainExecution({ mode: "v54-spot", phase: "confirmed", action, slug: holding.slug, account: receipt.account, transactionHash: receipt.transactionHash, blockNumber: receipt.blockNumber, message: `${action} confirmed on Robinhood Chain in block ${receipt.blockNumber}.`, updatedAt: Date.now() });
+        setChainExecution({ mode: token.chainDeploymentMode?.endsWith("v55") ? "v55-spot" : "v54-spot", phase: "confirmed", action, slug: holding.slug, account: receipt.account, transactionHash: receipt.transactionHash, blockNumber: receipt.blockNumber, message: `${action} confirmed on Robinhood Chain in block ${receipt.blockNumber}.`, updatedAt: Date.now() });
         const closedSpot: ClosedTrade = { id: randomId(), slug: holding.slug, direction: "spot", leverage: 1, entryCap: 0, exitCap: 0, collateral: investedClosed, pnlEth: payout - investedClosed, roiPercent: investedClosed > 0 ? (payout - investedClosed) / investedClosed * 100 : 0, openedAt: holding.openedAt, closedAt: Date.now(), reason: "spot-sale" };
         setClosedTrades((current) => [closedSpot, ...current].slice(0, 10_000));
-        pushEvent({ slug: holding.slug, action: "spot-sell", amountEth: payout, marketCap: 0, actor: shortWallet(receipt.account), note: `${tokenAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })} real ERC-20 tokens sold · ${runtime.marketCapEth.toFixed(6)} ETH market cap`, transactionHash: receipt.transactionHash, blockNumber: receipt.blockNumber, executionMode: "v54-spot" });
+        pushEvent({ slug: holding.slug, action: "spot-sell", amountEth: payout, marketCap: 0, actor: shortWallet(receipt.account), note: `${tokenAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })} real ERC-20 tokens sold · ${runtime.marketCapEth.toFixed(6)} ETH market cap`, transactionHash: receipt.transactionHash, blockNumber: receipt.blockNumber, executionMode: token.chainDeploymentMode?.endsWith("v55") ? "v55-spot" : "v54-spot" });
         return;
       } catch (error) {
-        throw failChainExecution(holding.slug, action, error, "v54-spot");
+        throw failChainExecution(holding.slug, action, error, token.chainDeploymentMode?.endsWith("v55") ? "v55-spot" : "v54-spot");
       }
     }
     if ((holding.executionMode === "v43-contract" || holding.executionMode === "v45-account" || holding.executionMode === "v45-session") || isContractMarket(token) && holding.chainTransactionHash) {

@@ -24,7 +24,7 @@ function cardCanvas(payload: PnlSharePayload) {
   ctx.strokeRect(30, 30, 1140, 615);
   ctx.fillStyle = "#f3c941";
   ctx.font = "800 44px Arial";
-  ctx.fillText("PERPHOOD", 74, 105);
+  ctx.fillText("LEVERAGE X", 74, 105);
   ctx.fillStyle = "#9ca39e";
   ctx.font = "600 24px Arial";
   ctx.fillText(payload.subtitle, 74, 145);
@@ -58,10 +58,10 @@ function cardCanvas(payload: PnlSharePayload) {
 }
 
 export async function sharePnlToX(payload: PnlSharePayload) {
-  const text = `${payload.title}: ${payload.summary.totalEth >= 0 ? "+" : ""}${payload.summary.totalEth.toFixed(4)} ETH on @PerpHood\n${payload.periodLabel} · ${payload.summary.trades} trades · ${payload.summary.winRate.toFixed(1)}% win rate\n\nSpot × Long × Sell × Short. One BattlePool.`;
+  const text = `${payload.title}: ${payload.summary.totalEth >= 0 ? "+" : ""}${payload.summary.totalEth.toFixed(4)} ETH on @Leverage X\n${payload.periodLabel} · ${payload.summary.trades} trades · ${payload.summary.winRate.toFixed(1)}% win rate\n\nSpot × Long × Sell × Short. One BattlePool.`;
   const canvas = cardCanvas(payload);
   const blob = await new Promise<Blob>((resolve, reject) => canvas.toBlob((value) => value ? resolve(value) : reject(new Error("Could not generate card")), "image/png"));
-  const file = new File([blob], "perphood-pnl.png", { type: "image/png" });
+  const file = new File([blob], "leveragex-pnl.png", { type: "image/png" });
   const nav = navigator as Navigator & { canShare?: (data?: ShareData) => boolean };
   if (navigator.share && nav.canShare?.({ files: [file] })) {
     await navigator.share({ title: payload.title, text, files: [file] });
@@ -70,7 +70,7 @@ export async function sharePnlToX(payload: PnlSharePayload) {
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = url;
-  anchor.download = "perphood-pnl.png";
+  anchor.download = "leveragex-pnl.png";
   anchor.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
   window.open(`https://x.com/intent/post?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");

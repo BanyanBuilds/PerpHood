@@ -1,4 +1,4 @@
-# PERPHOOD V23 validation report
+# LEVERAGE X V23 validation report
 
 Validation date: 2026-07-24
 

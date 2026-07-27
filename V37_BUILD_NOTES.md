@@ -1,8 +1,8 @@
-# PERPHOOD V37 build notes
+# LEVERAGE X V37 build notes
 
 ## Product rule
 
-The selected-coin page follows Padre's overall information architecture and spacing, while the chart follows GMGN's configurable wallet-intelligence model. PerpHood keeps its own Buy × Sell × Long × Short BattlePool execution and liquidation overlays.
+The selected-coin page follows Padre's overall information architecture and spacing, while the chart follows GMGN's configurable wallet-intelligence model. Leverage X keeps its own Buy × Sell × Long × Short BattlePool execution and liquidation overlays.
 
 ## Default screen
 

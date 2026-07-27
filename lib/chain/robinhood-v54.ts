@@ -36,7 +36,7 @@ export const ROBINHOOD_NETWORKS: Record<RobinhoodNetworkKey, RobinhoodNetwork> =
     chainHex: "0xb626",
     rpcUrl: TESTNET_RPC,
     explorerUrl: "https://explorer.testnet.chain.robinhood.com",
-    factoryAddress: process.env.NEXT_PUBLIC_V54_TESTNET_FACTORY_ADDRESS ?? "",
+    factoryAddress: process.env.NEXT_PUBLIC_V55_TESTNET_FACTORY_ADDRESS ?? process.env.NEXT_PUBLIC_V54_TESTNET_FACTORY_ADDRESS ?? "",
   },
   mainnet: {
     key: "mainnet",
@@ -45,7 +45,7 @@ export const ROBINHOOD_NETWORKS: Record<RobinhoodNetworkKey, RobinhoodNetwork> =
     chainHex: "0x1237",
     rpcUrl: MAINNET_RPC,
     explorerUrl: "https://robinhoodchain.blockscout.com",
-    factoryAddress: process.env.NEXT_PUBLIC_V54_MAINNET_FACTORY_ADDRESS ?? "",
+    factoryAddress: process.env.NEXT_PUBLIC_V55_MAINNET_FACTORY_ADDRESS ?? process.env.NEXT_PUBLIC_V54_MAINNET_FACTORY_ADDRESS ?? "",
   },
 };
 
@@ -212,7 +212,7 @@ export async function quoteV54LaunchBudget(
 ) {
   if (!provider) throw new Error("No injected EVM wallet was found.");
   const { account, network } = await ensureRobinhoodNetwork(networkKey, provider);
-  const factoryAddress = normalizeAddress(network.factoryAddress, `${network.name} V54 factory`);
+  const factoryAddress = normalizeAddress(network.factoryAddress, `${network.name} Leverage X V55 factory`);
   const budget = await estimateBudget(input, account, factoryAddress, network, provider);
   const walletBalance = await readRobinhoodWalletBalance(account, networkKey, provider);
   if (walletBalance < budget.totalBudgetWei) throw new Error("Wallet needs at least 0.001 ETH on this network for the capped launch transaction.");
@@ -222,7 +222,7 @@ export async function quoteV54LaunchBudget(
 export function parseV54MarketCreated(receipt: TransactionReceipt) {
   const topic = eventTopic(V54_MARKET_CREATED_EVENT).toLowerCase();
   const log = receipt.logs?.find((entry) => entry.topics[0]?.toLowerCase() === topic);
-  if (!log) throw new Error("The confirmed transaction did not emit the PERPHOOD V54 MarketCreated event.");
+  if (!log) throw new Error("The confirmed transaction did not emit the LEVERAGE X V54 MarketCreated event.");
   const words = decodeWords(log.data);
   if (words.length < 5) throw new Error("The MarketCreated event payload is malformed.");
   return {
@@ -338,6 +338,32 @@ export type V54SpotTradeReceipt = {
 };
 
 const V54_TRADE_EVENT = "Trade(address,bool,uint256,uint256,uint256,uint256,uint256,uint256)";
+export type V54ExecutionOptions = {
+  slippageBps?: number;
+  maxNetworkFeeEth?: number;
+  maxPriceImpactPercent?: number;
+  onQuote?: (quote: { priceImpactPercent: number; minimumOutputWei: bigint; maximumNetworkFeeEth?: number }) => void;
+  onWalletRequest?: () => void;
+  onSubmitted?: (transactionHash: Hex) => void;
+};
+
+async function transactionWithFeeCeiling(
+  provider: Eip1193Provider,
+  transaction: Record<string, unknown>,
+  maxNetworkFeeEth?: number,
+) {
+  const gasEstimateHex = await provider.request<Hex>({ method: "eth_estimateGas", params: [transaction] });
+  const gasPriceHex = await provider.request<Hex>({ method: "eth_gasPrice" });
+  const gasEstimate = BigInt(gasEstimateHex);
+  const gasLimit = gasEstimate * 120n / 100n + 5_000n;
+  const gasPriceWei = BigInt(gasPriceHex);
+  const maximumNetworkFeeWei = gasLimit * gasPriceWei;
+  if (maxNetworkFeeEth !== undefined && maxNetworkFeeEth > 0 && maximumNetworkFeeWei > toWad(maxNetworkFeeEth)) {
+    throw new Error(`Estimated network fee ${formatEthWei(maximumNetworkFeeWei, 8)} exceeds the selected ${maxNetworkFeeEth.toFixed(8)} ETH ceiling.`);
+  }
+  return { ...transaction, gas: toRpcHex(gasLimit), gasPrice: toRpcHex(gasPriceWei) };
+}
+
 
 function parseV54Trade(receipt: TransactionReceipt) {
   const topic = eventTopic(V54_TRADE_EVENT).toLowerCase();
@@ -421,26 +447,36 @@ export async function executeV54SpotBuy(
   tokenAddress: string,
   amountEth: number,
   networkKey: RobinhoodNetworkKey,
-  slippageBps = 200,
+  options: V54ExecutionOptions = {},
   provider: Eip1193Provider | null = injectedProvider(),
 ): Promise<V54SpotTradeReceipt> {
   if (!provider) throw new Error("No injected EVM wallet was found.");
   const { account, network } = await ensureRobinhoodNetwork(networkKey, provider);
   const market = normalizeAddress(marketAddress, "V54 market");
   const token = normalizeAddress(tokenAddress, "V54 token");
-  const quote = await quoteV54SpotBuy(market, amountEth, networkKey);
+  const [quote, runtime] = await Promise.all([
+    quoteV54SpotBuy(market, amountEth, networkKey),
+    readV54MarketRuntime(market, networkKey),
+  ]);
+  const priceAfterEth = fromWad(quote.priceAfterWad, 18);
+  const priceImpactPercent = runtime.priceEth > 0 ? Math.abs(priceAfterEth - runtime.priceEth) / runtime.priceEth * 100 : 0;
+  if (options.maxPriceImpactPercent !== undefined && priceImpactPercent > options.maxPriceImpactPercent) {
+    throw new Error(`Quoted price impact ${priceImpactPercent.toFixed(2)}% exceeds the selected ${options.maxPriceImpactPercent.toFixed(2)}% ceiling.`);
+  }
+  const slippageBps = Math.max(1, Math.min(10_000, Math.round(options.slippageBps ?? 200)));
   const minTokenOut = quote.tokenOutWad * BigInt(10_000 - slippageBps) / 10_000n;
-  const transactionHash = await provider.request<Hex>({
-    method: "eth_sendTransaction",
-    params: [{
-      from: account,
-      to: market,
-      value: toRpcHex(quote.amountWei),
-      data: `${functionSelector("buy(uint256)")}${encodeUint(minTokenOut)}`,
-    }],
-  });
+  options.onQuote?.({ priceImpactPercent, minimumOutputWei: minTokenOut, maximumNetworkFeeEth: options.maxNetworkFeeEth });
+  const transaction = await transactionWithFeeCeiling(provider, {
+    from: account,
+    to: market,
+    value: toRpcHex(quote.amountWei),
+    data: `${functionSelector("buy(uint256)")}${encodeUint(minTokenOut)}`,
+  }, options.maxNetworkFeeEth);
+  options.onWalletRequest?.();
+  const transactionHash = await provider.request<Hex>({ method: "eth_sendTransaction", params: [transaction] });
+  options.onSubmitted?.(transactionHash);
   const receipt = await waitForReceipt(transactionHash, network.rpcUrl, 120_000) as TransactionReceipt;
-  if (receipt.status === "0x0" || !receipt.blockNumber) throw new Error("The V54 spot buy reverted.");
+  if (receipt.status === "0x0" || !receipt.blockNumber) throw new Error("The Leverage X V55 spot buy reverted.");
   const trade = parseV54Trade(receipt);
   return {
     network: networkKey,
@@ -459,7 +495,7 @@ export async function executeV54SpotSell(
   tokenAddress: string,
   tokenAmountWad: bigint,
   networkKey: RobinhoodNetworkKey,
-  slippageBps = 200,
+  options: V54ExecutionOptions = {},
   provider: Eip1193Provider | null = injectedProvider(),
 ): Promise<V54SpotTradeReceipt> {
   if (!provider) throw new Error("No injected EVM wallet was found.");
@@ -468,28 +504,36 @@ export async function executeV54SpotSell(
   const token = normalizeAddress(tokenAddress, "V54 token");
   const available = await readV54TokenBalance(token, account, networkKey);
   if (tokenAmountWad <= 0n || tokenAmountWad > available) throw new Error("Wallet does not hold enough of this token.");
-  const quote = await quoteV54SpotSell(market, tokenAmountWad, networkKey);
+  const [quote, runtime] = await Promise.all([
+    quoteV54SpotSell(market, tokenAmountWad, networkKey),
+    readV54MarketRuntime(market, networkKey),
+  ]);
+  const priceAfterEth = fromWad(quote.priceAfterWad, 18);
+  const priceImpactPercent = runtime.priceEth > 0 ? Math.abs(priceAfterEth - runtime.priceEth) / runtime.priceEth * 100 : 0;
+  if (options.maxPriceImpactPercent !== undefined && priceImpactPercent > options.maxPriceImpactPercent) {
+    throw new Error(`Quoted sell impact ${priceImpactPercent.toFixed(2)}% exceeds the selected ${options.maxPriceImpactPercent.toFixed(2)}% ceiling.`);
+  }
+  const slippageBps = Math.max(1, Math.min(10_000, Math.round(options.slippageBps ?? 200)));
   const minEthOut = quote.netEthWei * BigInt(10_000 - slippageBps) / 10_000n;
-  const approvalTransactionHash = await provider.request<Hex>({
-    method: "eth_sendTransaction",
-    params: [{
-      from: account,
-      to: token,
-      data: `${functionSelector("approve(address,uint256)")}${stripHex(market).padStart(64, "0")}${encodeUint(tokenAmountWad)}`,
-    }],
-  });
+  options.onQuote?.({ priceImpactPercent, minimumOutputWei: minEthOut, maximumNetworkFeeEth: options.maxNetworkFeeEth });
+  const approvalTransaction = await transactionWithFeeCeiling(provider, {
+    from: account,
+    to: token,
+    data: `${functionSelector("approve(address,uint256)")}${stripHex(market).padStart(64, "0")}${encodeUint(tokenAmountWad)}`,
+  }, options.maxNetworkFeeEth);
+  options.onWalletRequest?.();
+  const approvalTransactionHash = await provider.request<Hex>({ method: "eth_sendTransaction", params: [approvalTransaction] });
   const approvalReceipt = await waitForReceipt(approvalTransactionHash, network.rpcUrl, 120_000) as TransactionReceipt;
   if (approvalReceipt.status === "0x0") throw new Error("Token approval reverted.");
-  const transactionHash = await provider.request<Hex>({
-    method: "eth_sendTransaction",
-    params: [{
-      from: account,
-      to: market,
-      data: `${functionSelector("sell(uint256,uint256)")}${encodeUint(tokenAmountWad)}${encodeUint(minEthOut)}`,
-    }],
-  });
+  const sellTransaction = await transactionWithFeeCeiling(provider, {
+    from: account,
+    to: market,
+    data: `${functionSelector("sell(uint256,uint256)")}${encodeUint(tokenAmountWad)}${encodeUint(minEthOut)}`,
+  }, options.maxNetworkFeeEth);
+  const transactionHash = await provider.request<Hex>({ method: "eth_sendTransaction", params: [sellTransaction] });
+  options.onSubmitted?.(transactionHash);
   const receipt = await waitForReceipt(transactionHash, network.rpcUrl, 120_000) as TransactionReceipt;
-  if (receipt.status === "0x0" || !receipt.blockNumber) throw new Error("The V54 spot sell reverted.");
+  if (receipt.status === "0x0" || !receipt.blockNumber) throw new Error("The Leverage X V55 spot sell reverted.");
   const trade = parseV54Trade(receipt);
   return {
     network: networkKey,

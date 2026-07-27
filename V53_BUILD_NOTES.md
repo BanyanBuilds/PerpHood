@@ -1,8 +1,8 @@
-# PERPHOOD V53 Build Notes
+# LEVERAGE X V53 Build Notes
 
 ## Milestone
 
-V53 connects PERPHOOD's user-facing preferences to a settings-only Supabase/Postgres synchronization layer with automatic local fallback.
+V53 connects LEVERAGE X's user-facing preferences to a settings-only Supabase/Postgres synchronization layer with automatic local fallback.
 
 ## Added
 

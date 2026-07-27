@@ -1,10 +1,10 @@
-# PERPHOOD V49 — Settlement Math Verification
+# LEVERAGE X V49 — Settlement Math Verification
 
-V49 hardens the economic core of PERPHOOD. Its purpose is not to claim that the protocol is mathematically "perfect" before formal verification and audit. Its purpose is to make every displayed leveraged payout traceable to one exact settlement path, prove the important invariants independently, and reject new exposure whenever all existing positions cannot remain payable.
+V49 hardens the economic core of LEVERAGE X. Its purpose is not to claim that the protocol is mathematically "perfect" before formal verification and audit. Its purpose is to make every displayed leveraged payout traceable to one exact settlement path, prove the important invariants independently, and reject new exposure whenever all existing positions cannot remain payable.
 
 ## The authoritative rule
 
-PERPHOOD does not calculate leveraged PNL as a simple market-cap percentage multiplied by leverage. Every position is settled by executing the complete reverse trade across the shared BattleCurve:
+LEVERAGE X does not calculate leveraged PNL as a simple market-cap percentage multiplied by leverage. Every position is settled by executing the complete reverse trade across the shared BattleCurve:
 
 - A long closes by selling its exact locked token inventory back down the curve.
 - A short closes by buying its exact borrowed token inventory back up the curve.

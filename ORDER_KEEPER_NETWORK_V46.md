@@ -1,4 +1,4 @@
-# PERPHOOD V46 — Order and Keeper Network
+# LEVERAGE X V46 — Order and Keeper Network
 
 V46 adds a durable conditional-order and liquidation layer above the V45 custody router and V43 unified BattlePool. The terminal can sign orders once with the active bounded V45 session key, persist them outside browser memory, and let a keeper settle them through the same on-chain nonce, action, expiry, replay, and cumulative-opening limits used by immediate authorized trades.
 

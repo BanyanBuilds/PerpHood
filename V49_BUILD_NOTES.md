@@ -2,7 +2,7 @@
 
 ## Goal
 
-Make PERPHOOD's leveraged settlement mathematically explicit, independently testable, and payable by construction—especially the maximum-profit short case where the shared curve falls toward its floor.
+Make LEVERAGE X's leveraged settlement mathematically explicit, independently testable, and payable by construction—especially the maximum-profit short case where the shared curve falls toward its floor.
 
 ## Contract changes
 

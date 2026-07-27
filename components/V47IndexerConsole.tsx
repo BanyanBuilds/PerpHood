@@ -90,7 +90,7 @@ export function V47IndexerConsole() {
 
   return <main className="v47-indexer-page">
     <header className="v47-indexer-hero">
-      <div><span><ShieldCheck size={18}/>PERPHOOD V47</span><h1>Authoritative Indexer &amp; Recovery</h1><p>Transactional SQLite history, factory-wide discovery, reorg rollback, deterministic replay, indexed accounts, cross-device sessions, and keeper health.</p></div>
+      <div><span><ShieldCheck size={18}/>LEVERAGE X V47</span><h1>Authoritative Indexer &amp; Recovery</h1><p>Transactional SQLite history, factory-wide discovery, reorg rollback, deterministic replay, indexed accounts, cross-device sessions, and keeper health.</p></div>
       <div className={canonical ? "healthy" : "degraded"}>{canonical ? <CheckCircle2 size={19}/> : <Siren size={19}/>}<span><b>{canonical ? "CANONICAL" : "SYNC REQUIRED"}</b><small>{status?.mode ?? "Indexer unavailable"}</small></span></div>
     </header>
 

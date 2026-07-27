@@ -1,4 +1,4 @@
-# PerpHood V42 — Executable Local-Chain Launchpad Sandbox
+# Leverage X V42 — Executable Local-Chain Launchpad Sandbox
 
 V42 moves the launchpad beyond browser-only lifecycle simulation without pretending the protocol is public-chain ready.
 

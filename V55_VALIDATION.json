@@ -1,0 +1,53 @@
+{
+  "version": "55.0.0",
+  "release": "leveragex-v55-real-trading-terminal",
+  "validated_at": "2026-07-27",
+  "portable_test_command": "npm run test:v55",
+  "portable_test_result": "PASS",
+  "metrics": {
+    "v55_assertions": {
+      "passed": 70,
+      "total": 70
+    },
+    "quick_preset_assertions": {
+      "passed": 13,
+      "total": 13
+    },
+    "left_sidecar_assertions": {
+      "passed": 13,
+      "total": 13
+    },
+    "exact_curve_vectors": 3001,
+    "short_settlement_scenarios": 20,
+    "close_order_permutations": 24,
+    "fee_fragmentation_vectors": 96,
+    "oscillation_cycles": 500,
+    "stateful_transitions": 24576,
+    "stateful_liquidations": 2747,
+    "portfolio_close_permutations": 5760,
+    "typescript_tsx_files": 305
+  },
+  "validated_features": [
+    "Leverage X brand, official logo, favicon and metadata",
+    "empty hosted market list with no bundled demo tokens",
+    "fixed one-billion-supply V55 ERC-20 factory and native-ETH spot market source",
+    "0.001 ETH creator launch budget inclusive of gas",
+    "P1/P2/P3 category execution profiles",
+    "action-specific slippage, fee ceiling, deadline and price-impact bounds",
+    "quote-wallet-submission-confirmation lifecycle",
+    "authoritative market-state and native-token safety panels",
+    "emergency quick-action, order, position and session controls",
+    "V55 Supabase registry, metadata and discovery routes",
+    "mainnet deployment lock and RPC chain-ID check"
+  ],
+  "not_executed_here": [
+    "npm ci and Next.js production build because the assembly npm gateway returned HTTP 503",
+    "Solidity compilation and Foundry tests because Forge was unavailable",
+    "Robinhood Chain testnet deployment",
+    "browser-wallet mint, buy or sell",
+    "explorer source verification",
+    "GMGN discovery"
+  ],
+  "public_funds_approved": false,
+  "mainnet_enabled": false
+}

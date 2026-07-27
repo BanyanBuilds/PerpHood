@@ -96,7 +96,7 @@ export function FundingCenter() {
 
   const connect = useCallback(async () => {
     const provider = injectedProvider();
-    if (!provider) throw new Error("Install or unlock an EVM wallet, then connect to the local PERPHOOD chain.");
+    if (!provider) throw new Error("Install or unlock an EVM wallet, then connect to the local LEVERAGE X chain.");
     const next = saveV45Account(await connectLocalWallet(provider));
     setAccount(next);
     const material = loadV45SessionKey();

@@ -64,7 +64,7 @@ export function ProfileMenu({ onClose, onOpenPnl }: ProfileMenuProps) {
     ["Perps", "Positions and executable live PNL", "/?panel=positions", Swords],
     ["Spot portfolio", "Token holdings", "/?panel=positions", Coins],
     ["Orders", `${pendingOrders.length} open order${pendingOrders.length === 1 ? "" : "s"}`, "/?panel=positions", BookOpenCheck],
-    ["Trade history", "Completed PerpHood trades", "/?panel=trade-tracker", History],
+    ["Trade history", "Completed Leverage X trades", "/?panel=trade-tracker", History],
     ["Referrals", "Volume-based partner rewards", "/?panel=referrals", Gift],
     ["Holder rewards", "BattlePool community distributions", "/?panel=positions", CircleDollarSign],
     ["Creator", "Launches and community health", "/?panel=launch", Rocket],
@@ -80,7 +80,7 @@ export function ProfileMenu({ onClose, onOpenPnl }: ProfileMenuProps) {
 
   const share = async () => {
     try {
-      const result = await sharePnlToX({ title: "My all-time PerpHood PNL", subtitle: "Robinhood Chain BattlePool", summary, periodLabel: "All time" });
+      const result = await sharePnlToX({ title: "My all-time Leverage X PNL", subtitle: "Robinhood Chain BattlePool", summary, periodLabel: "All time" });
       setShareStatus(result === "shared" ? "Shared" : "Card downloaded · X opened");
     } catch { setShareStatus("Share cancelled"); }
     window.setTimeout(() => setShareStatus(""), 2200);
@@ -89,7 +89,7 @@ export function ProfileMenu({ onClose, onOpenPnl }: ProfileMenuProps) {
   return <div className="profile-sidebar-backdrop" role="presentation" onMouseDown={(event) => {
     if (event.currentTarget === event.target) onClose();
   }}>
-    <aside className="profile-sidebar" role="dialog" aria-modal="true" aria-label="PerpHood trading account">
+    <aside className="profile-sidebar" role="dialog" aria-modal="true" aria-label="Leverage X trading account">
       <header className="profile-sidebar-title">
         <span><strong>Trading identity</strong><small>One active owner wallet · one X profile · revocable session key</small></span>
         <button onClick={onClose} aria-label="Close account sidebar"><X size={18} /></button>
@@ -117,7 +117,7 @@ export function ProfileMenu({ onClose, onOpenPnl }: ProfileMenuProps) {
         <div><span><small>Revision</small><strong>{userState.revision}</strong></span><span><small>Synced sections</small><strong>{Object.keys(userState.document.sections).length}</strong></span><span><small>Recovery key</small><strong>{userState.recoveryKey ? `${userState.recoveryKey.slice(0, 9)}…${userState.recoveryKey.slice(-5)}` : "Loading"}</strong></span></div>
         <footer>
           <button onClick={async () => { const copied = await userState.copyRecoveryKey(); setSyncAction(copied ? "Recovery key copied" : "Copy failed"); window.setTimeout(() => setSyncAction(""), 1800); }}><Copy size={13} />Copy key</button>
-          <button onClick={() => { const value = window.prompt("Paste your PERPHOOD V53 settings recovery key. This restores settings only—not funds or trading authority."); if (!value) return; const accepted = userState.importRecoveryKey(value); setSyncAction(accepted ? "Importing…" : "Invalid recovery key"); }}><Download size={13} />Import key</button>
+          <button onClick={() => { const value = window.prompt("Paste your LEVERAGE X V53 settings recovery key. This restores settings only—not funds or trading authority."); if (!value) return; const accepted = userState.importRecoveryKey(value); setSyncAction(accepted ? "Importing…" : "Invalid recovery key"); }}><Download size={13} />Import key</button>
           <button onClick={() => { void userState.syncNow(); }}><RefreshCw size={13} />Sync now</button>
           {syncAction && <em>{syncAction}</em>}
         </footer>

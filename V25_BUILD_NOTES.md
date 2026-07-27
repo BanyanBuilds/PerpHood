@@ -1,4 +1,4 @@
-# PERPHOOD V25 — 360 FPS Dark Terminal
+# LEVERAGE X V25 — 360 FPS Dark Terminal
 
 V25 turns the application into a terminal-only product surface and establishes the default visual identity around dark `#333333` surfaces.
 

@@ -83,7 +83,7 @@ export function FloatingPnlWidget({ onClose }: { onClose: () => void }) {
 
   const share = async () => {
     try {
-      const result = await sharePnlToX({ title: "My PerpHood PNL", subtitle: "Robinhood Chain BattlePool", summary, periodLabel: PERIODS.find(([value]) => value === period)?.[1] ?? period });
+      const result = await sharePnlToX({ title: "My Leverage X PNL", subtitle: "Robinhood Chain BattlePool", summary, periodLabel: PERIODS.find(([value]) => value === period)?.[1] ?? period });
       setShareStatus(result === "shared" ? "Shared" : "Card downloaded · X opened");
     } catch {
       setShareStatus("Share cancelled");

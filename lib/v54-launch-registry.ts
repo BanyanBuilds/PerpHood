@@ -73,7 +73,7 @@ export function v54LaunchRowToToken(row: V54PublicLaunchRow): Token {
     metadataUri: row.metadata_uri,
     metadataHash: row.metadata_hash,
     creatorWallet: row.creator_address,
-    chainDeploymentMode: network === "mainnet" ? "robinhood-mainnet-v54" : "robinhood-testnet-v54",
+    chainDeploymentMode: network === "mainnet" ? "robinhood-mainnet-v55" : "robinhood-testnet-v55",
     chainId: row.chain_id,
     chainFactoryAddress: row.factory_address,
     chainMarketAddress: row.market_address,
@@ -82,7 +82,7 @@ export function v54LaunchRowToToken(row: V54PublicLaunchRow): Token {
     launchTransactionHash: row.transaction_hash,
     launchBlock: Number(row.block_number),
     chainExplorerUrl: `${explorer}/address/${tokenAddress}`,
-    launchpadVersion: "V54",
+    launchpadVersion: "V55",
     launchState: "live",
     battlePhase: row.status === "migrated" ? "migrated" : row.status === "paused" ? "paused" : "bonding",
     totalSupply: supply,
@@ -101,21 +101,26 @@ export function v54LaunchRowToToken(row: V54PublicLaunchRow): Token {
 }
 
 export async function fetchV54LaunchTokens(limit = 250): Promise<Token[]> {
-  const response = await fetch(`/api/v54/launches?limit=${Math.max(1, Math.min(500, Math.floor(limit)))}`, { cache: "no-store" });
+  const response = await fetch(`/api/v55/launches?limit=${Math.max(1, Math.min(500, Math.floor(limit)))}`, { cache: "no-store" });
   const payload = await response.json() as { configured?: boolean; launches?: V54PublicLaunchRow[]; error?: string };
-  if (!response.ok) throw new Error(payload.error || "V54 launch registry request failed.");
+  if (!response.ok) throw new Error(payload.error || "V55 launch registry request failed.");
   if (!payload.configured) return [];
   const baseTokens = (payload.launches ?? []).map(v54LaunchRowToToken);
   const hydrated = await Promise.allSettled(baseTokens.map(async (token) => {
     if (!token.chainMarketAddress) return token;
-    const networkKey = token.chainDeploymentMode === "robinhood-mainnet-v54" ? "mainnet" as const : "testnet" as const;
+    const networkKey = (token.chainDeploymentMode === "robinhood-mainnet-v55" || token.chainDeploymentMode === "robinhood-mainnet-v54") ? "mainnet" as const : "testnet" as const;
     const runtime = await readV54MarketRuntime(token.chainMarketAddress, networkKey);
     return {
       ...token,
       priceEth: runtime.priceEth,
       marketCapEth: runtime.marketCapEth,
       realWethBalance: runtime.realEthBalance,
+      freeWethEth: runtime.realEthBalance,
       poolFeesEth: runtime.feesEth,
+      curveAllocation: 800_000_000,
+      curveTokenReserve: Math.max(0, 800_000_000 - runtime.soldTokens),
+      curveRealTokenReserve: Math.max(0, 800_000_000 - runtime.soldTokens),
+      circulatingSpotTokens: runtime.soldTokens,
       chainLastSyncedAt: Date.now(),
       chainStateSequence: runtime.tradeCount,
       battlePhase: runtime.paused ? "paused" : token.battlePhase,

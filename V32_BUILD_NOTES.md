@@ -1,6 +1,6 @@
-# PERPHOOD V32 — Floating PNL + Trading Identity
+# LEVERAGE X V32 — Floating PNL + Trading Identity
 
-V32 adds the portable live-PNL experience traders expect without weakening PerpHood's one-wallet/no-multiwallet execution policy.
+V32 adds the portable live-PNL experience traders expect without weakening Leverage X's one-wallet/no-multiwallet execution policy.
 
 ## Floating executable PNL
 
@@ -34,12 +34,12 @@ Production must replace browser-local history with an authoritative indexed acco
 V32 locks the recommended architecture:
 
 1. **External owner wallet** — user controlled; its private key remains in the user's wallet and is exportable there.
-2. **PerpHood trading account** — contract account owned by the external wallet; funds can always be withdrawn by the owner.
+2. **Leverage X trading account** — contract account owned by the external wallet; funds can always be withdrawn by the owner.
 3. **Session key** — non-exportable, scoped, revocable, and never owns funds.
 4. **One active owner wallet at a time** — switching wallets revokes the current session authorization.
-5. **One X profile per PerpHood identity** — used for verified profile, PNL sharing, and anti-abuse identity, not for custody.
+5. **One X profile per Leverage X identity** — used for verified profile, PNL sharing, and anti-abuse identity, not for custody.
 
-PerpHood should never create an unexportable seed wallet that can trap user funds.
+Leverage X should never create an unexportable seed wallet that can trap user funds.
 
 ## Sharing
 

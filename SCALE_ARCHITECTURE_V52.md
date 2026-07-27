@@ -1,4 +1,4 @@
-# PERPHOOD V52 — 100K to 1M User Scale Foundation
+# LEVERAGE X V52 — 100K to 1M User Scale Foundation
 
 The one-million-user requirement is a design target, not a capacity claim. V52 introduces deterministic partition planning and explicit service boundaries so later work does not create a single-host bottleneck.
 

@@ -148,15 +148,15 @@ async function supabaseFetch(path: string, init: RequestInit = {}) {
 }
 
 async function uploadObject(path: string, body: BodyInit, contentType: string) {
-  const response = await supabaseFetch(`/storage/v1/object/token-media/${path}`, {
+  const response = await supabaseFetch(`/storage/v1/object/leveragex-token-media/${path}`, {
     method: "POST",
     headers: { "content-type": contentType, "x-upsert": "false" },
     body,
   });
-  if (!response.ok) throw new Error(`Token-media upload failed (${response.status}): ${await response.text()}`);
+  if (!response.ok) throw new Error(`Leverage X token-media upload failed (${response.status}): ${await response.text()}`);
   const settings = config();
   if (!settings) throw new Error("Supabase launch storage is not configured.");
-  return `${settings.url}/storage/v1/object/public/token-media/${path}`;
+  return `${settings.url}/storage/v1/object/public/leveragex-token-media/${path}`;
 }
 
 export async function createV54Metadata(formData: FormData) {
@@ -189,7 +189,7 @@ export async function createV54Metadata(formData: FormData) {
     properties: {
       category: "image",
       files: [{ uri: imageUrl, type: file.type }],
-      creator: "PERPHOOD",
+      creator: "LEVERAGE X",
       chain: "Robinhood Chain",
       image_exact_hash: imageExactHash || undefined,
       x: xHandle || undefined,
@@ -211,9 +211,9 @@ function normalizeOptionalMetadata(value: unknown) {
 async function verifyV54MetadataDocument(input: V54LaunchRecordInput) {
   const settings = config();
   if (!settings) throw new Error("Supabase launch storage is not configured.");
-  const expectedPrefix = `${settings.url}/storage/v1/object/public/token-media/`;
+  const expectedPrefix = `${settings.url}/storage/v1/object/public/leveragex-token-media/`;
   if (!input.metadataUri.startsWith(expectedPrefix) || !input.imageUrl.startsWith(expectedPrefix)) {
-    throw new Error("Launch metadata and artwork must use the configured PERPHOOD token-media bucket.");
+    throw new Error("Launch metadata and artwork must use the configured Leverage X token-media bucket.");
   }
   const response = await fetch(input.metadataUri, { cache: "no-store" });
   if (!response.ok) throw new Error(`Canonical metadata could not be read (${response.status}).`);
@@ -288,7 +288,7 @@ export async function saveV54Launch(input: V54LaunchRecordInput) {
     migration_target_usd_wad: input.migrationTargetUsdWad,
     status: "confirmed",
   };
-  const response = await supabaseFetch("/rest/v1/perphood_v54_launches?on_conflict=chain_id,token_address", {
+  const response = await supabaseFetch("/rest/v1/leveragex_v55_launches?on_conflict=chain_id,token_address", {
     method: "POST",
     headers: { "content-type": "application/json", prefer: "resolution=merge-duplicates,return=representation" },
     body: JSON.stringify(body),
@@ -300,7 +300,7 @@ export async function saveV54Launch(input: V54LaunchRecordInput) {
 
 export async function listV54Launches(limit = 100) {
   const safeLimit = Math.min(500, Math.max(1, Math.floor(limit)));
-  const response = await supabaseFetch(`/rest/v1/perphood_v54_launches?select=*&status=eq.confirmed&order=block_number.desc&limit=${safeLimit}`);
+  const response = await supabaseFetch(`/rest/v1/leveragex_v55_launches?select=*&status=eq.confirmed&order=block_number.desc&limit=${safeLimit}`);
   if (!response.ok) throw new Error(`Launch registry read failed (${response.status}): ${await response.text()}`);
   return response.json() as Promise<Array<Record<string, unknown>>>;
 }

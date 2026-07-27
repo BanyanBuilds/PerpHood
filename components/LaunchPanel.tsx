@@ -41,7 +41,7 @@ import { OgBadge } from "./OgBadge";
 import { useMarkets } from "./MarketProvider";
 
 const EMOJIS = ["🧊", "🐸", "🐕", "🗿", "🛸", "🦎", "🥷", "🦉"];
-const MAINNET_ENABLED = process.env.NEXT_PUBLIC_V54_MAINNET_ENABLED === "true";
+const MAINNET_ENABLED = (process.env.NEXT_PUBLIC_V55_MAINNET_ENABLED ?? process.env.NEXT_PUBLIC_V54_MAINNET_ENABLED) === "true";
 
 type ArtworkState = {
   file: File;
@@ -175,7 +175,7 @@ export function LaunchPanel({
       return;
     }
     if (!factoryReady) {
-      setStatus(`${network.name} factory is not deployed/configured yet. V54 must deploy the factory before minting is enabled.`);
+      setStatus(`${network.name} factory is not deployed/configured yet. V55 must deploy the factory before minting is enabled.`);
       return;
     }
     setBusy(true);
@@ -190,7 +190,7 @@ export function LaunchPanel({
       form.set("telegram", telegram.trim());
       form.set("imageExactHash", artwork.imageExactHash);
       form.set("image", artwork.file);
-      const metadataResponse = await fetch("/api/v54/metadata", { method: "POST", body: form });
+      const metadataResponse = await fetch("/api/v55/metadata", { method: "POST", body: form });
       const metadataPayload = await metadataResponse.json() as PreparedMetadata & { error?: string };
       if (!metadataResponse.ok) throw new Error(metadataPayload.error || "Metadata upload failed.");
       const metadata = {
@@ -235,7 +235,7 @@ export function LaunchPanel({
 
   const registerConfirmedLaunch = async (launched: V54LaunchReceipt) => {
     if (!prepared) throw new Error("Launch metadata is unavailable for registry verification.");
-    const registryResponse = await fetch("/api/v54/launches", {
+    const registryResponse = await fetch("/api/v55/launches", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
@@ -265,7 +265,7 @@ export function LaunchPanel({
     const registryPayload = await registryResponse.json() as { error?: string };
     if (!registryResponse.ok) throw new Error(registryPayload.error || "The on-chain launch confirmed, but registry verification failed.");
     setRegistrySaved(true);
-    window.dispatchEvent(new CustomEvent("perphood:v54-launch-confirmed", { detail: { tokenAddress: launched.tokenAddress } }));
+    window.dispatchEvent(new CustomEvent("leveragex:v55-launch-confirmed", { detail: { tokenAddress: launched.tokenAddress } }));
     setStatus(`REAL TOKEN CONFIRMED · ${ticker} minted at ${launched.tokenAddress}`);
     onComplete?.(launched.tokenAddress.toLowerCase());
   };
@@ -315,7 +315,7 @@ export function LaunchPanel({
     <section className={`v41-launchpad ${compact ? "compact" : ""}`}>
       <header className="v41-launchpad-head">
         <div>
-          <span className="eyebrow"><Rocket size={13} /> V54 REAL ROBINHOOD CHAIN LAUNCH</span>
+          <span className="eyebrow"><Rocket size={13} /> LEVERAGE X V55 REAL ROBINHOOD CHAIN LAUNCH</span>
           <h2>Mint a real one-billion-supply memecoin.</h2>
           <p>Connected-wallet deployment, public ERC-20 transfers, real bonding-curve spot trading, and no free creator allocation.</p>
         </div>

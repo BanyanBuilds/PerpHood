@@ -151,7 +151,7 @@ export async function connectLocalWallet(provider = injectedProvider()) {
         method: "wallet_addEthereumChain",
         params: [{
           chainId: LOCAL_CHAIN_HEX,
-          chainName: "PERPHOOD Local Battle Chain",
+          chainName: "LEVERAGE X Local Battle Chain",
           nativeCurrency: { name: "Test ETH", symbol: "ETH", decimals: 18 },
           rpcUrls: [process.env.NEXT_PUBLIC_LOCAL_CHAIN_RPC ?? DEFAULT_LOCAL_RPC],
         }],

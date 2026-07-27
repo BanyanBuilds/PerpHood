@@ -73,7 +73,7 @@ export function V48DataPlaneConsole() {
 
   return <main className="v48-plane-page">
     <header className="v48-plane-hero">
-      <div><span><Waves size={18}/>PERPHOOD V48</span><h1>Live Data Plane &amp; Chain Readiness</h1><p>RPC quorum, finalized indexing, durable SSE, 1s/15s/30s candles, market metrics, health alerts, backups, and optional Supabase/Postgres replication.</p></div>
+      <div><span><Waves size={18}/>LEVERAGE X V48</span><h1>Live Data Plane &amp; Chain Readiness</h1><p>RPC quorum, finalized indexing, durable SSE, 1s/15s/30s candles, market metrics, health alerts, backups, and optional Supabase/Postgres replication.</p></div>
       <div className={live ? "healthy" : "degraded"}>{live ? <CheckCircle2 size={20}/> : <AlertTriangle size={20}/>}<span><b>{live ? "LIVE & CANONICAL" : "ATTENTION REQUIRED"}</b><small>{status?.chain.name ?? "Chain configuration unavailable"}</small></span></div>
     </header>
 

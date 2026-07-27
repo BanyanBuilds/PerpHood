@@ -1,4 +1,4 @@
-# PERPHOOD V53 Validation
+# LEVERAGE X V53 Validation
 
 ## Result
 
@@ -45,7 +45,7 @@ The single nested `npm run test:v53` wrapper exceeded the execution environment'
 
 ## Readability regression corrected
 
-The full historical chain found 11 V52/V53 admin font declarations below PERPHOOD's 11px minimum. They were raised to 11px. The V27 readability guard and all affected V52/V53 static checks pass afterward.
+The full historical chain found 11 V52/V53 admin font declarations below LEVERAGE X's 11px minimum. They were raised to 11px. The V27 readability guard and all affected V52/V53 static checks pass afterward.
 
 ## Not executed here
 

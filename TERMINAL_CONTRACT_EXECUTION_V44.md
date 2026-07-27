@@ -1,6 +1,6 @@
-# PERPHOOD V44 — Terminal Contract Execution
+# LEVERAGE X V44 — Terminal Contract Execution
 
-V44 connects the normal PERPHOOD trading terminal to the executable V43 unified BattlePool on the local Anvil chain. A configured V43 market is no longer isolated inside the admin sandbox: Buy, Sell, Long, Short, and full Close actions are submitted by the user's injected EVM wallet, confirmed on-chain, decoded from V43 events, and reconciled back into terminal state.
+V44 connects the normal LEVERAGE X trading terminal to the executable V43 unified BattlePool on the local Anvil chain. A configured V43 market is no longer isolated inside the admin sandbox: Buy, Sell, Long, Short, and full Close actions are submitted by the user's injected EVM wallet, confirmed on-chain, decoded from V43 events, and reconciled back into terminal state.
 
 ## Authority model
 
@@ -22,7 +22,7 @@ Other tokens continue using the deterministic browser BattlePool so the applicat
 1. The terminal recognizes a configured contract market.
 2. The user selects a market action.
 3. The injected wallet switches/adds Anvil chain `31337` and requests the account.
-4. PERPHOOD submits the V43 calldata and exact ETH value.
+4. LEVERAGE X submits the V43 calldata and exact ETH value.
 5. The client waits for a successful transaction receipt.
 6. Trade, PositionOpened, or PositionClosed events are decoded.
 7. `runtimeState()` and the wallet balance are read after confirmation.

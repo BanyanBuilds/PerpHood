@@ -1,11 +1,11 @@
 @echo off
 setlocal
 cd /d "%~dp0"
-title PERPHOOD Clean Install
+title LEVERAGE X Clean Install
 
 echo.
 echo ========================================
-echo   PERPHOOD - Clean npm Install
+echo   LEVERAGE X - Clean npm Install
 echo ========================================
 echo.
 

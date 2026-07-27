@@ -1,4 +1,4 @@
-# PerpHood V38 Validation
+# Leverage X V38 Validation
 
 Validation covers the full dependency-free V21–V38 regression suite plus the restored terminal and responsive spacing rules.
 

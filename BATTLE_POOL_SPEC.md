@@ -1,4 +1,4 @@
-# PERPHOOD BattlePool Specification — V20 Adaptive Sequencer
+# LEVERAGE X BattlePool Specification — V20 Adaptive Sequencer
 
 ## 1. Product invariant
 

@@ -1,4 +1,4 @@
-# PERPHOOD V28 Validation
+# LEVERAGE X V28 Validation
 
 - Official logo asset exists and is used by `BrandMark`.
 - Legacy feather icon removed from the brand component.

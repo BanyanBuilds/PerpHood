@@ -1,4 +1,4 @@
-# PERPHOOD V48 — Live Data Plane and Robinhood Chain Readiness
+# LEVERAGE X V48 — Live Data Plane and Robinhood Chain Readiness
 
 ## Purpose
 

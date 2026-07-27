@@ -1,11 +1,11 @@
-# PerpHood V39 — Clean Shell + Full-Row Market Navigation
+# Leverage X V39 — Clean Shell + Full-Row Market Navigation
 
 V39 corrects the landing-terminal hierarchy after the V38 spacing pass.
 
 ## Command bar
 
 - Replaced the crowded single flex row with three deliberate zones:
-  - PerpHood brand + Markets/Movers
+  - Leverage X brand + Markets/Movers
   - compact ticker/contract search + Paste CA
   - 360 Hz status + settings + funding + account
 - Removed passive chain, position-count, and portfolio-value readouts from the top bar.

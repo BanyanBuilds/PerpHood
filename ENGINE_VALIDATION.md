@@ -1,4 +1,4 @@
-# PERPHOOD V20 deterministic validation
+# LEVERAGE X V20 deterministic validation
 
 Validation date: 2026-07-23
 

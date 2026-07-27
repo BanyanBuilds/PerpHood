@@ -102,7 +102,7 @@ export async function GET(request: NextRequest) {
       posts: streamPosts.slice(0, 100),
       query,
       newestId: streamPosts[0]?.id,
-      message: "Live posts supplied by the PerpHood filtered-stream worker.",
+      message: "Live posts supplied by the Leverage X filtered-stream worker.",
     }, { headers: { "Cache-Control": "no-store" } });
   }
 
@@ -112,7 +112,7 @@ export async function GET(request: NextRequest) {
       mode: "unconfigured",
       posts: [],
       query,
-      message: "Add X_BEARER_TOKEN to enable the native PerpHood X Launch Feed.",
+      message: "Add X_BEARER_TOKEN to enable the native Leverage X X Launch Feed.",
     });
   }
 

@@ -1,5 +1,5 @@
 /**
- * V24 contract-grade integer reference for the exponent-5 PERPHOOD BattleCurve.
+ * V24 contract-grade integer reference for the exponent-5 LEVERAGE X BattleCurve.
  *
  * All token quantities use token-WAD (1 whole token = 1e18 units).
  * All WETH values and token prices use WAD. Rounding is intentionally explicit:

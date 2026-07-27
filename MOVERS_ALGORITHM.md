@@ -1,6 +1,6 @@
-# PerpHood Movers Algorithm
+# Leverage X Movers Algorithm
 
-PerpHood Movers is a discovery ranking—not a price feed and not a promise of future performance. The score reacts to broad, fast participation while reducing visibility for activity that appears concentrated, repetitive, insolvent, or easily manufactured.
+Leverage X Movers is a discovery ranking—not a price feed and not a promise of future performance. The score reacts to broad, fast participation while reducing visibility for activity that appears concentrated, repetitive, insolvent, or easily manufactured.
 
 ## Public category weights
 
@@ -15,7 +15,7 @@ PerpHood Movers is a discovery ranking—not a price feed and not a promise of f
 | Like velocity | 5% |
 | Quality | 5% |
 
-Each non-quality signal is normalized against the currently eligible PerpHood market universe. This keeps a single raw number—such as volume—from permanently controlling the table across different market conditions.
+Each non-quality signal is normalized against the currently eligible Leverage X market universe. This keeps a single raw number—such as volume—from permanently controlling the table across different market conditions.
 
 ## Time weighting
 
@@ -27,7 +27,7 @@ The score is recalculated every second from authoritative events. Score values u
 
 ## BattlePool-native inputs
 
-Unlike a standard launchpad, PerpHood can include:
+Unlike a standard launchpad, Leverage X can include:
 
 - Leveraged long and short entry velocity
 - Open-interest pressure relative to the market

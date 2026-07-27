@@ -1,4 +1,38 @@
-# PERPHOOD V54 — Real Robinhood Chain Launch Path
+# Leverage X V55 — Real Launch and Trading Terminal
+
+**Leverage X** (`leverageX.fun`) is a Robinhood Chain-first memecoin launch and Spot × Perps terminal. V55 completes the public rebrand, integrates the official LX logo, preserves the real V54 minting path under Leverage X contracts/APIs, and adds the fee, quote, lifecycle and emergency controls required before the first controlled token launch.
+
+**Current state:** portable validation passes; the V55 factory is not yet deployed. Mainnet, public funds and live V55 perps remain locked.
+
+Start with:
+
+- `LEVERAGEX_REAL_TRADING_TERMINAL_V55.md`
+- `V55_TESTNET_DEPLOYMENT.md`
+- `V55_BUILD_NOTES.md`
+- `V55_VALIDATION.md`
+
+Run the portable release gate:
+
+```bash
+npm run test:v55
+```
+
+Run the Vercel-equivalent gate after dependencies install:
+
+```bash
+npm ci
+npm run test:v55-fast
+npm run build
+```
+
+Apply the active launch database migration:
+
+```text
+supabase/v55_production_launch.sql
+```
+
+---
+# LEVERAGE X V54 — Real Robinhood Chain Launch Path
 
 V54 removes the hosted demo market and builds the first real connected-wallet minting path: a fixed one-billion-supply ERC-20, native-ETH bonding-curve spot market, canonical Supabase metadata/registry verification, explorer receipts, real terminal Buy/Sell, and a public indexer discovery feed.
 
@@ -8,7 +42,7 @@ Start with [PRODUCTION_LAUNCH_V54.md](PRODUCTION_LAUNCH_V54.md), [V54_BUILD_NOTE
 
 ---
 
-# PERPHOOD V53 — Supabase User-State Synchronization
+# LEVERAGE X V53 — Supabase User-State Synchronization
 
 V53 is the current development baseline. It adds settings-only cross-device synchronization for Markets/Movers presets, saved three-left-sidecar workspaces, likes, watchlists, and per-market alerts. Local storage remains the automatic fallback, and the recovery key has no authority over funds, wallets, sessions, orders, or BattlePool settlement.
 
@@ -28,13 +62,13 @@ npm run test:v53-fast
 
 The GitHub build workflow runs `npm ci`, the V53 portable gate, and the real Next.js production build on every main/build branch push.
 
-PERPHOOD remains build-mode software. V53 syncs preferences only and is not approval for testnet, public users, or public funds.
+LEVERAGE X remains build-mode software. V53 syncs preferences only and is not approval for testnet, public users, or public funds.
 
 See `USER_STATE_SYNC_V53.md`, `V53_BUILD_NOTES.md`, and `V53_VALIDATION.md`.
 
 ---
 
-# PERPHOOD V52 — Product Completion and Scale Foundation
+# LEVERAGE X V52 — Product Completion and Scale Foundation
 
 V52 is the current development baseline. It adds an honest product-completion inventory, a Vercel-safe readiness endpoint, a 100K–1M-user service topology, deterministic market/account sharding, a Supabase/Postgres scale schema, and a GitHub production-build gate.
 
@@ -44,13 +78,13 @@ Open the completion console at:
 /admin/completion
 ```
 
-PERPHOOD is still build-mode software. Public funds and testnet deployment remain blocked until the dashboard's production blockers are resolved, compiled contract campaigns pass, and independent audits are complete.
+LEVERAGE X is still build-mode software. Public funds and testnet deployment remain blocked until the dashboard's production blockers are resolved, compiled contract campaigns pass, and independent audits are complete.
 
 See `PRODUCT_COMPLETION_V52.md`, `SCALE_ARCHITECTURE_V52.md`, `V52_BUILD_NOTES.md`, and `V52_VALIDATION.md`.
 
 ---
 
-# PERPHOOD V51 — Compiler-Backed Chain Assault
+# LEVERAGE X V51 — Compiler-Backed Chain Assault
 
 V51 binds every current terminal and keeper position action to a deadline and fresh execution limits, adds hostile Solidity actors for stale ordering, reentrancy, rejecting receivers, forced ETH, creator restrictions, and gas ceilings, and packages a complete Forge/Anvil/Cast assault lifecycle.
 
@@ -87,7 +121,7 @@ Read `COMPILER_CHAIN_ASSAULT_V51.md`, `V51_BUILD_NOTES.md`, and `V51_VALIDATION.
 
 ---
 
-# PERPHOOD V50 — Formal Invariants and Adversarial Settlement
+# LEVERAGE X V50 — Formal Invariants and Adversarial Settlement
 
 V50 hardens the V49 settlement layer with machine-checkable invariants, exhaustive mixed-position close ordering, a stateful adversarial engine, upward protocol-fee rounding that closes dust fragmentation, an on-chain invariant snapshot, and a live `/admin/invariants` safety console.
 
@@ -121,7 +155,7 @@ Read `FORMAL_INVARIANTS_V50.md`, `V50_BUILD_NOTES.md`, and `V50_VALIDATION.md` f
 
 ---
 
-# PERPHOOD V48 — Live Data Plane and Robinhood Chain Readiness
+# LEVERAGE X V48 — Live Data Plane and Robinhood Chain Readiness
 
 V48 connects the V47 canonical index to a production-shaped live data layer: multi-provider RPC quorum, finalized event indexing, durable reconnectable SSE, indexed 1s/15s/30s candles, market metrics, health alerts, recovery snapshots, and optional Supabase/Postgres replication.
 
@@ -169,9 +203,9 @@ Read `LIVE_DATA_PLANE_V48.md`, `V48_BUILD_NOTES.md`, and `V48_VALIDATION.md` for
 
 ---
 
-# PERPHOOD V47 — Authoritative Indexer and Recovery
+# LEVERAGE X V47 — Authoritative Indexer and Recovery
 
-V47 gives PERPHOOD one durable canonical history across the V45 account router, every discovered BattlePool, V46 durable orders, sessions, positions, keeper workers, and recovery operations. It replaces the live JSON order store with transactional SQLite, detects reorgs, rolls back to a common ancestor, deterministically replays projections, reconciles indexed liabilities/state hashes against the contracts, and exposes cross-device account/session history.
+V47 gives LEVERAGE X one durable canonical history across the V45 account router, every discovered BattlePool, V46 durable orders, sessions, positions, keeper workers, and recovery operations. It replaces the live JSON order store with transactional SQLite, detects reorgs, rolls back to a common ancestor, deterministically replays projections, reconciles indexed liabilities/state hashes against the contracts, and exposes cross-device account/session history.
 
 ## Run V47
 
@@ -207,7 +241,7 @@ Read `AUTHORITATIVE_INDEXER_V47.md`, `V47_BUILD_NOTES.md`, and `V47_VALIDATION.m
 
 ---
 
-# PERPHOOD V46 — Durable Orders and Keeper Execution
+# LEVERAGE X V46 — Durable Orders and Keeper Execution
 
 V46 adds real unattended local execution above V45's fully backed account ledger and V43's unified BattlePool. Limit orders, trigger orders, take profit, stop loss, two-stage breakeven protection, and batch liquidations are signed by the bounded V45 session, stored durably, evaluated from authoritative contract state, settled by a keeper, and reconciled into the terminal after receipt confirmation.
 
@@ -241,7 +275,7 @@ NEXT_PUBLIC_V45_DEMO_TOKEN_ADDRESS=0x...
 NEXT_PUBLIC_LOCAL_CHAIN_RPC=http://127.0.0.1:8545
 
 NEXT_PUBLIC_V46_LOCAL_KEEPER_AUTORUN=false
-PERPHOOD_APP_URL=http://localhost:3000
+LEVERAGE X_APP_URL=http://localhost:3000
 V46_KEEPER_SECRET=
 V46_KEEPER_ACCOUNTS=0x...
 V46_KEEPER_INTERVAL_MS=1500
@@ -275,7 +309,7 @@ V46_ORDER_STORE_PATH=.perphood/v46-orders.json
 
 ---
 
-# PERPHOOD V45 — Authorized Account Execution
+# LEVERAGE X V45 — Authorized Account Execution
 
 V45 adds the real account and authorization layer above the unified BattlePool. Users can deposit once, authorize a bounded local session, trade Spot Buy/Sell and Long/Short/Close without a wallet popup for every action, revoke the session on-chain, and withdraw through a direct owner-only path. The router continuously reconciles actual custody against ETH and token liabilities.
 
@@ -332,9 +366,9 @@ NEXT_PUBLIC_LOCAL_CHAIN_RPC=http://127.0.0.1:8545
 
 ---
 
-# PERPHOOD V44 — Terminal-to-Contract Execution
+# LEVERAGE X V44 — Terminal-to-Contract Execution
 
-V44 connects the normal PERPHOOD terminal to the executable V43 unified BattlePool contract for configured local-chain markets. **Buy, Sell, Long, Short, and full Close now submit real wallet transactions, wait for confirmed receipts, decode execution events, and reconcile the terminal from the contract's authoritative state.**
+V44 connects the normal LEVERAGE X terminal to the executable V43 unified BattlePool contract for configured local-chain markets. **Buy, Sell, Long, Short, and full Close now submit real wallet transactions, wait for confirmed receipts, decode execution events, and reconcile the terminal from the contract's authoritative state.**
 
 ## Run the application
 
@@ -392,7 +426,7 @@ V44 does not pretend unsupported automation is live. Limit orders, trigger order
 
 ---
 
-# PERPHOOD V43 — Unified BattlePool Settlement
+# LEVERAGE X V43 — Unified BattlePool Settlement
 
 V43 is the first executable local settlement bridge where **spot buys, spot sells, leveraged longs, leveraged shorts, manual closes, and liquidations all mutate one ordered exponent-5 BattlePool**. The creator launches a fixed one-billion-token market, receives no free allocation, buys from the same public curve, and is blocked from perps on the token at the contract layer.
 
@@ -440,9 +474,9 @@ Copy the printed `NEXT_PUBLIC_V43_LAUNCHPAD_FACTORY_ADDRESS` into `.env.local`, 
 
 ---
 
-# PerpHood V42 — Executable Local-Chain Launchpad Sandbox
+# Leverage X V42 — Executable Local-Chain Launchpad Sandbox
 
-V42 adds an honest local-chain execution layer to the V41 launchpad lifecycle. The Launcher now supports **Browser Simulator** and **Anvil Contract** modes. Contract mode deploys a real one-billion-token local market, executes the creator's post-gas genesis buy against the exponent-5 curve, supports local spot buys and sells, and records the factory, market, token, creator, block, and transaction receipt inside PerpHood.
+V42 adds an honest local-chain execution layer to the V41 launchpad lifecycle. The Launcher now supports **Browser Simulator** and **Anvil Contract** modes. Contract mode deploys a real one-billion-token local market, executes the creator's post-gas genesis buy against the exponent-5 curve, supports local spot buys and sells, and records the factory, market, token, creator, block, and transaction receipt inside Leverage X.
 
 ### Start browser testing
 
@@ -473,7 +507,7 @@ Then copy the printed factory address into `.env.local`, restart Next.js, and se
 
 ---
 
-# PerpHood V41 — Launchpad Test Alpha
+# Leverage X V41 — Launchpad Test Alpha
 
 V41 turns the existing terminal and BattlePool simulator into a complete **local creator-to-migration launchpad test harness**. Create test tokens from the terminal Launcher, reserve gas inside the creator's 0.001 ETH minimum total spend, execute the remaining value as the creator's real curve buy, observe the token under New Pairs, stress the shared pool, and migrate only after all seven safety gates pass.
 
@@ -495,39 +529,39 @@ npm run dev
 
 ---
 
-# PERPHOOD V39 — Clean Shell + Full-Row Navigation
+# LEVERAGE X V39 — Clean Shell + Full-Row Navigation
 
 V39 keeps the V38 BattlePool, chart, alerts, Movers, sidecars, PNL, and spacious three-column terminal while simplifying the top navigation and making every non-control area of a token row open its market workspace.
 
 See `V39_BUILD_NOTES.md` and `V39_VALIDATION.md` for this revision.
 
-# PERPHOOD V36 — One-Demo Chart Research Workspace
+# LEVERAGE X V36 — One-Demo Chart Research Workspace
 
-V36 opens directly into one complete `HOOD` chart workspace so the terminal can be judged without placeholder-token clutter. It combines DEX Screener-style market-data density, Padre-style execution hierarchy, GMGN-style wallet intelligence, and PerpHood's own Buy × Sell × Long × Short BattlePool overlays.
+V36 opens directly into one complete `HOOD` chart workspace so the terminal can be judged without placeholder-token clutter. It combines DEX Screener-style market-data density, Padre-style execution hierarchy, GMGN-style wallet intelligence, and Leverage X's own Buy × Sell × Long × Short BattlePool overlays.
 
 See `CHART_WORKSPACE_RESEARCH.md`, `V36_BUILD_NOTES.md`, and `V36_VALIDATION.md`.
 
-# PERPHOOD V35 — Complete Coin Trading Workspace
+# LEVERAGE X V35 — Complete Coin Trading Workspace
 
 V35 makes the selected coin the primary professional trading workspace: one-second charting, unified Buy/Sell/Long/Short execution, live BattlePool solvency, liquidation mapping, executable PNL, partial position management, keyboard shortcuts, and saved Trade/Focus/Research layouts.
 
 See `V35_BUILD_NOTES.md` and `V35_VALIDATION.md`.
 
-# PERPHOOD V32 — Floating PNL + Trading Identity
+# LEVERAGE X V32 — Floating PNL + Trading Identity
 
 V32 adds a draggable live-PNL window, session/today/7D/30D/all-time modes, a 35-day PNL calendar, Share to X, a 10,000-trade local history cap, and the recommended owner-wallet + contract-account + revocable session-key architecture. The external owner wallet remains user-controlled; the session key is non-exportable because it never owns the funds.
 
 See `V32_BUILD_NOTES.md` and `V32_VALIDATION.md`.
 
-# PERPHOOD V31 — Pro Terminal Controls + Multi-Dock
+# LEVERAGE X V31 — Pro Terminal Controls + Multi-Dock
 
 V31 adds six independent Markets/Movers execution profiles, fee presets, saved filters, a configurable positions/watchlist strip, a configurable Padre-style bottom utility bar, uncapped manual 360 FPS, and sidecars that can remain open together, move left/right, or detach into draggable floating windows. Every temporary settings menu dismisses on outside click or Escape.
 
 See `V31_BUILD_NOTES.md` and `V31_VALIDATION.md`.
 
-# PERPHOOD V30 — Live Movers Ranking Engine
+# LEVERAGE X V30 — Live Movers Ranking Engine
 
-V30 replaces the placeholder “largest percentage move” sort with PerpHood’s real rolling Movers algorithm. Rankings now combine transaction velocity, net WETH inflow, independent-wallet growth, market-cap acceleration, BattlePool pressure, liquidation proximity, real liquidity growth, like velocity, and market quality.
+V30 replaces the placeholder “largest percentage move” sort with Leverage X’s real rolling Movers algorithm. Rankings now combine transaction velocity, net WETH inflow, independent-wallet growth, market-cap acceleration, BattlePool pressure, liquidation proximity, real liquidity growth, like velocity, and market quality.
 
 - **Rolling windows:** 15 seconds (45%), 1 minute (35%), and 5 minutes (20%).
 - **Anti-wash ranking:** repeated actors, linked-wallet concentration, bad debt, and weak custody quality reduce visibility.
@@ -539,14 +573,14 @@ V30 replaces the placeholder “largest percentage move” sort with PerpHood’
 
 See `MOVERS_ALGORITHM.md`, `V30_BUILD_NOTES.md`, and `V30_VALIDATION.md`.
 
-# PERPHOOD V28 — Official Gold Brand Mark
+# LEVERAGE X V28 — Official Gold Brand Mark
 
-The current baseline keeps V27's readable terminal scale, independent New Pairs/Cooking/Migrated quick-buy amounts, #333333 identity, adaptive rendering up to 360 FPS, OG lineage search, account sidebar, and fixed-point BattlePool. V28 installs the new gold PerpHood symbol throughout the application, crops it tightly for small-size legibility, and adds production app, Apple, and favicon assets.
+The current baseline keeps V27's readable terminal scale, independent New Pairs/Cooking/Migrated quick-buy amounts, #333333 identity, adaptive rendering up to 360 FPS, OG lineage search, account sidebar, and fixed-point BattlePool. V28 installs the new gold Leverage X symbol throughout the application, crops it tightly for small-size legibility, and adds production app, Apple, and favicon assets.
 
 See `V28_BUILD_NOTES.md` and `V28_VALIDATION.md` for the brand integration details.
 
 
-PERPHOOD is a Robinhood Chain-first memecoin market where **spot buys, leveraged longs, spot sells, and leveraged shorts all traverse one TOKEN/WETH BattlePool**. The pool—not a matched long/short order book—is the counterparty to every action.
+LEVERAGE X is a Robinhood Chain-first memecoin market where **spot buys, leveraged longs, spot sells, and leveraged shorts all traverse one TOKEN/WETH BattlePool**. The pool—not a matched long/short order book—is the counterparty to every action.
 
 V24 moves the most important financial boundary out of floating-point simulation and into an integer-only contract verifier.
 

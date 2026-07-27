@@ -1,8 +1,8 @@
-# PERPHOOD V20 Execution Architecture — Fast Battle Sequencing and Ordered State
+# LEVERAGE X V20 Execution Architecture — Fast Battle Sequencing and Ordered State
 
 ## Objective
 
-PERPHOOD should feel faster than any memecoin terminal while preserving one authoritative BattlePool state and never pretending an optimistic acknowledgement is settled money.
+LEVERAGE X should feel faster than any memecoin terminal while preserving one authoritative BattlePool state and never pretending an optimistic acknowledgement is settled money.
 
 The user sees one action:
 
@@ -218,7 +218,7 @@ Engineering targets—not current claims:
 - no client polling on the trading path,
 - zero bad debt from a route accepted by the sequencer.
 
-Robinhood Chain inclusion and finality remain external constraints. PERPHOOD should not claim “fastest” until independent end-to-end benchmarks prove it.
+Robinhood Chain inclusion and finality remain external constraints. LEVERAGE X should not claim “fastest” until independent end-to-end benchmarks prove it.
 
 ## Mandatory benchmark suite
 

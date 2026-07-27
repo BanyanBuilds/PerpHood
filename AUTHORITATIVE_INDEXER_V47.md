@@ -1,4 +1,4 @@
-# PERPHOOD V47 — Authoritative Indexer, Reconciliation, and Recovery
+# LEVERAGE X V47 — Authoritative Indexer, Reconciliation, and Recovery
 
 V47 replaces the single-node JSON execution history with a transactional SQLite reference database and introduces one canonical block/event history for the V45 account router, every V45 BattlePool market, V46 durable orders, keeper health, account recovery, and reorg-safe projection replay.
 

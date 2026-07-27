@@ -1,4 +1,4 @@
-# PERPHOOD V20 Supabase foundation
+# Leverage X V20 Supabase foundation
 
 `schema.sql` is a production-shaped **indexer and user-state mirror** for profiles, one-wallet sessions, terminal layouts, alerts, launch drafts, market identity, adaptive BattlePool configurations, reserve snapshots, open leveraged positions, atomic execution batches, settled history, and fee records.
 
@@ -19,7 +19,7 @@ Before connecting this schema publicly:
 9. Treat browser-submitted execution state as untrusted.
 10. Preserve V20's zero-bad-debt and token-conservation assertions in indexer reconciliation.
 
-PERPHOOD supports one active trading wallet per profile. `tracked_wallets` remains read-only intelligence and never authorizes multiwallet execution.
+Leverage X supports one active trading wallet per profile. `tracked_wallets` remains read-only intelligence and never authorizes multiwallet execution.
 
 Creator and holder reward routing is intentionally absent. The existing referral/reward persistence placeholders are inactive future infrastructure, not executable BattlePool economics.
 

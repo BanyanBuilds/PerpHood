@@ -1,10 +1,10 @@
-# PERPHOOD V45 Build Notes
+# LEVERAGE X V45 Build Notes
 
 ## Milestone
 
 **Authorized Account Execution + Fully Backed Internal Ledger**
 
-V45 advances the V44 direct-wallet terminal into the intended PERPHOOD flow:
+V45 advances the V44 direct-wallet terminal into the intended LEVERAGE X flow:
 
 ```text
 Deposit once → authorize a bounded session → trade instantly → revoke or withdraw directly

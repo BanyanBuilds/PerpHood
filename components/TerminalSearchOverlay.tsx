@@ -81,7 +81,7 @@ export function TerminalSearchOverlay({
     <div className="ticker-search-backdrop" role="presentation" onMouseDown={(event) => {
       if (event.currentTarget === event.target) onClose();
     }}>
-      <section className="ticker-search-modal" role="dialog" aria-modal="true" aria-label="Search PERPHOOD markets">
+      <section className="ticker-search-modal" role="dialog" aria-modal="true" aria-label="Search LEVERAGE X markets">
         <header className="ticker-search-head">
           <Search size={20} />
           <input
@@ -104,7 +104,7 @@ export function TerminalSearchOverlay({
           <div className="ticker-search-empty">
             <Search size={28} />
             <strong>Search any ticker lineage</strong>
-            <span>Try <b>$COIN</b>. PERPHOOD will separate the oldest listings from the highest-market-cap listings.</span>
+            <span>Try <b>$COIN</b>. LEVERAGE X will separate the oldest listings from the highest-market-cap listings.</span>
           </div>
         ) : matches.length === 0 ? (
           <div className="ticker-search-empty">

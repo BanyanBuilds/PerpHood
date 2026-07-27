@@ -1,4 +1,4 @@
-# PERPHOOD V36 — One-demo chart workspace
+# LEVERAGE X V36 — One-demo chart workspace
 
 V36 removes the empty discovery detour from the review build and opens directly into one complete `HOOD` chart workspace.
 

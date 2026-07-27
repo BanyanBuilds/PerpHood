@@ -12,7 +12,7 @@ export function V53UserStateConsole() {
 
   return <main className="v53-user-state-console">
     <header>
-      <span><Cloud size={18}/>PERPHOOD V53</span>
+      <span><Cloud size={18}/>LEVERAGE X V53</span>
       <h1>Cross-device user state</h1>
       <p>Supabase stores settings only. BattlePool settlement, account custody, session authority and withdrawals remain outside this sync layer.</p>
     </header>
@@ -29,7 +29,7 @@ export function V53UserStateConsole() {
       <p>Copy this key to restore presets, workspaces, watchlists, likes and alerts on another device. Anyone with it can change those settings, but cannot move assets or place trades.</p>
       <div>
         <button onClick={async () => { const copied = await state.copyRecoveryKey(); setAction(copied ? "Recovery key copied" : "Clipboard access failed"); }}><Copy size={14}/>Copy recovery key</button>
-        <button onClick={() => { const value = window.prompt("Paste a PERPHOOD V53 settings recovery key"); if (!value) return; setAction(state.importRecoveryKey(value) ? "Importing key…" : "Invalid key"); }}><Download size={14}/>Import recovery key</button>
+        <button onClick={() => { const value = window.prompt("Paste a LEVERAGE X V53 settings recovery key"); if (!value) return; setAction(state.importRecoveryKey(value) ? "Importing key…" : "Invalid key"); }}><Download size={14}/>Import recovery key</button>
         <button onClick={() => { setAction("Sync requested"); void state.syncNow(); }}><RefreshCw size={14}/>Sync now</button>
         {action && <em>{action}</em>}
       </div>

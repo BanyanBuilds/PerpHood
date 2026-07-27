@@ -38,7 +38,7 @@ function downloadAccounts(accounts: string[]) {
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = url;
-  anchor.download = "perphood-x-accounts.json";
+  anchor.download = "leveragex-x-accounts.json";
   anchor.click();
   URL.revokeObjectURL(url);
 }
@@ -163,7 +163,7 @@ export function XLaunchFeedPanel({ onClose, onLaunchDraft }: { onClose: () => vo
       </div>
       <div className="x-launch-feed-scroll">
         {feed.posts.map((post) => <XPostCard key={post.id} post={post} onLaunch={onLaunchDraft} />)}
-        {!feed.posts.length && <div className="x-launch-empty"><UploadCloud size={28} /><strong>{feed.configured ? "No launch posts matched" : "Connect the official X API"}</strong><p>{error || feed.message || "Add monitored accounts or keywords. PerpHood does not invent social posts."}</p>{!feed.configured ? <code>X_BEARER_TOKEN=</code> : null}</div>}
+        {!feed.posts.length && <div className="x-launch-empty"><UploadCloud size={28} /><strong>{feed.configured ? "No launch posts matched" : "Connect the official X API"}</strong><p>{error || feed.message || "Add monitored accounts or keywords. Leverage X does not invent social posts."}</p>{!feed.configured ? <code>X_BEARER_TOKEN=</code> : null}</div>}
       </div>
     </> : <div className="x-launch-account-manager">
       <header><strong>Monitored accounts</strong><small>Import usernames, not another terminal’s private feed.</small></header>
@@ -175,7 +175,7 @@ export function XLaunchFeedPanel({ onClose, onLaunchDraft }: { onClose: () => vo
         <button onClick={() => setAccounts([])} disabled={!accounts.length}><Trash2 size={14} />Clear</button>
         <input ref={fileRef} hidden type="file" accept=".json,.txt,.csv" onChange={(event) => void importAccounts(event.target.files?.[0])} />
       </div>
-      <div className="x-launch-account-note"><strong>Why native?</strong><p>Axiom and Padre do not publish an official importable X-feed API. PerpHood owns its rules, account lists, ticker suggestions, and one-click launch path.</p></div>
+      <div className="x-launch-account-note"><strong>Why native?</strong><p>Axiom and Padre do not publish an official importable X-feed API. Leverage X owns its rules, account lists, ticker suggestions, and one-click launch path.</p></div>
     </div>}
   </div>;
 }

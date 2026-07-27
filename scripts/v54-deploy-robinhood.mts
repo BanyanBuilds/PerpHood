@@ -32,7 +32,7 @@ const deployer = run("cast", ["wallet", "address", "--private-key", privateKey],
 const owner = (process.env.V54_FACTORY_OWNER ?? deployer).toLowerCase();
 if (!/^0x[0-9a-f]{40}$/.test(owner)) throw new Error("V54_FACTORY_OWNER must be a valid EVM address.");
 
-console.log(`\nCompiling PERPHOOD V54 for ${network.name}…`);
+console.log(`\nCompiling Leverage X V55 for ${network.name}…`);
 run("forge", ["build", "--contracts", "contracts/src"]);
 
 const args = [

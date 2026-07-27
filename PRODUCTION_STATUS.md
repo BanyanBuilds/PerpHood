@@ -1,3 +1,41 @@
+# Leverage X V55 production status
+
+## Current milestone
+
+V55 is the branded real-launch and real-trading-terminal candidate. The hosted runtime contains no bundled markets or fabricated execution data. The first market must come from a canonically verified Leverage X V55 factory receipt.
+
+## Ready in source
+
+- Official Leverage X logo, browser icons, metadata and domain identity
+- Fixed one-billion-supply ERC-20 launch factory
+- Native-ETH spot bonding curve
+- Inclusive 0.001 ETH creator launch budget
+- Canonical Supabase metadata and launch verification
+- Real wallet Buy and Sell
+- P1/P2/P3 fee/slippage/execution profiles
+- Transaction lifecycle tracker
+- Market truth and native-token security facts
+- Emergency controls
+- Empty production market list until real launches exist
+
+## Still blocking a real mint
+
+- Compile V55 contracts with Foundry
+- Execute the V55 Foundry tests
+- Deploy and verify the factory on Robinhood Chain testnet
+- Add its public address to Vercel
+- Mint from a connected creator wallet using testnet ETH
+- Complete an independent second-wallet Buy/Sell
+- Reconcile explorer, contract, registry and terminal values
+
+## Explicitly locked
+
+- Robinhood Chain mainnet
+- Public funds
+- V55 Long/Short execution
+- Claims of GMGN support before actual discovery/integration
+
+---
 # V54 production status
 
 ## Built
@@ -27,7 +65,7 @@
 
 # V53 Current Status
 
-PERPHOOD V53 adds a cross-device Supabase/Postgres path for low-frequency user settings only. Independent Markets/Movers Buy/Long/Short presets, saved layouts with up to three left sidecars, likes, watchlists, and bounded alert history now merge by section timestamp and survive device changes through a 256-bit recovery key. Local storage remains the automatic fallback.
+LEVERAGE X V53 adds a cross-device Supabase/Postgres path for low-frequency user settings only. Independent Markets/Movers Buy/Long/Short presets, saved layouts with up to three left sidecars, likes, watchlists, and bounded alert history now merge by section timestamp and survive device changes through a 256-bit recovery key. Local storage remains the automatic fallback.
 
 The recovery key cannot authorize trades, sessions, sequencer commands, position closes, withdrawals, custody changes, or BattlePool settlement. The same-origin API stores only its SHA-256 hash and uses a server-only Supabase service-role credential.
 
@@ -39,7 +77,7 @@ See `USER_STATE_SYNC_V53.md`, `V53_BUILD_NOTES.md`, and `V53_VALIDATION.md`.
 
 # V52 Current Status
 
-PERPHOOD V52 is a product-completion and scale-foundation build. The repository now exposes a canonical 17-system completion inventory and explicitly reports 13 unresolved production blockers. It is not approved for public funds or testnet deployment.
+LEVERAGE X V52 is a product-completion and scale-foundation build. The repository now exposes a canonical 17-system completion inventory and explicitly reports 13 unresolved production blockers. It is not approved for public funds or testnet deployment.
 
 The architecture targets 100,000 to 1,000,000 registered users through market-partitioned sequencing, durable queues, horizontally scaled APIs and stream gateways, PostgreSQL projections, distributed caching, worker fleets and RPC quorum. Those targets are not capacity claims until deployed load and failure tests pass.
 
@@ -167,7 +205,7 @@ See `V41_VALIDATION.md` for exactly what was and was not executed.
 
 ---
 
-# PERPHOOD V36 production status
+# LEVERAGE X V36 production status
 
 ## Review build implemented
 
@@ -188,7 +226,7 @@ See `V41_VALIDATION.md` for exactly what was and was not executed.
 - Production WebSocket delivery and event ordering
 - Audited contracts and real settlement adapters
 
-# PERPHOOD V35 production status
+# LEVERAGE X V35 production status
 
 ## Newly implemented
 
@@ -209,7 +247,7 @@ See `V41_VALIDATION.md` for exactly what was and was not executed.
 - Real alert delivery
 - Compiled Next.js production build after dependency installation
 
-# PERPHOOD V32 production status
+# LEVERAGE X V32 production status
 
 ## Newly implemented
 
@@ -231,7 +269,7 @@ See `V41_VALIDATION.md` for exactly what was and was not executed.
 - Smart-account owner recovery and wallet-switch transaction flow
 - Hardware-backed WebAuthn session keys where supported
 
-# PERPHOOD V24 production status
+# LEVERAGE X V24 production status
 
 ## Implemented and locally validated
 

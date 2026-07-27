@@ -22,9 +22,9 @@ export function Header() {
   return (
     <header className="site-header terminal-site-header">
       <div className="header-inner terminal-only-header">
-        <Link href="/" className="brand-lockup" aria-label="Open PERPHOOD terminal">
+        <Link href="/" className="brand-lockup" aria-label="Open LEVERAGE X terminal">
           <BrandMark />
-          <span><strong>PERPHOOD</strong><small>ROBINHOOD CHAIN</small></span>
+          <span><strong>LEVERAGE X</strong><small>ROBINHOOD CHAIN</small></span>
         </Link>
 
         <div className="terminal-header-status" aria-label="Terminal status">
@@ -35,7 +35,7 @@ export function Header() {
         <div className="header-actions">
           {connected && <Link href="/funding" className="header-fund-button"><Plus size={15}/><span>Fund</span><strong>{balanceEth.toFixed(3)} ETH</strong></Link>}
           <KeyButton compact className={connected ? "profile-key" : ""} onClick={handleWalletButton}>
-            {connected ? <><span className="profile-key-avatar">PH</span><span className="profile-key-copy"><strong>Trading account</strong><small>Open account sidebar</small></span></> : <><WalletCards size={17} />Connect Wallet</>}
+            {connected ? <><span className="profile-key-avatar">LX</span><span className="profile-key-copy"><strong>Trading account</strong><small>Open account sidebar</small></span></> : <><WalletCards size={17} />Connect Wallet</>}
           </KeyButton>
         </div>
       </div>

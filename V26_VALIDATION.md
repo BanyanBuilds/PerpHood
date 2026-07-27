@@ -1,4 +1,4 @@
-# PERPHOOD V26 Validation
+# LEVERAGE X V26 Validation
 
 ## UI static validation
 

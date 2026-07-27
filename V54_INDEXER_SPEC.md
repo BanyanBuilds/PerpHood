@@ -1,4 +1,4 @@
-# PERPHOOD V54 Indexer Interface
+# LEVERAGE X V54 Indexer Interface
 
 ## Discovery endpoint
 
@@ -48,4 +48,4 @@ Trade(
 Transfer(address indexed from, address indexed to, uint256 value)
 ```
 
-Third-party visibility is not assumed. An indexer must recognize both the standard ERC-20 and the PERPHOOD factory/market events to display accurate custom-curve prices and liquidity.
+Third-party visibility is not assumed. An indexer must recognize both the standard ERC-20 and the LEVERAGE X factory/market events to display accurate custom-curve prices and liquidity.

@@ -1,4 +1,4 @@
-name: PERPHOOD V54 Build Gate
+name: Leverage X V55 Build Gate
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
   pull_request:
 
 concurrency:
-  group: perphood-build-${{ github.ref }}
+  group: leveragex-build-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -23,7 +23,7 @@ jobs:
           cache: npm
       - name: Install locked dependencies
         run: npm ci
-      - name: Run V54 production-launch guards
-        run: npm run test:v54-fast
+      - name: Run Leverage X V55 terminal guards
+        run: npm run test:v55-fast
       - name: Build the Next.js application
         run: npm run build

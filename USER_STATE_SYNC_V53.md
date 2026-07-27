@@ -1,4 +1,4 @@
-# PERPHOOD V53 — Supabase User-State Synchronization
+# LEVERAGE X V53 — Supabase User-State Synchronization
 
 V53 adds durable cross-device synchronization for low-frequency user preferences without placing funds, trading authority, private keys, custody balances, BattlePool reserves, positions, or settlement truth inside Supabase.
 

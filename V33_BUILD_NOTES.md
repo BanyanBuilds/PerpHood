@@ -21,4 +21,4 @@
 
 ## Product rule
 
-PerpHood does not attempt to scrape or embed Axiom or Terminal/Padre. A competitor integration may be added only through an official supported API or user-exported account list.
+Leverage X does not attempt to scrape or embed Axiom or Terminal/Padre. A competitor integration may be added only through an official supported API or user-exported account list.

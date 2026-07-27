@@ -14,7 +14,7 @@ const consoles = [
 
 export default function AdminPage() {
   return <main className="v52-admin-hub">
-    <header><span><Workflow size={18}/>PERPHOOD BUILD CENTER</span><h1>Development Operations</h1><p>Internal build consoles only. These pages do not indicate public-fund or testnet approval.</p></header>
+    <header><span><Workflow size={18}/>LEVERAGE X BUILD CENTER</span><h1>Development Operations</h1><p>Internal build consoles only. These pages do not indicate public-fund or testnet approval.</p></header>
     <section>{consoles.map(({ href, label, detail, Icon }) => <Link href={href} key={href}><Icon size={18}/><span><b>{label}</b><small>{detail}</small></span></Link>)}</section>
   </main>;
 }

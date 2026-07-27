@@ -15,7 +15,7 @@ export function Hero() {
   return (
     <section className="hero-section">
       <div className="hero-copy">
-        <span className="eyebrow">PERPHOOD · ROBINHOOD CHAIN FIRST</span>
+        <span className="eyebrow">LEVERAGE X · ROBINHOOD CHAIN FIRST</span>
         <h1>ONE POOL.<br />FOUR SIDES.</h1>
         <p>Spot buyers, leveraged longs, spot sellers, and leveraged shorts fight through one real TOKEN/WETH BattlePool.</p>
         <div className="hero-actions">

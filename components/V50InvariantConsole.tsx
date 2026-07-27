@@ -53,7 +53,7 @@ export function V50InvariantConsole() {
 
   return <main className="v50-invariant-page">
     <header className="v50-invariant-hero">
-      <div><span><Sigma size={18}/>PERPHOOD V50</span><h1>Formal Invariants &amp; Settlement Safety</h1><p>Live contract diagnostics for token conservation, custody, collateral reconciliation, short inventory, and guaranteed WETH solvency.</p></div>
+      <div><span><Sigma size={18}/>LEVERAGE X V50</span><h1>Formal Invariants &amp; Settlement Safety</h1><p>Live contract diagnostics for token conservation, custody, collateral reconciliation, short inventory, and guaranteed WETH solvency.</p></div>
       <div className={healthy ? "healthy" : "degraded"}>{healthy ? <ShieldCheck size={24}/> : <AlertTriangle size={24}/>}<span><b>{healthy ? "ALL INVARIANTS GREEN" : "VALIDATION REQUIRED"}</b><small>Read directly from the BattlePool contract</small></span></div>
     </header>
 

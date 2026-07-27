@@ -1,4 +1,4 @@
-# PERPHOOD V31 — Pro Terminal Controls
+# LEVERAGE X V31 — Pro Terminal Controls
 
 V31 turns the terminal controls into a coherent, persistent professional workspace.
 

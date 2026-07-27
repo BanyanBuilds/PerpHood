@@ -2,7 +2,7 @@
 
 ## Result
 
-`npm run test:v49` passes the inherited PERPHOOD regression chain and the new settlement-math verification suite.
+`npm run test:v49` passes the inherited LEVERAGE X regression chain and the new settlement-math verification suite.
 
 ## Independent curve verification
 

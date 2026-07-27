@@ -1,6 +1,6 @@
 # V36 chart-workspace research
 
-PerpHood V36 deliberately combines the strongest chart-page patterns without copying another terminal's branding or depending on a competitor's private APIs.
+Leverage X V36 deliberately combines the strongest chart-page patterns without copying another terminal's branding or depending on a competitor's private APIs.
 
 ## DEX Screener patterns retained
 
@@ -12,7 +12,7 @@ PerpHood V36 deliberately combines the strongest chart-page patterns without cop
 
 - Chart-first workspace hierarchy with the execution ticket always available on the right.
 - Compact CEX-like spacing, expected execution context, chart order lines, pending activity, and a fast market tape.
-- One selected market remains inside the PerpHood shell rather than opening a disconnected microsite.
+- One selected market remains inside the Leverage X shell rather than opening a disconnected microsite.
 
 ## GMGN patterns retained
 
@@ -20,7 +20,7 @@ PerpHood V36 deliberately combines the strongest chart-page patterns without cop
 - Visible creator, smart-money, sniper, and liquidation chart markers.
 - Holder concentration, creator ownership, bundled-wallet risk, early-buyer retention, and wallet labels.
 
-## PerpHood-only layer
+## Leverage X-only layer
 
 - Buy, Sell, Long, and Short all traverse one BattlePool.
 - One-second candles are the default.

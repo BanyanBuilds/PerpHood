@@ -1,4 +1,4 @@
-# PERPHOOD V27 Validation
+# LEVERAGE X V27 Validation
 
 ## Readability and quick-buy UI
 

@@ -48,7 +48,7 @@ export function LaunchpadTestConsole() {
     setLoading(true);
     setError("");
     try {
-      const response = await fetch("/api/v54/launches?limit=100", { cache: "no-store" });
+      const response = await fetch("/api/v55/launches?limit=100", { cache: "no-store" });
       const body = await response.json() as { ok?: boolean; launches?: LaunchRow[]; error?: string };
       if (!response.ok || !body.ok) throw new Error(body.error || "Launch registry could not be loaded.");
       setRows(body.launches ?? []);
@@ -70,7 +70,7 @@ export function LaunchpadTestConsole() {
   return <main className="v41-console-page">
     <header className="v41-console-head">
       <div>
-        <span className="eyebrow"><Rocket size={14}/> V54 REAL LAUNCH REGISTRY</span>
+        <span className="eyebrow"><Rocket size={14}/> LEVERAGE X V55 REAL LAUNCH REGISTRY</span>
         <h1>Robinhood Chain launches</h1>
         <p>Only canonically confirmed factory deployments are shown. No local simulator, bundled token, fake balance, or fabricated transaction is included.</p>
       </div>
@@ -93,7 +93,7 @@ export function LaunchpadTestConsole() {
       <header className="v41-selected-market"><Database size={18}/><span><strong>Confirmed token contracts</strong><small>Factory receipt, token identity, metadata hash, and one-billion supply are verified before insertion.</small></span></header>
       <div className="v41-console-ledger">
         <div>
-          {!loading && rows.length === 0 && <p>No real PERPHOOD markets have been launched yet.</p>}
+          {!loading && rows.length === 0 && <p>No real LEVERAGE X markets have been launched yet.</p>}
           {loading && <p>Reading the confirmed launch registry…</p>}
           {rows.map((row) => {
             const base = explorer(row);
