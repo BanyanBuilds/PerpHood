@@ -1,3 +1,4 @@
+import type { SQLInputValue } from "node:sqlite";
 import { openV47Database, v47DatabasePath, type V47Database } from "./v47-database.ts";
 import { validateV85Event, type V85LiveEvent } from "../v85-live-data.ts";
 import type { V87LiveStateSnapshot, V87PositionSnapshot, V87TokenSnapshot } from "../v87-live-state.ts";
@@ -127,11 +128,11 @@ export function readV87LiveState(input:{chainId:number;marketAddress?:string;own
   const db=openV47Database(input.databasePath ?? v47DatabasePath());
   try {
     ensureV87LiveStateSchema(db); const limit=Math.max(1,Math.min(500,input.limit ?? 100));
-    const marketArgs: unknown[]=[input.chainId]; let marketWhere="chain_id=?";
+    const marketArgs: SQLInputValue[]=[input.chainId]; let marketWhere="chain_id=?";
     if(input.marketAddress){marketWhere+=" AND market_address=?";marketArgs.push(input.marketAddress.toLowerCase());}
     marketArgs.push(limit);
     const markets=db.prepare(`SELECT * FROM v87_market_snapshots WHERE ${marketWhere} ORDER BY updated_at DESC LIMIT ?`).all(...marketArgs) as Record<string,unknown>[];
-    const posArgs: unknown[]=[input.chainId]; let posWhere="chain_id=?";
+    const posArgs: SQLInputValue[]=[input.chainId]; let posWhere="chain_id=?";
     if(input.marketAddress){posWhere+=" AND market_address=?";posArgs.push(input.marketAddress.toLowerCase());}
     if(input.ownerAddress){posWhere+=" AND owner_address=?";posArgs.push(input.ownerAddress.toLowerCase());}
     if(!input.includeClosed) posWhere+=" AND status='OPEN'"; posArgs.push(limit);
