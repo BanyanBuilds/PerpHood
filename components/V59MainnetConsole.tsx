@@ -64,6 +64,14 @@ export function V59MainnetConsole() {
 
   useEffect(() => { void refresh(); }, [refresh]);
 
+  if (data === null) {
+    return <main className="v59-mainnet-page">
+      <header className="v59-mainnet-hero">
+        <div><span><Activity size={17}/>LEVERAGE X V60</span><h1>Mainnet Preflight & Factory Gate</h1><p>Loading authoritative Robinhood Chain mainnet state…</p></div>
+      </header>
+    </main>;
+  }
+
   const safe = data?.gates.factorySafelyDeployed ?? false;
   const rpcReady = data?.gates.rpcReady ?? false;
   const factoryLabel = data?.factory.codePresent ? "DEPLOYED" : "NOT DEPLOYED";

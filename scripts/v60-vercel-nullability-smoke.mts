@@ -1,19 +1,35 @@
-import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import fs from "node:fs";
+import path from "node:path";
 
-const source = readFileSync("components/V59MainnetConsole.tsx", "utf8");
-const checks: Array<[string, boolean]> = [
-  ["global pause is normalized before JSX", source.includes("const globalTradingPaused = data?.factory.globalTradingPaused ?? null")],
-  ["new-market pause is normalized before JSX", source.includes("const newMarketsPaused = data?.factory.newMarketsPaused ?? null")],
-  ["global pause JSX no longer dereferences nullable data", !source.includes("data.factory.globalTradingPaused ?")],
-  ["new-market pause JSX no longer dereferences nullable data", !source.includes("data.factory.newMarketsPaused ?")],
-  ["global pause renders from narrowed local state", source.includes('globalTradingPaused === null ? "—" : globalTradingPaused ? "ON" : "OFF"')],
-  ["new-market pause renders from narrowed local state", source.includes('newMarketsPaused === null ? "—" : newMarketsPaused ? "ON" : "OFF"')],
+const root = process.cwd();
+const files = [
+  "components/V59MainnetConsole.tsx",
+  "components/V60CanaryConsole.tsx",
 ];
 
-for (const [label, passed] of checks) {
-  assert.ok(passed, label);
-  console.log(`PASS — ${label}`);
+let checks = 0;
+for (const relative of files) {
+  const source = fs.readFileSync(path.join(root, relative), "utf8");
+  const unsafeNullableTernary = /data\?\.[^\n]*=== null\s*\?[^\n]*:\s*data\./g;
+  if (unsafeNullableTernary.test(source)) {
+    throw new Error(`${relative} still contains an unsafe nullable ternary`);
+  }
+  checks += 1;
 }
 
-console.log(`\n${checks.length}/${checks.length} V60 Vercel nullability checks passed.`);
+const v59 = fs.readFileSync(path.join(root, files[0]), "utf8");
+const v60 = fs.readFileSync(path.join(root, files[1]), "utf8");
+for (const token of ["globalTradingPaused", "newMarketsPaused"]) {
+  if (!v59.includes(`const ${token} = data?.factory.${token} ?? null;`)) {
+    throw new Error(`V59 missing normalized ${token}`);
+  }
+  checks += 1;
+}
+for (const token of ["marketPaused", "newMarketsPaused", "nextLocalCommand"]) {
+  if (!v60.includes(`const ${token}`)) {
+    throw new Error(`V60 missing normalized ${token}`);
+  }
+  checks += 1;
+}
+
+console.log(`V60 Vercel nullability smoke: ${checks}/${checks} checks passed`);

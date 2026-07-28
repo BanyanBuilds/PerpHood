@@ -54,12 +54,29 @@ export function V60CanaryConsole() {
 
   useEffect(() => { void refresh(); }, [refresh]);
 
+  if (data === null) {
+    return <main className="v60-canary-page">
+      <header className="v60-canary-hero">
+        <div><span><Activity size={17}/>LEVERAGE X V60</span><h1>Mainnet Canary Control</h1><p>Loading authoritative Robinhood Chain canary state…</p></div>
+      </header>
+    </main>;
+  }
+
   const phase = data?.gates.spotCanaryOpen ? "SPOT CANARY LIVE"
     : data?.gates.firstMarketCreated ? "MARKET PAUSED"
       : data?.gates.canaryLaunchReady ? "LAUNCH READY"
         : data?.gates.canaryConfigurationReady ? "VERCEL SYNC"
           : data?.factory.codePresent ? "CONFIGURE CANARY" : "DEPLOY FACTORY";
   const healthy = data?.gates.rpcReady ?? false;
+  const marketPaused = data?.market.paused ?? null;
+  const newMarketsPaused = data?.factory.newMarketsPaused ?? null;
+  const nextLocalCommand = !data?.factory.codePresent
+    ? "npm run chain:v59:preflight"
+    : !data.gates.canaryConfigurationReady
+      ? "npm run chain:v60:canary:preflight"
+      : !data.gates.firstMarketCreated
+        ? "Use Launch Token with the allowlisted wallet"
+        : "npm run chain:v60:canary:open";
 
   return <main className="v60-canary-page">
     <header className="v60-canary-hero">
@@ -77,7 +94,7 @@ export function V60CanaryConsole() {
     <section className="v60-canary-metrics">
       <article><Factory/><span><small>Factory mode</small><strong>{data?.factory.launchModeLabel?.toUpperCase() ?? "NOT DEPLOYED"}</strong><em>{short(data?.factory.address ?? null)}</em></span></article>
       <article><UserCheck/><span><small>Canary creator</small><strong>{data?.factory.canaryCreatorAllowed ? "ALLOWLISTED" : "LOCKED"}</strong><em>{short(data?.accounts.canaryCreator ?? null)}</em></span></article>
-      <article><PauseCircle/><span><small>Trading posture</small><strong>{data?.gates.spotCanaryOpen ? "CAPPED LIVE" : "PAUSED"}</strong><em>New markets {data?.factory.newMarketsPaused ? "paused" : "open"}</em></span></article>
+      <article><PauseCircle/><span><small>Trading posture</small><strong>{data?.gates.spotCanaryOpen ? "CAPPED LIVE" : "PAUSED"}</strong><em>New markets {newMarketsPaused === null ? "—" : newMarketsPaused ? "paused" : "open"}</em></span></article>
       <article><CircleDollarSign/><span><small>Creator / trader</small><strong>{eth(data?.accounts.creatorBalanceWei ?? null)}</strong><em>Trader {eth(data?.accounts.traderBalanceWei ?? null)}</em></span></article>
     </section>
 
@@ -94,8 +111,8 @@ export function V60CanaryConsole() {
 
       <aside className="v60-canary-side">
         <section><header><WalletCards size={16}/><strong>Controlled accounts</strong></header><div><span>Owner</span><b>{short(data?.accounts.owner ?? null)}</b></div><div><span>Creator</span><b>{short(data?.accounts.canaryCreator ?? null)}</b></div><div><span>First trader</span><b>{short(data?.accounts.firstTrader ?? null)}</b></div></section>
-        <section><header><Factory size={16}/><strong>First market</strong></header><div><span>Market</span><b>{short(data?.market.address ?? null)}</b></div><div><span>Token</span><b>{short(data?.market.token ?? null)}</b></div><div><span>Paused</span><b>{data?.market.paused === null ? "—" : data.market.paused ? "YES" : "NO"}</b></div><div><span>Trades</span><b>{data?.market.tradeCount ?? "0"}</b></div></section>
-        <section><header><CheckCircle2 size={16}/><strong>Next local command</strong></header><code>{data?.factory.codePresent ? data?.gates.canaryConfigurationReady ? data?.gates.firstMarketCreated ? "npm run chain:v60:canary:open" : "Use Launch Token with the allowlisted wallet" : "npm run chain:v60:canary:preflight" : "npm run chain:v59:preflight"}</code><p>All owner signing remains local. Vercel can read state but cannot sign or broadcast administration transactions.</p></section>
+        <section><header><Factory size={16}/><strong>First market</strong></header><div><span>Market</span><b>{short(data?.market.address ?? null)}</b></div><div><span>Token</span><b>{short(data?.market.token ?? null)}</b></div><div><span>Paused</span><b>{marketPaused === null ? "—" : marketPaused ? "YES" : "NO"}</b></div><div><span>Trades</span><b>{data?.market.tradeCount ?? "0"}</b></div></section>
+        <section><header><CheckCircle2 size={16}/><strong>Next local command</strong></header><code>{nextLocalCommand}</code><p>All owner signing remains local. Vercel can read state but cannot sign or broadcast administration transactions.</p></section>
       </aside>
     </section>
   </main>;
