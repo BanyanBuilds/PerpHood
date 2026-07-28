@@ -1,6 +1,6 @@
 {
-  "name": "leveragex-v92-production-deployment-gate",
-  "version": "0.92.0",
+  "name": "leveragex-v94-strict-live-event-types",
+  "version": "0.94.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -307,7 +307,9 @@
     "test:v87": "npm run test:v86 && npm run test:v87-state",
     "test:v88": "node --experimental-strip-types scripts/v88-immediate-perps-smoke.mts && npm run test:v87",
     "test:v89": "node --experimental-strip-types scripts/v89-protocol-stats-smoke.mts && npm run test:v88",
-    "test:v92": "node --experimental-strip-types scripts/v92-production-deployment-gate-smoke.mts"
+    "test:v92": "node --experimental-strip-types scripts/v92-production-deployment-gate-smoke.mts",
+    "test:v93": "node --experimental-strip-types scripts/v93-ethers-contract-type-safety-smoke.mts && npm run test:v92",
+    "test:v94": "node --experimental-strip-types scripts/v94-strict-live-event-types-smoke.mts && npm run test:v93"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.14",

@@ -48,13 +48,14 @@ export function validateV85Event(input: unknown): V85LiveEvent {
   if (value.marketAddress !== undefined && !ADDRESS_RE.test(value.marketAddress)) throw new Error("marketAddress must be a 20-byte address.");
   if (!value.payload || typeof value.payload !== "object" || Array.isArray(value.payload)) throw new Error("payload must be an object.");
 
+  const chainId = Number(value.chainId);
   const occurredAt = value.occurredAt ? new Date(value.occurredAt) : new Date();
   if (Number.isNaN(occurredAt.getTime())) throw new Error("occurredAt must be a valid timestamp.");
 
   return {
-    id: typeof value.id === "string" && value.id.trim() ? value.id.trim() : createV85EventId(value.kind, value.chainId, value.transactionHash, value.blockNumber),
+    id: typeof value.id === "string" && value.id.trim() ? value.id.trim() : createV85EventId(value.kind, chainId, value.transactionHash, value.blockNumber),
     kind: value.kind,
-    chainId: Number(value.chainId),
+    chainId,
     blockNumber: value.blockNumber,
     transactionHash: value.transactionHash,
     marketAddress: value.marketAddress,

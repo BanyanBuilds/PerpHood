@@ -90,9 +90,20 @@ export async function verifyDeployment(lockerAddressRaw?: string, factoryAddress
   if (lockerCode === "0x" || factoryCode === "0x") throw new Error("One or both deployment addresses have no bytecode.");
   const locker = new Contract(lockerAddress, lockerReadAbi, p);
   const factory = new Contract(factoryAddress, factoryReadAbi, p);
+  const call = (contract: Contract, functionName: string) => contract.getFunction(functionName)();
   const [lockerOwner, boundFactory, lockerUni, lockerPm, lockerWeth, factoryOwner, configuredLocker, launchesOpen, factoryUni, factoryPm, router, factoryWeth] = await Promise.all([
-    locker.owner(), locker.factory(), locker.uniswapV3Factory(), locker.positionManager(), locker.weth(),
-    factory.owner(), factory.liquidityLocker(), factory.launchesOpen(), factory.uniswapV3Factory(), factory.positionManager(), factory.swapRouter02(), factory.weth(),
+    call(locker, "owner"),
+    call(locker, "factory"),
+    call(locker, "uniswapV3Factory"),
+    call(locker, "positionManager"),
+    call(locker, "weth"),
+    call(factory, "owner"),
+    call(factory, "liquidityLocker"),
+    call(factory, "launchesOpen"),
+    call(factory, "uniswapV3Factory"),
+    call(factory, "positionManager"),
+    call(factory, "swapRouter02"),
+    call(factory, "weth"),
   ]);
   const expectedOwner = process.env.LEVERAGEX_OWNER?.trim();
   const checks = {
