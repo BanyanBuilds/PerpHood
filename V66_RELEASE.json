@@ -1,0 +1,22 @@
+{
+  "release": "V66",
+  "name": "Leverage X Mainnet Execution Gate",
+  "packageVersion": "66.0.0",
+  "contractCandidate": "LeverageXLaunchFactoryV65",
+  "network": {
+    "name": "Robinhood Chain Mainnet",
+    "chainId": 4663,
+    "gasToken": "ETH"
+  },
+  "objective": "Reach the first controlled canonical-pool mint and GMGN discovery test without violating the 0.001 ETH total-budget-inclusive-of-gas rule.",
+  "publicLaunchesEnabled": false,
+  "perpsEnabled": false,
+  "deploymentBroadcast": false,
+  "mainChanges": [
+    "Unified browser and CLI launch-budget semantics",
+    "Live gas reservation inside total budget",
+    "Receipt-level actual-spend reconciliation",
+    "Focused mainnet environment template",
+    "One-command zero-transaction execution gate"
+  ]
+}

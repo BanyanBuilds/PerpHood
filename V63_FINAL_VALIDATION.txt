@@ -1,0 +1,36 @@
+leverage X V63 — GMGN Compatibility Final Validation
+
+Completed in this build environment:
+- V55 real terminal: 70/70
+- V55 Vercel regression: 12/12
+- V56 mainnet controls: 26/26
+- V57 profile drawer: 15/15
+- V58 Launch Token UI: 21/21
+- V59 mainnet preflight static gate: 37/37
+- V60 canary controls: 36/36
+- V60 Vercel nullability: 7/7
+- V61 launchpad + How It Works: 20/20
+- V62 go-live gate: 11/11
+- V63 GMGN compatibility: 25/25
+- TypeScript/TSX syntax parsing: 358 files
+- Changed V63 modules semantic TypeScript check with local dependency stubs: passed
+- GMGN integration package generation: passed
+- Secret scan: passed
+
+Added for the final V63 handoff:
+- Public versioned factory/token/market ABIs
+- Event topic fingerprints in the machine-readable manifest
+- Common pool and quote-token aliases in launch-feed records
+- GMGN onboarding submission template and canary evidence checklist
+
+Not completed in this environment:
+- Clean npm dependency install / full Next.js production build (package gateway missing zod-validation-error@4.0.2)
+- Foundry compilation and tests (forge unavailable)
+- Any mainnet transaction, contract deployment, token launch, GMGN discovery test, or GMGN onboarding
+
+Mandatory gates before deployment:
+1. npm install
+2. npm run test:v63-fast
+3. npm run build
+4. npm run chain:test:v63
+5. npm run chain:v63:preflight

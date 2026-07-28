@@ -69,7 +69,7 @@ contract LeverageXLaunchFactoryV55Test {
     }
 
     function testZeroGenesisBuyAndEmptyMetadataRevert() public {
-        vm.expectRevert(LeverageXLaunchFactoryV55.ZeroGenesisBuy.selector);
+        vm.expectRevert(LeverageXLaunchFactoryV55.InvalidGenesisBuy.selector);
         vm.prank(creator);
         factory.createMarket("No Buy", "NOBUY", "https://example.com/nobuy.json", keccak256("nobuy"), 45_000 ether);
 

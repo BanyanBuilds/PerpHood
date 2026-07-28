@@ -28,7 +28,7 @@ const profile = file("app/profile/page.tsx");
 check("package preserves V60 controls in the current product build", Number(pkg.version?.split(".")[0] ?? 0) >= 61 && pkg.name?.startsWith("leveragex-v") === true);
 check("V60 command surface exists", ["chain:v60:canary:preflight", "chain:v60:canary:configure", "chain:v60:canary:status", "chain:v60:canary:open", "chain:v60:emergency-pause"].every((key) => Boolean(pkg.scripts?.[key])));
 check("V60 production contract is packaged", existsSync("contracts/src/LeverageXLaunchFactoryV60.sol") && contract.includes("contract LeverageXLaunchFactoryV60"));
-check("V59 deployment path now targets V60 bytecode", v59Common.includes("LeverageXLaunchFactoryV60.sol:LeverageXLaunchFactoryV60") && v59Common.includes("LeverageXSpotMarketV60"));
+check("Deployment path targets the current safe factory bytecode", (v59Common.includes("LeverageXLaunchFactoryV60.sol:LeverageXLaunchFactoryV60") || v59Common.includes("LeverageXLaunchFactoryV63.sol:LeverageXLaunchFactoryV63")) && (v59Common.includes("LeverageXSpotMarketV60") || v59Common.includes("LeverageXSpotMarketV63")));
 check("factory deploys CLOSED and globally paused", contract.includes("LaunchMode public launchMode") && contract.includes("bool public globalTradingPaused = true") && contract.includes("bool public newMarketsPaused = true"));
 check("atomic canary configuration exists", contract.includes("function configureFirstCanary") && contract.includes("FirstCanaryConfigured"));
 check("allowlist can create exactly one canary market", contract.includes("msg.sender != activeCanaryCreator") && contract.includes("if (markets.length != 0) revert UnsafeCanaryState()") && contractTest.includes("testAllowlistCanCreateExactlyOneCanaryMarket"));

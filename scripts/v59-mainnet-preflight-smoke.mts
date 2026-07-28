@@ -25,7 +25,7 @@ check(common.includes("DEFAULT_DEPLOYER") && common.includes("DEFAULT_FIRST_TRAD
 
 const preflight = read("scripts/v59-mainnet-preflight.mts");
 check(preflight.includes("eth_chainId") && preflight.includes("eth_getBlockByNumber"), "preflight verifies chain identity and RPC freshness");
-check(preflight.includes("forge\", [\"clean\"") && preflight.includes("LeverageXLaunchFactoryV60.t.sol"), "preflight compiles cleanly and runs factory tests");
+check(preflight.includes("forge\", [\"clean\"") && preflight.includes("LeverageXLaunchFactoryV63.t.sol"), "preflight compiles cleanly and runs factory tests");
 check(preflight.includes("EIP170_RUNTIME_LIMIT_BYTES") && preflight.includes("EIP3860_INITCODE_LIMIT_BYTES"), "runtime and initcode size limits are enforced");
 check(preflight.includes("eth_estimateGas") && preflight.includes("fundingShortfallWei"), "deployment gas and exact funding shortfall are calculated");
 check(preflight.includes("factoryStillUndeployedByThisCommand: true"), "preflight cannot broadcast a transaction");

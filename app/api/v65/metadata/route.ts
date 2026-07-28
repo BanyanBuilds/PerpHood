@@ -1,0 +1,17 @@
+import { NextResponse } from "next/server";
+import { createV54Metadata } from "@/lib/server/v54-launch-server";
+import { isV65LaunchStorageConfigured } from "@/lib/server/v65-launch-server";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+export async function POST(request: Request) {
+  if (!isV65LaunchStorageConfigured()) return NextResponse.json({ error: "Leverage X token-media storage is not configured." }, { status: 503 });
+  try {
+    const contentLength = Number(request.headers.get("content-length") ?? 0);
+    if (Number.isFinite(contentLength) && contentLength > 4.5 * 1024 * 1024) throw new Error("Metadata upload request exceeds 4.5 MB.");
+    return NextResponse.json(await createV54Metadata(await request.formData()));
+  } catch (error) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Metadata upload failed." }, { status: 400 });
+  }
+}

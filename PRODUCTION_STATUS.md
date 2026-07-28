@@ -1,3 +1,52 @@
+# leverage X Production Status — V65
+
+**Current release:** V65 GMGN Live Pool, pre-deployment candidate.
+
+V65 creates a canonical Uniswap V3 pool from the first launch transaction and exposes standard pool logs, public ABIs, deterministic token→pool attribution, reorg-aware replay, and a GMGN handoff package. No mainnet deployment or real token launch has happened yet. Public launching and real perps remain disabled.
+
+Mandatory next gate: clean Next.js build, Foundry compile/tests, zero-transaction preflight, closed deployment, first canary launch, independent-wallet Spot roundtrip, GMGN contract search.
+
+---
+
+# leverage X V64 production status
+
+## Current milestone
+
+V64 is the first-real-mainnet-launch workflow above the V63 GMGN compatibility contract candidate. The package can compile/test/estimate the factory, deploy it closed and paused, configure one creator, launch one paused token, prove it against chain + Supabase, open one capped Spot market, execute a separate-wallet buy/sell, and generate GMGN onboarding evidence.
+
+## Ready in source
+
+- Closed/paused factory deployment and Blockscout verification tooling.
+- Encrypted local deployer, creator, and trader keystore paths.
+- Creator total-spend budgeting with network gas reserved from the selected amount.
+- Required name, ticker, and image/GIF metadata; optional description/socials.
+- One-token paused canary launch and canonical registry proof.
+- One capped external-wallet buy, approval, and sell roundtrip.
+- Public GMGN manifest, token lookup, launch feed, ABIs, event topics, and canary evidence endpoint.
+- Ready-to-send GMGN onboarding message generator.
+- Emergency lockdown remains available.
+
+## Still blocking observed mainnet proof
+
+- Run the clean Next.js/Vercel build.
+- Run Foundry compilation/tests and zero-transaction preflight locally.
+- Fund the deployer/creator/trader wallets only after estimates.
+- Broadcast and verify the closed/paused factory.
+- Launch the first token and complete the external buy/sell.
+- Test the real contract address on GMGN.
+- Obtain GMGN acceptance for the official Leverage X launchpad label.
+
+## Explicitly locked
+
+- Public token creation.
+- Uncapped Spot trading.
+- Long/Short and 20× perps.
+- Any claim that GMGN indexing or the official label already exists.
+
+See `V64_FIRST_MAINNET_LAUNCH_RUNBOOK.md`, `V64_BUILD_NOTES.md`, and `V64_VALIDATION.md`.
+
+---
+
 # Leverage X V55 production status
 
 ## Current milestone

@@ -63,6 +63,11 @@ if (manifest) {
   };
   writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
 }
+const publicEnvPath = resolve("deployments", "v63-vercel-public.env");
+if (existsSync(publicEnvPath)) {
+  const current = readFileSync(publicEnvPath, "utf8").replace("LEVERAGEX_FACTORY_SOURCE_VERIFIED=false", "LEVERAGEX_FACTORY_SOURCE_VERIFIED=true");
+  writeFileSync(publicEnvPath, current);
+}
 
 console.log("\nVerification command completed.");
 console.log(`Review the verified source and constructor arguments: ${V59_NETWORK.explorer}/address/${factoryAddress}?tab=contract`);

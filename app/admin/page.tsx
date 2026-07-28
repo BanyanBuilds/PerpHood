@@ -1,7 +1,9 @@
 import Link from "next/link";
-import { Activity, Cloud, Database, Gauge, Network, Rocket, Server, ShieldCheck, Workflow } from "lucide-react";
+import { Activity, Cloud, Database, Gauge, Network, Rocket, Search, Server, ShieldCheck, Waves, Workflow } from "lucide-react";
 
 const consoles = [
+  { href: "/admin/gmgn-live", label: "V65 GMGN Live Pool", detail: "Canonical Uniswap pool launches, pool-event replay and GMGN evidence", Icon: Waves },
+  { href: "/admin/first-launch", label: "V64 First Launch", detail: "Controlled first-token proof and independent-wallet roundtrip", Icon: Search },
   { href: "/admin/mainnet", label: "V59 Mainnet Preflight", detail: "Live RPC, deployer, factory bytecode and closed/paused activation gates", Icon: Rocket },
   { href: "/admin/user-state", label: "V53 User State", detail: "Supabase presets, workspaces, watchlists, likes and alerts", Icon: Cloud },
   { href: "/admin/completion", label: "V52 Product Completion", detail: "Canonical build inventory, blockers and 100K–1M-user topology", Icon: Workflow },

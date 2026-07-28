@@ -42,7 +42,7 @@ if (signerAddress !== expectedDeployer) {
   throw new Error(`Configured signer resolves to ${signerAddress}, not the expected deployer ${expectedDeployer}.`);
 }
 
-const preflightPath = resolve("deployments", "v59-mainnet-preflight.json");
+const preflightPath = resolve("deployments", "v63-mainnet-preflight.json");
 const preflight = JSON.parse(readFileSync(preflightPath, "utf8")) as {
   deploymentEstimate?: { fundingTargetWei?: string | null };
   contract?: { artifacts?: { factory?: { runtimeHash?: string } } };
@@ -116,8 +116,9 @@ const deploymentCostWei = gasUsed * effectiveGasPriceWei;
 
 mkdirSync(resolve("deployments"), { recursive: true });
 const manifest = {
-  version: "V59",
-  sourceContractVersion: "V60",
+  version: "V63",
+  deploymentToolVersion: "V59",
+  sourceContractVersion: "V63",
   deployedAt: new Date().toISOString(),
   network: {
     name: V59_NETWORK.name,
@@ -153,9 +154,13 @@ const manifest = {
   },
 };
 writeFileSync(resolve("deployments", "leveragex-mainnet.json"), `${JSON.stringify(manifest, null, 2)}\n`);
-writeFileSync(resolve("deployments", "v59-vercel-public.env"), [
+writeFileSync(resolve("deployments", "v63-vercel-public.env"), [
   `LEVERAGEX_FACTORY_ADDRESS=${factoryAddress}`,
   `NEXT_PUBLIC_LEVERAGEX_FACTORY_ADDRESS=${factoryAddress}`,
+  `V63_MAINNET_FACTORY_ADDRESS=${factoryAddress}`,
+  `LEVERAGEX_FACTORY_DEPLOYMENT_BLOCK=${blockNumber}`,
+  `V63_FACTORY_DEPLOYMENT_BLOCK=${blockNumber}`,
+  "LEVERAGEX_FACTORY_SOURCE_VERIFIED=false",
   `NEXT_PUBLIC_V56_MAINNET_FACTORY_ADDRESS=${factoryAddress}`,
   "NEXT_PUBLIC_LEVERAGEX_MAINNET_ENABLED=false",
   "NEXT_PUBLIC_V56_MAINNET_ENABLED=false",

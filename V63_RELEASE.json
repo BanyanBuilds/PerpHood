@@ -1,0 +1,13 @@
+{
+  "product": "leverage X",
+  "version": "63.0.0",
+  "release": "GMGN compatibility",
+  "chainId": 4663,
+  "mainnetTransactionsBroadcast": 0,
+  "factoryDeployed": false,
+  "publicLaunchingEnabled": false,
+  "publicSpotEnabled": false,
+  "perpsEnabled": false,
+  "gmgnOfficialLabelGuaranteed": false,
+  "primaryNextGate": "Run the clean Next.js build and Foundry V63 preflight, then deploy the factory closed and paused."
+}

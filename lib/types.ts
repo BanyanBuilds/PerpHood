@@ -77,7 +77,7 @@ export type Token = {
 
   // V43 local-chain unified settlement receipt. These fields are optional because browser-only
   // simulator markets remain supported when Anvil is not configured.
-  chainDeploymentMode?: "browser-sim" | "anvil-v42" | "anvil-v43" | "anvil-v45" | "robinhood-testnet-v54" | "robinhood-mainnet-v54" | "robinhood-testnet-v55" | "robinhood-mainnet-v55";
+  chainDeploymentMode?: "browser-sim" | "anvil-v42" | "anvil-v43" | "anvil-v45" | "robinhood-testnet-v54" | "robinhood-mainnet-v54" | "robinhood-testnet-v55" | "robinhood-mainnet-v55" | "robinhood-mainnet-v65";
   chainId?: number;
   chainFactoryAddress?: string;
   chainMarketAddress?: string;
@@ -208,7 +208,7 @@ export type Position = {
   entryPriceEth?: number;
   owner?: string;
   clientOrderId?: string;
-  executionMode?: "browser-sim" | "v43-contract" | "v45-account" | "v45-session" | "v54-spot" | "v55-spot";
+  executionMode?: "browser-sim" | "v43-contract" | "v45-account" | "v45-session" | "v54-spot" | "v55-spot" | "v65-spot";
   chainPositionId?: string;
   chainMarketAddress?: string;
   chainTransactionHash?: string;
@@ -229,7 +229,7 @@ export type SpotHolding = {
   openedAt: number;
   tokenAmount?: number;
   entryPriceEth?: number;
-  executionMode?: "browser-sim" | "v43-contract" | "v45-account" | "v45-session" | "v54-spot" | "v55-spot";
+  executionMode?: "browser-sim" | "v43-contract" | "v45-account" | "v45-session" | "v54-spot" | "v55-spot" | "v65-spot";
   chainMarketAddress?: string;
   chainTokenAddress?: string;
   chainTransactionHash?: string;
@@ -248,7 +248,7 @@ export type MarketEvent = {
   note?: string;
   transactionHash?: string;
   blockNumber?: number;
-  executionMode?: "browser-sim" | "v43-contract" | "v45-account" | "v45-session" | "v54-spot" | "v55-spot";
+  executionMode?: "browser-sim" | "v43-contract" | "v45-account" | "v45-session" | "v54-spot" | "v55-spot" | "v65-spot";
 };
 
 export type ClosedTrade = {
@@ -285,7 +285,7 @@ export type LaunchTokenInput = {
   telegram?: string;
   migrationTargetMarketCapUsd?: number;
   creatorWallet?: string;
-  chainDeploymentMode?: "browser-sim" | "anvil-v42" | "anvil-v43" | "anvil-v45" | "robinhood-testnet-v54" | "robinhood-mainnet-v54" | "robinhood-testnet-v55" | "robinhood-mainnet-v55";
+  chainDeploymentMode?: "browser-sim" | "anvil-v42" | "anvil-v43" | "anvil-v45" | "robinhood-testnet-v54" | "robinhood-mainnet-v54" | "robinhood-testnet-v55" | "robinhood-mainnet-v55" | "robinhood-mainnet-v65";
   chainId?: number;
   chainFactoryAddress?: string;
   chainMarketAddress?: string;

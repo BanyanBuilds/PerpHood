@@ -304,3 +304,10 @@ export async function listV54Launches(limit = 100) {
   if (!response.ok) throw new Error(`Launch registry read failed (${response.status}): ${await response.text()}`);
   return response.json() as Promise<Array<Record<string, unknown>>>;
 }
+
+export async function listV55IndexerLaunches(limit = 500) {
+  const safeLimit = Math.min(2_000, Math.max(1, Math.floor(limit)));
+  const response = await supabaseFetch(`/rest/v1/leveragex_v55_launches?select=*&status=in.(confirmed,paused,migrated)&order=block_number.desc&limit=${safeLimit}`);
+  if (!response.ok) throw new Error(`Indexer launch registry read failed (${response.status}): ${await response.text()}`);
+  return response.json() as Promise<Array<Record<string, unknown>>>;
+}

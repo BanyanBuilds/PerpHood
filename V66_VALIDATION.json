@@ -1,0 +1,22 @@
+{
+  "release": "V66",
+  "generatedAt": "2026-07-28",
+  "passed": {
+    "v63Static": "25/25",
+    "v64Static": "20/20",
+    "v65Static": "32/32",
+    "v66Static": "23/23",
+    "typescriptSyntaxFiles": 397,
+    "modifiedScriptTypecheck": true
+  },
+  "blocked": {
+    "npmCi": "HTTP 503 from workspace package gateway",
+    "fullTypecheck": "Project dependencies unavailable",
+    "nextBuild": "Project dependencies unavailable",
+    "forgeBuild": "Foundry unavailable",
+    "forgeTests": "Foundry unavailable",
+    "mainnetPreflight": "Private RPC and Foundry required"
+  },
+  "transactionsSigned": 0,
+  "transactionsBroadcast": 0
+}

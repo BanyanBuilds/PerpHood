@@ -1,0 +1,13 @@
+{
+  "version": 75,
+  "name": "Spot-to-Perps Activation",
+  "criticalPath": "verified launch -> first canonical spot price -> engine-ready perps market",
+  "chainId": 4663,
+  "maximumLeverage": 20,
+  "creatorTradingBlocked": true,
+  "unsafeOverrides": false,
+  "outputs": [
+    "deployments/v75-perps-market-activation.json",
+    "runtime/perps/markets/<token-address>.json"
+  ]
+}

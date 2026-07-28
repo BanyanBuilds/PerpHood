@@ -1,0 +1,27 @@
+{
+  "version": "65.0.0",
+  "name": "leverage X V65 GMGN Live Pool",
+  "status": "pre-deployment candidate",
+  "chainId": 4663,
+  "mainnetTransactionsBroadcast": 0,
+  "publicLaunchingEnabled": false,
+  "realPerpsEnabled": false,
+  "canonicalMarket": "Uniswap V3 token/WETH pool from first launch transaction",
+  "gmgnOfficialAttribution": "pending external onboarding",
+  "mandatoryNextGate": "Foundry compile/test plus zero-transaction mainnet preflight",
+  "staticValidation": {
+    "v65": "32/32",
+    "v64": "20/20",
+    "v63": "25/25",
+    "typescriptSyntaxFiles": 395,
+    "selectedSemanticTypecheck": "passed"
+  },
+  "graduationOracle": {
+    "twapSeconds": 900,
+    "minimumObservationCardinality": 32,
+    "currentTickAlsoRequired": true
+  },
+  "protocolEconomicsReviewRequired": true,
+  "fullNextBuildCompletedHere": false,
+  "foundryCompilationCompletedHere": false
+}

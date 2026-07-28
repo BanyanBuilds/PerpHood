@@ -1,0 +1,18 @@
+Leverage X V70 Mint-Only Contract Gate 
+Started: Tue 07/28/2026 14:47:26.49 
+ 
+Unable to resolve imports:
+      "./BattleCurveMathV24.sol" in "C:/Users/paulb/Desktop/PerpHood-Platform/contracts/mint-path-src\LeverageXLaunchFactoryV70.sol"
+with remappings:
+      
+Compiling 2 files with Solc 0.8.28
+Solc 0.8.28 finished in 71.24ms
+Error: Compiler run failed:
+Error (6275): Source "contracts/mint-path-src/BattleCurveMathV24.sol" not found: File not found. Searched the following locations: "/Users/paulb/Desktop/PerpHood-Platform".
+ParserError: Source "contracts/mint-path-src/BattleCurveMathV24.sol" not found: File not found. Searched the following locations: "/Users/paulb/Desktop/PerpHood-Platform".
+ --> contracts/mint-path-src/LeverageXLaunchFactoryV70.sol:4:1:
+  |
+4 | import {BattleCurveMathV24} from "./BattleCurveMathV24.sol";
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+FAILED: See compiler/test output above. 

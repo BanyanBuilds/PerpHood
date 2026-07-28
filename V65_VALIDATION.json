@@ -1,0 +1,36 @@
+{
+  "version": "65.0.0",
+  "generatedAt": "2026-07-28",
+  "status": "pre-deployment candidate",
+  "passed": {
+    "v65Static": "32/32",
+    "v64Regression": "20/20",
+    "v63Regression": "25/25",
+    "typescriptSyntaxFiles": 395,
+    "selectedSemanticTypecheck": true,
+    "publicAbiJsonParse": true,
+    "secretScan": true
+  },
+  "notRunHere": {
+    "npmInstall": "package gateway HTTP 503",
+    "fullProjectTsc": true,
+    "nextBuild": true,
+    "foundryCompileAndTests": true,
+    "mainnetTransactions": 0,
+    "gmgnLiveTokenTest": false
+  },
+  "mandatoryNextGate": [
+    "npm install",
+    "npm run test:v65-fast",
+    "npm run build",
+    "npm run chain:test:v65",
+    "npm run chain:v65:preflight"
+  ],
+  "securityNotes": [
+    "Factory deploys closed",
+    "One-creator canary only",
+    "Graduation requires current terminal tick plus 15-minute TWAP",
+    "Protocol economics require final review before immutable deployment",
+    "Official GMGN attribution requires external onboarding"
+  ]
+}

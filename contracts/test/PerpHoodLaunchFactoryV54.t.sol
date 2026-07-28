@@ -69,7 +69,7 @@ contract PerpHoodLaunchFactoryV54Test {
     }
 
     function testZeroGenesisBuyAndEmptyMetadataRevert() public {
-        vm.expectRevert(PerpHoodLaunchFactoryV54.ZeroGenesisBuy.selector);
+        vm.expectRevert(PerpHoodLaunchFactoryV54.InvalidGenesisBuy.selector);
         vm.prank(creator);
         factory.createMarket("No Buy", "NOBUY", "https://example.com/nobuy.json", keccak256("nobuy"), 45_000 ether);
 

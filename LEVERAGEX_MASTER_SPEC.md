@@ -129,3 +129,26 @@ The current V55 code is allowed to claim source readiness for controlled Spot te
 - external indexer or GMGN support.
 
 The next release gate is a clean production build followed by compiled Foundry tests, Robinhood Chain testnet deployment and verification, a creator mint, a second-wallet Buy/Sell lifecycle, and registry/indexer reconciliation.
+
+## 11. V63 GMGN compatibility priority
+
+Until leverage X launches are externally discoverable, GMGN compatibility takes priority over unrelated UI expansion and public perps activation.
+
+Every launch must expose:
+
+- a standard fixed-supply, taxless ERC-20 token;
+- immutable creator and launch-factory attribution;
+- required token artwork plus name and ticker, with optional description and social links;
+- stable launch, market, trade, and graduation events;
+- deterministic token enumeration and historical backfill;
+- a public metadata URI and metadata hash;
+- an authoritative pre-graduation Spot market;
+- an explicit canonical external pool mapping after graduation;
+- public machine-readable launchpad and token feeds.
+
+The codebase must never promise an official GMGN launchpad label or automatic chart/trading support before GMGN resolves the real deployed canary. Official launchpad attribution depends on external GMGN onboarding. The immediate release sequence is: V63 compile/preflight → verified closed/paused factory → first real token and capped buy/sell lifecycle → direct GMGN contract-address test → integration handoff and any adapter corrections.
+
+
+## V65 GMGN-first canonical market decision
+
+The authoritative Spot launch architecture now creates a standard token/WETH Uniswap V3 pool from the first confirmed launch transaction. Leverage X attribution remains available through the V65 factory events and public feeds, while price, liquidity, and swaps are externally legible through standard pool state/events. Graduation changes the permanently locked liquidity range in the same pool rather than switching market addresses. Public launching remains behind a closed/allowlisted canary gate, and official GMGN launchpad labeling is not assumed until GMGN approves the integration.

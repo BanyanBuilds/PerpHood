@@ -1,0 +1,13 @@
+{
+  "version": 74,
+  "name": "Canary Evidence Pipeline",
+  "chainId": 4663,
+  "capabilities": [
+    "local image/GIF validation and hashing",
+    "standard metadata JSON generation",
+    "optional automatic public IPFS upload through Pinata",
+    "automatic post-launch token and canonical pool discovery",
+    "machine-readable on-chain launch proof"
+  ],
+  "externalIndexerVisibilityGuaranteed": false
+}

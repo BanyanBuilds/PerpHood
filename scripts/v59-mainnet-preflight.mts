@@ -51,11 +51,11 @@ console.log(`Latest block: ${latestBlock.toLocaleString("en-US")} · ${blockAgeS
 console.log(`Gas price: ${gasPriceWei.toLocaleString("en-US")} wei`);
 console.log(`Deployer balance: ${formatEth(deployerBalanceWei)} ETH`);
 
-console.log("\nCompiling deterministic V60 factory artifacts for mainnet deployment tooling…");
+console.log("\nCompiling deterministic V63 factory artifacts for mainnet deployment tooling…");
 run("forge", ["clean"], { capture: false });
 run("forge", ["build", "--sizes"], { capture: false });
 console.log("\nRunning factory contract tests…");
-run("forge", ["test", "--match-path", "contracts/test/LeverageXLaunchFactoryV60.t.sol", "-vvv"], { capture: false });
+run("forge", ["test", "--match-path", "contracts/test/LeverageXLaunchFactoryV63.t.sol", "-vvv"], { capture: false });
 
 const targets = [
   { name: "factory", target: V59_FACTORY_TARGET },
@@ -116,7 +116,8 @@ if (deploymentGasEstimate) {
 
 mkdirSync(resolve("deployments"), { recursive: true });
 const report = {
-  version: "V59",
+  version: "V63",
+  preflightToolVersion: "V59",
   generatedAt: new Date().toISOString(),
   network: {
     name: V59_NETWORK.name,
@@ -135,7 +136,7 @@ const report = {
   },
   contract: {
     target: V59_FACTORY_TARGET,
-    sourceVersion: "V60",
+    sourceVersion: "V63",
     artifacts,
   },
   deploymentEstimate: {
@@ -157,8 +158,8 @@ const report = {
     fundedForBufferedEstimate: fundingTargetWei ? fundingShortfallWei === 0n : false,
   },
 };
-writeFileSync(resolve("deployments", "v59-mainnet-preflight.json"), `${JSON.stringify(report, null, 2)}\n`);
+writeFileSync(resolve("deployments", "v63-mainnet-preflight.json"), `${JSON.stringify(report, null, 2)}\n`);
 
 console.log("\nV59 preflight passed. No transaction was signed or broadcast.");
-console.log("Report: deployments/v59-mainnet-preflight.json");
+console.log("Report: deployments/v63-mainnet-preflight.json");
 if (fundingShortfallWei > 0n) console.log("Next gate: fund only the shortfall plus a small operational cushion, then rerun this command.");

@@ -1,0 +1,9 @@
+{
+  "release": "Leverage X V67",
+  "focus": "Contract compile gate and Windows execution reliability",
+  "contractCandidate": "LeverageXLaunchFactoryV65",
+  "publicLaunchEnabled": false,
+  "perpsEnabled": false,
+  "transactionBroadcast": false,
+  "fullProject": true
+}

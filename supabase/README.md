@@ -42,3 +42,11 @@ Creator and holder reward routing is intentionally absent. The existing referral
 - No browser access to command, worker, event or recovery tables.
 
 This migration does not authorize custody or settle trades. BattlePool contracts remain authoritative. A dedicated stream tier must fan out high-frequency data instead of connecting large client populations directly to Postgres Changes.
+
+## V63 GMGN compatibility
+
+Run `v63_gmgn_compatibility.sql` after the existing production launch schema. It adds a canonical raw-event mirror and indexer checkpoint table. Service-role credentials are required for writes; only canonical events are publicly readable.
+
+## V65 GMGN live pool
+
+After the V55 and V63 migrations, run `v65_gmgn_live_pool.sql`. It adds canonical Uniswap V3 pool attribution to confirmed launch records and creates the reorg-aware standard pool-event mirror/checkpoint tables used by `/api/v65/gmgn/*` and `npm run chain:v65:gmgn:backfill`.

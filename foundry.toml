@@ -39,3 +39,63 @@ depth = 256
 fail_on_revert = false
 show_metrics = true
 failure_persist_dir = "contracts/cache/v51-invariant-failures"
+
+[profile.mintpath]
+src = "contracts/mint-path-src"
+test = "contracts/test-mint-path"
+out = "contracts/out-mint-path"
+cache_path = "contracts/cache-mint-path"
+solc_version = "0.8.28"
+optimizer = true
+optimizer_runs = 200
+via_ir = true
+bytecode_hash = "none"
+cbor_metadata = false
+
+[profile.mintpath.fuzz]
+runs = 256
+
+[profile.perpsregistry]
+src = "contracts/perps-registry-src"
+test = "contracts/test-perps-registry"
+out = "contracts/out-perps-registry"
+cache_path = "contracts/cache-perps-registry"
+solc_version = "0.8.28"
+optimizer = true
+optimizer_runs = 500
+via_ir = true
+bytecode_hash = "none"
+cbor_metadata = false
+
+[profile.perpsregistry.fuzz]
+runs = 256
+
+[profile.perpsengine]
+src = "contracts/perps-engine-src"
+test = "contracts/test-perps-engine"
+out = "contracts/out-perps-engine"
+cache_path = "contracts/cache-perps-engine"
+solc_version = "0.8.28"
+optimizer = true
+optimizer_runs = 1000
+via_ir = true
+bytecode_hash = "none"
+cbor_metadata = false
+
+[profile.perpsengine.fuzz]
+runs = 512
+
+[profile.twaporacle]
+src = "contracts/twap-oracle-src"
+test = "contracts/test-twap-oracle"
+out = "contracts/out-twap-oracle"
+cache_path = "contracts/cache-twap-oracle"
+solc_version = "0.8.28"
+optimizer = true
+optimizer_runs = 1000
+via_ir = true
+bytecode_hash = "none"
+cbor_metadata = false
+
+[profile.twaporacle.fuzz]
+runs = 512

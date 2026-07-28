@@ -1,0 +1,1 @@
+import type { Metadata } from "next";import { V65GmgnLiveConsole } from "@/components/V65GmgnLiveConsole";export const metadata:Metadata={title:"GMGN Live Pool | leverage X",robots:{index:false,follow:false}};export default function Page(){return <V65GmgnLiveConsole/>}

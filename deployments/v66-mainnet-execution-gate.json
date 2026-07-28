@@ -1,0 +1,94 @@
+{
+  "release": "Leverage X V66",
+  "contractCandidate": "LeverageXLaunchFactoryV65",
+  "generatedAt": "2026-07-28T17:32:20.243Z",
+  "safeToDeployClosed": false,
+  "transactionBroadcast": false,
+  "summary": {
+    "passed": 5,
+    "blocked": 6,
+    "failed": 1,
+    "skipped": 0
+  },
+  "results": [
+    {
+      "id": "node",
+      "label": "Node.js 22+",
+      "status": "passed",
+      "detail": "Detected Node.js 24.13.1."
+    },
+    {
+      "id": "npm",
+      "label": "npm available",
+      "status": "blocked",
+      "detail": "Install Node.js with npm."
+    },
+    {
+      "id": "v63-static",
+      "label": "GMGN compatibility controls",
+      "status": "passed",
+      "command": "node --experimental-strip-types scripts/v63-gmgn-compatibility-smoke.mts",
+      "detail": "✓ V63 factory contract is packaged\n✓ fixed-supply standard ERC-20 remains taxless\n✓ stable TokenLaunched attribution event exists\n✓ factory exposes launch lookup\n✓ factory exposes human-readable token info\n✓ factory exposes token enumeration\n✓ factory exposes launchpad attribution\n✓ factory exposes graduation state\n✓ factory records canonical external pool after graduation\n✓ official Robinhood WETH is the default pair token\n✓ contract test covers indexer surface\n✓ public GMGN manifest route exists\n✓ public launch feed route exists\n✓ per-token discovery route exists\n✓ well-known launchpad manifest exists\n✓ public versioned ABIs are directly downloadable\n✓ manifest publishes event topics, ABI URLs, and common pool aliases\n✓ GMGN onboarding submission template is packaged\n✓ backfill replays ordered factory logs\n✓ integration package includes topics and selectors\n✓ Supabase raw event mirror is reorg-aware\n✓ public launch feed switches to canonical graduated pools\n✓ public launch feed rejects invalid pagination numbers\n✓ V63 scripts are wired into package.json\n✓ V59 deployment target now compiles V63\n\nV63 GMGN compatibility: 25/25 checks passed."
+    },
+    {
+      "id": "v64-static",
+      "label": "First-mainnet-launch controls",
+      "status": "passed",
+      "command": "node --experimental-strip-types scripts/v64-first-mainnet-launch-smoke.mts",
+      "detail": "✓ V64 preflight is explicitly zero-transaction\n✓ creator total spend minimum is inclusive of gas\n✓ creator identity and metadata are validated\n✓ metadata hash is deterministic SHA-256\n✓ first launch requires exact confirmation phrase\n✓ first launch verifies a paused one-market state\n✓ first launch writes public transaction/address env\n✓ trader wallet is separate from creator\n✓ roundtrip requires deliberate confirmation\n✓ roundtrip proves buy approval and sell\n✓ roundtrip remains under market caps\n✓ GMGN evidence requires public token discovery\n✓ GMGN evidence includes real launch buy and sell txs\n✓ GMGN label is never self-asserted\n✓ V64 readiness checks live receipts\n✓ operator console is packaged\n✓ public canary evidence endpoint is packaged\n✓ V63 manifest points to V64 canary evidence\n✓ V64 commands are wired\n✓ local env keeps creator/trader signing separate\n\nV64 first-mainnet-launch controls: 20/20 checks passed."
+    },
+    {
+      "id": "v65-static",
+      "label": "Canonical live-pool controls",
+      "status": "passed",
+      "command": "node --experimental-strip-types scripts/v65-gmgn-live-pool-smoke.mts",
+      "detail": "✓ V65 canonical launch contract packaged\n✓ tax-free fixed 1B ERC20\n✓ official Robinhood WETH configured\n✓ official Uniswap V3 factory configured\n✓ official position manager configured\n✓ official SwapRouter02 configured\n✓ official QuoterV2 published\n✓ canonical pool exists in launch transaction\n✓ token address uses dynamic CREATE2 anti-squatting salt\n✓ creator initial buy routes through standard router\n✓ launch LP NFT is permanently locked\n✓ graduation stays in same canonical pool\n✓ graduation resists one-block tick manipulation\n✓ locker validates factory pool mapping\n✓ factory remains closed by default\n✓ users cannot choose protocol migration target\n✓ launch UI uses V65 metadata and registry\n✓ browser client supports V65 launch buy sell\n✓ browser trades quote through QuoterV2\n✓ terminal routes V65 trades through Uniswap\n✓ server verifies canonical pool mapping\n✓ public V65 manifest publishes standard pool events\n✓ public V65 GMGN APIs packaged\n✓ public V65 ABIs packaged\n✓ reorg-aware factory and pool backfill packaged\n✓ Supabase mirrors standard Swap events\n✓ closed deployment binds immutable locker\n✓ real roundtrip uses quote-derived slippage floors\n✓ GMGN handoff package generator packaged\n✓ read-only GMGN operator console packaged\n✓ contract tests cover pool mapping and graduation\n✓ V65 commands wired\n\nV65 GMGN live-pool controls: 32/32 checks passed."
+    },
+    {
+      "id": "v66-static",
+      "label": "Mainnet execution controls",
+      "status": "passed",
+      "command": "node --experimental-strip-types scripts/v66-mainnet-execution-smoke.mts",
+      "detail": "✓ release version is V66\n✓ total budget constant is 0.001 ETH\n✓ creator buy minimum remains separate and tiny\n✓ CLI budget estimates live gas\n✓ CLI budget reserves a conservative gas limit\n✓ mainnet preflight verifies WETH decimals\n✓ mainnet preflight verifies canonical fee spacing\n✓ mainnet preflight verifies periphery immutable wiring\n✓ creator buy is total budget minus max gas\n✓ preflight uses total-budget naming\n✓ legacy initial-buy variable is deprecated\n✓ preflight verifies canary creator\n✓ preflight verifies creator-buy cap\n✓ launch uses calculated creator buy\n✓ launch pins gas limit\n✓ launch pins maximum gas price\n✓ actual launch spend is reconciled\n✓ launch rejects budget overflow\n✓ canary cap wording says creator buy\n✓ contract documents off-chain inclusive-gas rule\n✓ minimal mainnet env template exists\n✓ gate never broadcasts\n✓ gate command is wired\n\nV66 mainnet execution controls: 23/23 checks passed."
+    },
+    {
+      "id": "syntax",
+      "label": "TypeScript syntax smoke",
+      "status": "failed",
+      "command": "node --experimental-strip-types scripts/typescript-syntax-smoke.mts",
+      "detail": "node:internal/child_process:1120\r\n    result.error = new ErrnoException(result.error, 'spawnSync ' + options.file);\r\n                   ^\r\n\r\n<ref *1> Error: spawnSync npm ENOENT\r\n    at Object.spawnSync (node:internal/child_process:1120:20)\r\n    at spawnSync (node:child_process:911:24)\r\n    at execFileSync (node:child_process:954:15)\r\n    at file:///C:/Users/paulb/Desktop/PerpHood-Platform/scripts/typescript-syntax-smoke.mts:7:20\r\n    at ModuleJob.run (node:internal/modules/esm/module_job:430:25)\r\n    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:661:26)\r\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {\r\n  errno: -4058,\r\n  code: 'ENOENT',\r\n  syscall: 'spawnSync npm',\r\n  path: 'npm',\r\n  spawnargs: [ 'root', '-g' ],\r\n  error: [Circular *1],\r\n  status: null,\r\n  signal: null,\r\n  output: null,\r\n  pid: 0,\r\n  stdout: undefined,\r\n  stderr: undefined\r\n}\r\n\r\nNode.js v24.13.1"
+    },
+    {
+      "id": "typecheck",
+      "label": "TypeScript typecheck",
+      "status": "blocked",
+      "command": "npm run typecheck",
+      "detail": "npm is not installed or not in PATH."
+    },
+    {
+      "id": "next-build",
+      "label": "Next.js production build",
+      "status": "blocked",
+      "command": "npm run build",
+      "detail": "npm is not installed or not in PATH."
+    },
+    {
+      "id": "forge",
+      "label": "Foundry Forge",
+      "status": "blocked",
+      "detail": "Install Foundry so forge is available in PATH."
+    },
+    {
+      "id": "cast",
+      "label": "Foundry Cast",
+      "status": "blocked",
+      "detail": "Install Foundry so cast is available in PATH."
+    },
+    {
+      "id": "mainnet-preflight",
+      "label": "Zero-transaction Robinhood mainnet preflight",
+      "status": "blocked",
+      "detail": "Missing: private Robinhood mainnet RPC, forge, cast. No transaction was attempted."
+    }
+  ]
+}

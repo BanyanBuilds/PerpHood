@@ -22,18 +22,14 @@ import {
   Zap,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type DragEvent } from "react";
-import { LAUNCHPAD_TARGET_MARKET_CAP_USD } from "@/lib/launchpad";
 import { fingerprintImageFile, hammingSimilarity, tokenIdentityParts } from "@/lib/og";
+import { ROBINHOOD_NETWORKS, creatorBuyEthFromBudget, formatEthWei, toMetadataHash } from "@/lib/chain/robinhood-v54";
 import {
-  ROBINHOOD_NETWORKS,
-  creatorBuyEthFromBudget,
-  formatEthWei,
-  launchV54Market,
-  quoteV54LaunchBudget,
-  toMetadataHash,
-  type V54LaunchBudget,
-  type V54LaunchReceipt,
-} from "@/lib/chain/robinhood-v54";
+  launchV65Token,
+  quoteV65LaunchBudget,
+  type V65LaunchBudget,
+  type V65LaunchReceipt,
+} from "@/lib/chain/robinhood-v65";
 import type { XLaunchDraft } from "@/lib/x-launch-feed";
 import { KeyButton } from "./KeyButton";
 import { OgBadge } from "./OgBadge";
@@ -107,9 +103,9 @@ export function LaunchPanel({
   const [busy, setBusy] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [prepared, setPrepared] = useState<PreparedMetadata | null>(null);
-  const [budget, setBudget] = useState<V54LaunchBudget | null>(null);
+  const [budget, setBudget] = useState<V65LaunchBudget | null>(null);
   const [walletAccount, setWalletAccount] = useState("");
-  const [receipt, setReceipt] = useState<V54LaunchReceipt | null>(null);
+  const [receipt, setReceipt] = useState<V65LaunchReceipt | null>(null);
   const [registrySaved, setRegistrySaved] = useState(false);
   const [buyPopupOpen, setBuyPopupOpen] = useState(false);
   const [launchSpendEth, setLaunchSpendEth] = useState("0.001");
@@ -238,7 +234,7 @@ export function LaunchPanel({
     form.set("telegram", telegram.trim());
     form.set("imageExactHash", artwork.imageExactHash);
     form.set("image", artwork.file);
-    const metadataResponse = await fetch("/api/v62/metadata", { method: "POST", body: form });
+    const metadataResponse = await fetch("/api/v65/metadata", { method: "POST", body: form });
     const metadataPayload = await metadataResponse.json() as PreparedMetadata & { error?: string };
     if (!metadataResponse.ok) throw new Error(metadataPayload.error || "Metadata upload failed.");
     const metadata: PreparedMetadata = {
@@ -247,12 +243,11 @@ export function LaunchPanel({
       metadataUri: metadataPayload.metadataUri,
       metadataHash: metadataPayload.metadataHash,
     };
-    const quote = await quoteV54LaunchBudget({
+    const quote = await quoteV65LaunchBudget({
       name: cleanName,
       symbol: cleanTicker,
       metadataURI: metadata.metadataUri,
       metadataHash: toMetadataHash(metadata.metadataHash),
-      migrationTargetMarketCapUsd: LAUNCHPAD_TARGET_MARKET_CAP_USD,
     }, NETWORK_KEY, undefined, totalSpendEth);
     setPrepared(metadata);
     setBudget(quote.budget);
@@ -260,17 +255,17 @@ export function LaunchPanel({
     return { metadata, quotedBudget: quote.budget, account: quote.account };
   };
 
-  const registerConfirmedLaunch = async (launched: V54LaunchReceipt, metadataOverride?: PreparedMetadata) => {
+  const registerConfirmedLaunch = async (launched: V65LaunchReceipt, metadataOverride?: PreparedMetadata) => {
     const metadata = metadataOverride ?? prepared;
     if (!metadata) throw new Error("Launch metadata is unavailable for registry verification.");
-    const registryResponse = await fetch("/api/v62/launches", {
+    const registryResponse = await fetch("/api/v65/launches", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
         chainId: launched.chainId,
         network: launched.network,
         factoryAddress: launched.factoryAddress,
-        marketAddress: launched.marketAddress,
+        poolAddress: launched.poolAddress,
         tokenAddress: launched.tokenAddress,
         creatorAddress: launched.creatorAddress,
         transactionHash: launched.transactionHash,
@@ -284,16 +279,23 @@ export function LaunchPanel({
         website: website.trim(),
         xHandle: xHandle.trim(),
         telegram: telegram.trim(),
+        dexFactory: launched.dexFactory,
+        pairToken: launched.pairToken,
+        positionManager: launched.positionManager,
+        liquidityLocker: launched.liquidityLocker,
+        launchPositionId: launched.launchPositionId.toString(),
+        poolFee: launched.poolFee,
+        tokenIsToken0: launched.tokenIsToken0,
         creatorBuyWei: launched.creatorBuyWei.toString(),
         creatorTokensOutWad: launched.creatorTokensOutWad.toString(),
         marketCapEthWad: launched.marketCapEthWad.toString(),
-        migrationTargetUsdWad: launched.migrationTargetUsdWad.toString(),
+        targetFdvEthWad: launched.targetFdvEthWad.toString(),
       }),
     });
     const registryPayload = await registryResponse.json() as { error?: string };
     if (!registryResponse.ok) throw new Error(registryPayload.error || "The on-chain launch confirmed, but registry verification failed.");
     setRegistrySaved(true);
-    window.dispatchEvent(new CustomEvent("leveragex:v55-launch-confirmed", { detail: { tokenAddress: launched.tokenAddress } }));
+    window.dispatchEvent(new CustomEvent("leveragex:v65-launch-confirmed", { detail: { tokenAddress: launched.tokenAddress } }));
     setStatus(`REAL TOKEN CONFIRMED · ${cleanTicker} minted at ${launched.tokenAddress}`);
     onComplete?.(launched.tokenAddress.toLowerCase());
   };
@@ -353,12 +355,11 @@ export function LaunchPanel({
     try {
       const launchMetadata = prepared ?? (await uploadMetadataAndQuote(launchSpendEth)).metadata;
       setStatus("Confirm the launch transaction in your wallet.");
-      const launched = await launchV54Market({
+      const launched = await launchV65Token({
         name: cleanName,
         symbol: cleanTicker,
         metadataURI: launchMetadata.metadataUri,
         metadataHash: toMetadataHash(launchMetadata.metadataHash),
-        migrationTargetMarketCapUsd: LAUNCHPAD_TARGET_MARKET_CAP_USD,
       }, NETWORK_KEY, undefined, launchSpendEth);
       setReceipt(launched);
       setWalletAccount(launched.account);
@@ -454,11 +455,11 @@ export function LaunchPanel({
               <div className="lx-creator-fixed-facts">
                 <span><small>Supply</small><b>1B</b></span>
                 <span><small>Creator freebies</small><b>0</b></span>
-                <span><small>Migration</small><b>Protocol fixed</b></span>
+                <span><small>GMGN-ready pool</small><b>From launch</b></span>
               </div>
             </section>
 
-            {!factoryReady && <div className="lx-launch-warning lx-creator-warning"><AlertTriangle size={15} /><span>Mainnet factory is not deployed yet. You can finish the coin setup, but signing stays locked until the verified factory address is configured.</span></div>}
+            {!factoryReady && <div className="lx-launch-warning lx-creator-warning"><AlertTriangle size={15} /><span>V65 mainnet factory is not deployed yet. You can finish the coin setup, but signing stays locked until the verified factory address is configured.</span></div>}
             {MAINNET_CANARY_ONLY && !canaryWalletMatches && <div className="lx-launch-warning lx-creator-warning"><ShieldCheck size={15} /><span>The first launch is restricted to <b>{compactAddress(MAINNET_CANARY_CREATOR)}</b>.</span></div>}
           </div>
         ) : (
@@ -467,7 +468,7 @@ export function LaunchPanel({
             <span>{registrySaved ? "TOKEN LIVE" : "CONFIRMED ON-CHAIN"}</span>
             <h3>{cleanName}</h3>
             <b>${cleanTicker}</b>
-            <p>{registrySaved ? "The real market is registered and eligible for the live indexer." : "The chain transaction confirmed. Registry verification is still pending."}</p>
+            <p>{registrySaved ? "The canonical Uniswap V3 pool is registered and ready for external discovery." : "The chain transaction confirmed. Registry verification is still pending."}</p>
             <div>
               <a href={receipt.explorerTokenUrl} target="_blank" rel="noreferrer">Token <ExternalLink size={12} /></a>
               <a href={receipt.explorerMarketUrl} target="_blank" rel="noreferrer">Market <ExternalLink size={12} /></a>
@@ -506,7 +507,7 @@ export function LaunchPanel({
                 <span><small>Total wallet cap</small><b>{spendValid ? `${numericSpend.toFixed(numericSpend < .01 ? 3 : 2)} ETH` : "—"}</b></span>
                 <span><small>Estimated creator buy</small><b>{budget ? `${creatorBuyEthFromBudget(budget).toFixed(6)} ETH` : "Calculated live"}</b></span>
                 <span><small>Maximum gas reserve</small><b>{budget ? formatEthWei(budget.maximumGasCostWei) : "Calculated live"}</b></span>
-                <span><small>Migration target</small><b>${LAUNCHPAD_TARGET_MARKET_CAP_USD.toLocaleString("en-US")} · fixed</b></span>
+                <span><small>Live market</small><b>Uniswap V3 · instant</b></span>
               </div>
 
               {!spendValid && <div className="lx-initial-buy-error"><AlertTriangle size={14} />Enter 0.001–0.01 ETH for the controlled first launch.</div>}

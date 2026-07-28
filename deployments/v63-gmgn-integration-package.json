@@ -1,0 +1,110 @@
+{
+  "generatedAt": "2026-07-28T02:46:34.516Z",
+  "product": "leverage X",
+  "protocolVersion": "V63",
+  "appVersion": "63.0.0",
+  "chain": {
+    "name": "Robinhood Chain",
+    "chainId": 4663,
+    "weth": "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73"
+  },
+  "factory": {
+    "address": null,
+    "deploymentBlock": null
+  },
+  "attribution": {
+    "launchpadId": "leverage-x-robinhood",
+    "tokenSupply": "1000000000000000000000000000",
+    "decimals": 18,
+    "transferTaxBps": 0,
+    "hiddenMinting": false,
+    "blacklist": false
+  },
+  "events": {
+    "tokenLaunched": {
+      "signature": "TokenLaunched(address,address,address,address,uint256,uint256,bytes32)",
+      "topic0": "0xa3bbbf73cae8c04d1fafa24105a16f1d2e7d32ab4017881c8b1939163fdedbe8"
+    },
+    "marketCreated": {
+      "signature": "MarketCreated(address,address,address,uint256,uint256,uint256,uint256,bytes32)",
+      "topic0": "0xf78d1aaf35b24194aa29e01cf246ad29013ef322854e534d23c870a204781354"
+    },
+    "trade": {
+      "signature": "Trade(address,bool,uint256,uint256,uint256,uint256,uint256,uint256)",
+      "topic0": "0x0c668488dc690d00c35c03638df49a1c8a7b63511eba0f88eeed1bd471719b16"
+    },
+    "tokenGraduated": {
+      "signature": "TokenGraduated(address,address,address,address,address,uint24)",
+      "topic0": "0x3d0f06ac1656093b56714b15b1ed46271277c04a83a310c09665bf01c2b0a218"
+    }
+  },
+  "reads": [
+    {
+      "signature": "getLaunchedToken(address)",
+      "selector": "0x3cf28b5a"
+    },
+    {
+      "signature": "getTokenInfo(address)",
+      "selector": "0x1f69565f"
+    },
+    {
+      "signature": "graduationStatus(address)",
+      "selector": "0x98d652f1"
+    },
+    {
+      "signature": "isLeverageXToken(address)",
+      "selector": "0xbdcccd3d"
+    },
+    {
+      "signature": "tokenCount()",
+      "selector": "0x9f181b5e"
+    },
+    {
+      "signature": "allTokens(uint256)",
+      "selector": "0x634282af"
+    },
+    {
+      "signature": "marketForToken(address)",
+      "selector": "0x387bd4da"
+    },
+    {
+      "signature": "runtimeState()",
+      "selector": "0xd69864b7"
+    },
+    {
+      "signature": "metadataURI()",
+      "selector": "0x03ee438c"
+    }
+  ],
+  "endpoints": {
+    "manifest": "https://perp-hood.vercel.app/api/v63/gmgn/manifest",
+    "launches": "https://perp-hood.vercel.app/api/v63/gmgn/launches",
+    "tokenTemplate": "https://perp-hood.vercel.app/api/v63/gmgn/token/{tokenAddress}",
+    "wellKnown": "https://perp-hood.vercel.app/.well-known/leveragex-launchpad"
+  },
+  "preGraduationPricing": {
+    "model": "Leverage X native-ETH bonding curve",
+    "priceRead": "marginalPriceWad()",
+    "fullStateRead": "runtimeState()",
+    "tradeEvent": "Trade(address,bool,uint256,uint256,uint256,uint256,uint256,uint256)",
+    "quoteToken": "native ETH"
+  },
+  "postGraduationPricing": {
+    "authoritativeEvent": "TokenGraduated(address,address,address,address,address,uint24)",
+    "poolRead": "getLaunchedToken(token).pool",
+    "note": "Use the external canonical DEX pool and preserve its native token order after graduation."
+  },
+  "replay": {
+    "confirmations": 3,
+    "order": [
+      "blockNumber",
+      "transactionIndex",
+      "logIndex"
+    ],
+    "backfillCommand": "npm run chain:v63:gmgn:backfill"
+  },
+  "contacts": {
+    "website": "https://perp-hood.vercel.app",
+    "requestedListing": "Index Leverage X as a Robinhood Chain launchpad alongside Pons and other supported factories."
+  }
+}

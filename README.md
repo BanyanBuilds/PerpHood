@@ -1,51 +1,114 @@
-# leverage X V62 — Mainnet Go-Live Gate
+# leverage X V65 — GMGN Live Pool
 
-**leverage X** is a Robinhood Chain-first memecoin launchpad and Spot × Perps terminal. V62 connects the finished launch experience to an authoritative, proof-driven mainnet release sequence: production storage readiness, closed/paused factory deployment, one allowlisted creator, one paused first market, public transaction proof, and capped Spot activation only after the chain and Supabase agree.
+V65 is the current authoritative project baseline. Every V65 launch creates a standard fixed-supply ERC-20 and a canonical token/WETH Uniswap V3 pool in the first confirmed launch transaction, then publishes deterministic factory attribution and standard pool events for external indexers.
 
-**Current truth:** this package does not deploy a factory, launch a token, open public trading, or move funds by itself. Owner-writing actions remain local, confirmation-locked, and encrypted-keystore based. Long/Short remains disabled until the BattlePool is separately deployed, validated, and activated.
+## Current truth
 
-## Start here
+- Mainnet target: Robinhood Chain (`4663`).
+- Factory deployment: not yet performed.
+- Public launching: disabled.
+- Real Spot: wired for V65 canonical pools, pending first deployed canary.
+- GMGN: technical integration surface built; real token test and official launchpad onboarding still pending.
+- Real Long/Short: intentionally disabled until the separate BattlePool phase is audited.
 
-- `LEVERAGEX_MASTER_SPEC.md` — combined PerpHood 1–3 / leverage X specification
-- `V62_BUILD_NOTES.md` — V62 scope and safety boundaries
-- `V62_MAINNET_LAUNCH_RUNBOOK.md` — exact first-mainnet-launch sequence
-- `V62_VALIDATION.md` — completed checks and environment limitations
-- `.env.mainnet.example` — secret-free local configuration template
-- `/admin/go-live` — read-only operator console after deployment
+## Immediate commands
 
-## Application validation
+```powershell
+npm install
+npm run test:v65-fast
+npm run build
+npm run chain:test:v65
+npm run chain:v65:preflight
+```
+
+Read `V65_MAINNET_RUNBOOK.md`, `V65_GMGN_LIVE_POOL.md`, and `V65_VALIDATION.md` before any deployment.
+
+---
+
+
+**leverage X** is a Robinhood Chain memecoin launchpad and Spot × Perps terminal. V64 turns the V63 GMGN compatibility surface into a controlled first-mainnet-launch workflow: deploy closed/paused, launch one paused token, prove one separate-wallet Spot buy/sell, and generate the real GMGN onboarding package.
+
+## V64 start here
 
 ```bash
 npm install
-npm run test:v62-fast
+npm run test:v64-fast
 npm run build
 ```
 
-## Read-only go-live preflight
+Then follow `V64_FIRST_MAINNET_LAUNCH_RUNBOOK.md`. The read-only operator surface is `/admin/first-launch`; the public evidence endpoint is `/api/v64/gmgn/evidence`.
 
-With Foundry installed and `.env.mainnet.local` configured:
+## Current truth
+
+V63 is an integration-ready source package. It does **not** deploy the mainnet factory, launch a real token, create an external DEX pool, or guarantee an official GMGN launchpad label by itself. Those require the controlled deployment sequence, a real canary token with buys/sells, and GMGN onboarding.
+
+The mainnet factory still deploys **closed**, **globally paused**, and with new markets paused. Public launching, public Spot trading, and Long/Short remain behind separate activation gates.
+
+## V63 GMGN surface
+
+- `LeverageXLaunchFactoryV63` with stable `TokenLaunched`, `MarketCreated`, and `TokenGraduated` events.
+- Public factory reads: `getLaunchedToken`, `getTokenInfo`, `isLeverageXToken`, `tokenCount`, `allTokens`, and `graduationStatus`.
+- Fixed-supply, taxless ERC-20 launches with public metadata URI and no hidden minting or blacklist.
+- Canonical Robinhood wrapped-native token attribution.
+- Public manifest and launch feeds:
+  - `/api/v63/gmgn/manifest`
+  - `/api/v63/gmgn/launches`
+  - `/api/v63/gmgn/token/{address}`
+  - `/.well-known/leveragex-launchpad`
+- Reorg-aware historical factory backfill into Supabase.
+- Self-contained handoff assets under `integrations/gmgn/`.
+- Read-only operator page at `/admin/gmgn`.
+
+## Validate the application
 
 ```bash
-npm run chain:v62:go-live-preflight
+npm install
+npm run test:v63-fast
+npm run build
 ```
 
-This command checks Robinhood Chain, both operator wallets, Supabase media/registry access, and the current factory state. It signs and broadcasts **zero transactions**.
+## Compile and test the contracts
+
+Foundry is required:
+
+```bash
+npm run chain:test:v63
+npm run chain:v63:preflight
+```
+
+`chain:v63:preflight` signs and broadcasts nothing.
 
 ## Controlled mainnet sequence
 
+After all local and Vercel gates pass:
+
 ```bash
-npm run chain:v59:preflight
-npm run chain:v59:deploy
-npm run chain:v59:verify
+npm run chain:v63:deploy
+npm run chain:v63:verify
 npm run chain:v60:canary:preflight
 ```
 
-After the allowlisted creator launches the first paused market, record its public transaction hash locally and run:
+Do not run the deployment command until the preflight output and deployer funding amount have been reviewed. Use an encrypted Foundry keystore; never put a private key in Vercel, GitHub, Supabase, browser code, screenshots, or chat.
+
+## GMGN handoff sequence
+
+After the verified factory and first real canary launch exist:
 
 ```bash
-npm run chain:v62:first-launch-proof
+npm run chain:v63:gmgn:backfill
+npm run gmgn:package:v63
 ```
 
-Capped Spot cannot open until the proof matches the deployed factory, token, market, metadata, fixed one-billion supply, and canonical Supabase registry row. Public launches and Long/Short remain locked.
+Then test the token contract address directly in GMGN and provide GMGN the generated integration package, verified factory, deployment block, sample launch, and sample buy/sell transactions.
 
-Never store a wallet private key, seed phrase, keystore password, Alchemy endpoint, or Supabase service-role key in GitHub, Vercel browser variables, screenshots, or chat.
+## Start here
+
+- `LEVERAGEX_MASTER_SPEC.md`
+- `V63_BUILD_NOTES.md`
+- `V63_GMGN_INTEGRATION.md`
+- `V63_VALIDATION.md`
+- `V60_MAINNET_CANARY_RUNBOOK.md`
+- `.env.mainnet.example`
+
+## V74 Canary Evidence Pipeline
+Use `START_V74_PREPARE_CANARY_METADATA.cmd` before launch and `START_V74_VERIFY_CANARY_LAUNCH.cmd` after the transaction confirms.

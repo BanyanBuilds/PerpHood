@@ -7,9 +7,9 @@ export const V59_NETWORK = {
   blockscoutApi: "https://robinhoodchain.blockscout.com/api/",
 } as const;
 
-export const V59_FACTORY_TARGET = "contracts/src/LeverageXLaunchFactoryV60.sol:LeverageXLaunchFactoryV60";
-export const V59_MARKET_TARGET = "contracts/src/LeverageXLaunchFactoryV60.sol:LeverageXSpotMarketV60";
-export const V59_TOKEN_TARGET = "contracts/src/LeverageXLaunchFactoryV60.sol:LeverageXTokenV60";
+export const V59_FACTORY_TARGET = "contracts/src/LeverageXLaunchFactoryV63.sol:LeverageXLaunchFactoryV63";
+export const V59_MARKET_TARGET = "contracts/src/LeverageXLaunchFactoryV63.sol:LeverageXSpotMarketV63";
+export const V59_TOKEN_TARGET = "contracts/src/LeverageXLaunchFactoryV63.sol:LeverageXTokenV63";
 export const DEFAULT_DEPLOYER = "0x728fa84C70f7b88Ab59C86379745FdDBbDd7AD07".toLowerCase();
 export const DEFAULT_FIRST_TRADER = "0x1728DC75f70070DC74Ae2172EF94970e04D9830C".toLowerCase();
 export const EIP170_RUNTIME_LIMIT_BYTES = 24_576;
@@ -129,12 +129,31 @@ export function parseForgeCreateOutput(output: string) {
   };
 }
 
+export function walletArgsFor(
+  prefix: string,
+  expectedAddress: string,
+): { args: string[]; expectedAddress: string; redactions: string[]; mode: "keystore" | "private-key" } {
+  const account = process.env[`${prefix}_KEYSTORE_ACCOUNT`]?.trim();
+  const passwordFile = process.env[`${prefix}_KEYSTORE_PASSWORD_FILE`]?.trim();
+  const privateKey = process.env[`${prefix}_PRIVATE_KEY`]?.trim();
+
+  if (account) {
+    const args = ["--account", account];
+    if (passwordFile) args.push("--password-file", passwordFile);
+    return { args, expectedAddress, redactions: [passwordFile ?? ""], mode: "keystore" };
+  }
+  if (privateKey) {
+    if (!/^0x[0-9a-fA-F]{64}$/.test(privateKey)) throw new Error(`${prefix}_PRIVATE_KEY must be a 32-byte hex key.`);
+    return { args: ["--private-key", privateKey], expectedAddress, redactions: [privateKey], mode: "private-key" };
+  }
+  throw new Error(`Configure ${prefix}_KEYSTORE_ACCOUNT (preferred) or ${prefix}_PRIVATE_KEY locally. Never add either secret to Vercel, Supabase, GitHub, or chat.`);
+}
+
 export function walletArgs(): { args: string[]; expectedAddress: string; redactions: string[]; mode: "keystore" | "private-key" } {
   const expectedAddress = normalizeAddress(process.env.V59_EXPECTED_DEPLOYER_ADDRESS, "V59_EXPECTED_DEPLOYER_ADDRESS", DEFAULT_DEPLOYER);
   const account = process.env.V59_KEYSTORE_ACCOUNT?.trim();
   const passwordFile = process.env.V59_KEYSTORE_PASSWORD_FILE?.trim();
   const privateKey = process.env.V59_DEPLOYER_PRIVATE_KEY?.trim();
-
   if (account) {
     const args = ["--account", account];
     if (passwordFile) args.push("--password-file", passwordFile);

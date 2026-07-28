@@ -16,10 +16,10 @@ checks.push([proof.includes("V62_FIRST_LAUNCH_TX_HASH") && proof.includes("oneBi
 checks.push([proof.includes("indexingGuaranteed: false"), "GMGN visibility is not falsely promised"]);
 checks.push([proof.includes("if (!registryVerified) throw") && read("scripts/v60-open-canary-spot.mts").includes("v62-first-launch-proof.json"), "Spot cannot open without matching on-chain and Supabase proof"]);
 checks.push([preflight.includes("NO SIGNING / NO BROADCAST") && preflight.includes("signedTransactions: 0"), "go-live preflight cannot sign or broadcast"]);
-checks.push([launcher.includes('/api/v62/metadata') && launcher.includes('/api/v62/launches'), "launcher uses versioned V62 production endpoints"]);
+checks.push([/\/api\/v(?:62|64)\/metadata/.test(launcher) && /\/api\/v(?:62|64)\/launches/.test(launcher), "launcher uses versioned production endpoints"]);
 checks.push([pkg.scripts?.["test:v62-fast"]?.includes("typecheck") ?? false, "V62 fast gate includes TypeScript"]);
 checks.push([pkg.scripts?.["chain:v62:first-launch-proof"]?.includes("v62-first-launch-proof.mts") ?? false, "V62 proof command is packaged"]);
-checks.push([pkg.version === "62.0.0" && pkg.name?.includes("v62"), "package identifies V62"]);
+checks.push([Number(pkg.version?.split(".")[0] ?? 0) >= 62 && /v6[2-9]/.test(pkg.name ?? ""), "package preserves the V62+ go-live lineage"]);
 
 let failed = 0;
 for (const [passed, label] of checks) {

@@ -80,6 +80,7 @@ import { useUserState } from "./UserStateProvider";
 import { injectedProvider } from "@/lib/chain/local-battle-client";
 import { fetchV54LaunchTokens } from "@/lib/v54-launch-registry";
 import { executeV54SpotBuy, executeV54SpotSell, readV54MarketRuntime, type V54ExecutionOptions } from "@/lib/chain/robinhood-v54";
+import { executeV65SpotBuy, executeV65SpotSell, readV65PoolRuntime } from "@/lib/chain/robinhood-v65";
 import type {
   ClosedTrade,
   LaunchTokenInput,
@@ -100,7 +101,6 @@ import type {
 } from "@/lib/types";
 
 const ACTORS = ["0x71C…88F", "0xA4D…921", "0xC22…4B0", "0x91F…A73", "0xE80…129", "0x6BA…44D"];
-const EMOJIS = ["🧊", "🦎", "🛸", "🥷", "🦉", "🧃", "🐸", "🐕", "🗿", "⚡"];
 const ETH_USD_REFERENCE = 3_200;
 const ENABLE_LOCAL_MARKET_ENGINE = false;
 const DEFAULT_PRESETS: TradePreset[] = [
@@ -224,7 +224,7 @@ function computeRiskScore(token: Token) {
 }
 
 export type ChainExecutionState = {
-  mode: "browser-sim" | "v43-contract" | "v45-account" | "v45-session" | "v54-spot" | "v55-spot";
+  mode: "browser-sim" | "v43-contract" | "v45-account" | "v45-session" | "v54-spot" | "v55-spot" | "v65-spot";
   phase: "idle" | "quote" | "wallet" | "pending" | "confirmed" | "error";
   action?: string;
   slug?: string;
@@ -243,6 +243,12 @@ function isContractMarket(token: Token) {
 
 function isV54SpotMarket(token: Token) {
   return (token.chainDeploymentMode === "robinhood-testnet-v54" || token.chainDeploymentMode === "robinhood-mainnet-v54" || token.chainDeploymentMode === "robinhood-testnet-v55" || token.chainDeploymentMode === "robinhood-mainnet-v55")
+    && /^0x[0-9a-fA-F]{40}$/.test(token.chainMarketAddress ?? "")
+    && /^0x[0-9a-fA-F]{40}$/.test(token.chainTokenAddress ?? "");
+}
+
+function isV65SpotMarket(token: Token) {
+  return token.chainDeploymentMode === "robinhood-mainnet-v65"
     && /^0x[0-9a-fA-F]{40}$/.test(token.chainMarketAddress ?? "")
     && /^0x[0-9a-fA-F]{40}$/.test(token.chainTokenAddress ?? "");
 }
@@ -560,10 +566,10 @@ export function MarketProvider({ children }: { children: ReactNode }) {
   const beginChainExecution = useCallback((slug: string, action: string, mode: ChainExecutionState["mode"] = "v43-contract") => {
     setChainExecution({
       mode,
-      phase: mode === "v45-session" ? "pending" : (mode === "v54-spot" || mode === "v55-spot") ? "quote" : "wallet",
+      phase: mode === "v45-session" ? "pending" : (mode === "v54-spot" || mode === "v55-spot" || mode === "v65-spot") ? "quote" : "wallet",
       action,
       slug,
-      message: mode === "v45-session" ? "Signing the local session intent and sending it to the sponsored sequencer." : mode === "v45-account" ? "Confirm the bounded V45 account action in your wallet." : (mode === "v54-spot" || mode === "v55-spot") ? "Reading the authoritative curve and preparing a fresh executable quote." : "Confirm the local-chain transaction in your wallet.",
+      message: mode === "v45-session" ? "Signing the local session intent and sending it to the sponsored sequencer." : mode === "v45-account" ? "Confirm the bounded V45 account action in your wallet." : (mode === "v54-spot" || mode === "v55-spot" || mode === "v65-spot") ? mode === "v65-spot" ? "Reading the canonical Uniswap V3 pool and preparing a fresh executable quote." : "Reading the authoritative curve and preparing a fresh executable quote." : "Confirm the local-chain transaction in your wallet.",
       updatedAt: Date.now(),
     });
   }, []);
@@ -1110,6 +1116,69 @@ export function MarketProvider({ children }: { children: ReactNode }) {
   const buySpot = useCallback(async (slug: string, amountEth: number, feeTier: "market" | "maker" = "market", execution: Pick<V54ExecutionOptions, "slippageBps" | "maxNetworkFeeEth" | "maxPriceImpactPercent"> = {}) => {
     void feeTier;
     const token = normalizeToken(tokensRef.current.find((item) => item.slug === slug) ?? TOKENS[0]);
+    if (isV65SpotMarket(token)) {
+      if (!token.chainMarketAddress || !token.chainTokenAddress) throw new Error("The Leverage X V65 canonical pool registry is incomplete.");
+      const networkKey = "mainnet" as const;
+      const action = `Buy ${token.symbol}`;
+      beginChainExecution(slug, action, "v65-spot");
+      try {
+        const receipt = await executeV65SpotBuy(token.chainMarketAddress, token.chainTokenAddress, amountEth, networkKey, {
+          ...execution,
+          onQuote: ({ priceImpactPercent }) => setChainExecution({
+            mode: "v65-spot", phase: "quote", action, slug, account: walletAddress,
+            message: `Canonical Uniswap V3 quote ready · ${priceImpactPercent.toFixed(2)}% price impact.`, updatedAt: Date.now(),
+          }),
+          onWalletRequest: () => setChainExecution({
+            mode: "v65-spot", phase: "wallet", action, slug, account: walletAddress,
+            message: "Quote passed preset limits. Confirm the Uniswap V3 transaction in your wallet.", updatedAt: Date.now(),
+          }),
+          onSubmitted: (transactionHash) => setChainExecution({
+            mode: "v65-spot", phase: "pending", action, slug, account: walletAddress, transactionHash,
+            message: "Swap submitted. Waiting for Robinhood Chain confirmation.", updatedAt: Date.now(),
+          }),
+        });
+        const runtime = await readV65PoolRuntime(token.chainMarketAddress, token.chainTokenAddress, networkKey);
+        const nextToken = normalizeToken({
+          ...token,
+          priceEth: runtime.priceEth,
+          marketCapEth: runtime.marketCapEth,
+          realWethBalance: runtime.realEthBalance,
+          freeWethEth: runtime.realEthBalance,
+          curveAllocation: 800_000_000,
+          curveTokenReserve: Math.max(0, 800_000_000 - runtime.soldTokens),
+          curveRealTokenReserve: Math.max(0, 800_000_000 - runtime.soldTokens),
+          circulatingSpotTokens: runtime.soldTokens,
+          chainLastBlock: receipt.blockNumber,
+          chainLastSyncedAt: Date.now(),
+          uniqueTraders: Math.max(1, token.uniqueTraders ?? 1),
+        });
+        tokensRef.current = tokensRef.current.map((item) => item.slug === slug ? nextToken : item);
+        setTokens(tokensRef.current);
+        const holding: SpotHolding = {
+          id: `v65:${receipt.transactionHash}:spot`,
+          slug,
+          investedEth: amountEth,
+          entryCap: runtime.marketCapEth * ETH_USD_REFERENCE,
+          openedAt: Date.now(),
+          tokenAmount: fromWad(receipt.tokenAmountWad, 18),
+          entryPriceEth: fromWad(receipt.marginalPriceWad, 18),
+          executionMode: "v65-spot",
+          chainMarketAddress: token.chainMarketAddress,
+          chainTokenAddress: token.chainTokenAddress,
+          chainTransactionHash: receipt.transactionHash,
+          chainBlockNumber: receipt.blockNumber,
+        };
+        holdingsRef.current = [holding, ...holdingsRef.current];
+        setHoldings(holdingsRef.current);
+        setWalletAddress(receipt.account);
+        setConnected(true);
+        setChainExecution({ mode: "v65-spot", phase: "confirmed", action, slug, account: receipt.account, transactionHash: receipt.transactionHash, blockNumber: receipt.blockNumber, message: `${action} confirmed through the canonical Uniswap V3 pool in block ${receipt.blockNumber}.`, updatedAt: Date.now() });
+        pushEvent({ slug, action: "spot-buy", amountEth, marketCap: runtime.marketCapEth * ETH_USD_REFERENCE, actor: shortWallet(receipt.account), note: `${holding.tokenAmount?.toLocaleString(undefined, { maximumFractionDigits: 0 })} tokens bought through the GMGN-readable pool`, transactionHash: receipt.transactionHash, blockNumber: receipt.blockNumber, executionMode: "v65-spot" });
+        return holding;
+      } catch (error) {
+        throw failChainExecution(slug, action, error, "v65-spot");
+      }
+    }
     if (isV54SpotMarket(token)) {
       if (!token.chainMarketAddress || !token.chainTokenAddress) throw new Error("The Leverage X V55 market registry is incomplete.");
       const networkKey = (token.chainDeploymentMode === "robinhood-mainnet-v55" || token.chainDeploymentMode === "robinhood-mainnet-v54") ? "mainnet" as const : "testnet" as const;
@@ -1467,6 +1536,48 @@ export function MarketProvider({ children }: { children: ReactNode }) {
     const holding = holdingsRef.current.find((item) => item.id === id);
     if (!holding) return;
     const token = normalizeToken(tokensRef.current.find((item) => item.slug === holding.slug) ?? TOKENS[0]);
+    if (holding.executionMode === "v65-spot" || isV65SpotMarket(token)) {
+      if (!holding.tokenAmount || !token.chainMarketAddress || !token.chainTokenAddress) throw new Error("The Leverage X V65 holding is missing canonical pool data.");
+      const safeFraction = clamp(fraction, 0.01, 1);
+      const tokenAmount = holding.tokenAmount * safeFraction;
+      const investedClosed = holding.investedEth * safeFraction;
+      const action = `Sell ${token.symbol}`;
+      beginChainExecution(holding.slug, action, "v65-spot");
+      try {
+        const receipt = await executeV65SpotSell(token.chainMarketAddress, token.chainTokenAddress, toWad(tokenAmount.toFixed(18)), "mainnet", {
+          ...execution,
+          onQuote: ({ priceImpactPercent }) => setChainExecution({
+            mode: "v65-spot", phase: "quote", action, slug: holding.slug, account: walletAddress,
+            message: `Canonical Uniswap V3 sell quote ready · ${priceImpactPercent.toFixed(2)}% price impact.`, updatedAt: Date.now(),
+          }),
+          onWalletRequest: () => setChainExecution({
+            mode: "v65-spot", phase: "wallet", action, slug: holding.slug, account: walletAddress,
+            message: "Approve the token, confirm the swap, then unwrap WETH to ETH.", updatedAt: Date.now(),
+          }),
+          onSubmitted: (transactionHash) => setChainExecution({
+            mode: "v65-spot", phase: "pending", action, slug: holding.slug, account: walletAddress, transactionHash,
+            message: "Sell submitted. Waiting for Robinhood Chain confirmation.", updatedAt: Date.now(),
+          }),
+        });
+        const runtime = await readV65PoolRuntime(token.chainMarketAddress, token.chainTokenAddress, "mainnet");
+        const payout = fromWad(receipt.netEthWei, 18);
+        const nextToken = normalizeToken({ ...token, priceEth: runtime.priceEth, marketCapEth: runtime.marketCapEth, realWethBalance: runtime.realEthBalance, freeWethEth: runtime.realEthBalance, curveAllocation: 800_000_000, curveTokenReserve: Math.max(0, 800_000_000 - runtime.soldTokens), curveRealTokenReserve: Math.max(0, 800_000_000 - runtime.soldTokens), circulatingSpotTokens: runtime.soldTokens, chainLastBlock: receipt.blockNumber, chainLastSyncedAt: Date.now() });
+        tokensRef.current = tokensRef.current.map((item) => item.slug === holding.slug ? nextToken : item);
+        setTokens(tokensRef.current);
+        if (safeFraction >= 0.999) holdingsRef.current = holdingsRef.current.filter((item) => item.id !== id);
+        else holdingsRef.current = holdingsRef.current.map((item) => item.id === id ? { ...item, investedEth: item.investedEth * (1 - safeFraction), tokenAmount: (item.tokenAmount ?? 0) * (1 - safeFraction) } : item);
+        setHoldings(holdingsRef.current);
+        setWalletAddress(receipt.account);
+        setConnected(true);
+        setChainExecution({ mode: "v65-spot", phase: "confirmed", action, slug: holding.slug, account: receipt.account, transactionHash: receipt.transactionHash, blockNumber: receipt.blockNumber, message: `${action} confirmed and WETH unwrapped to ETH.`, updatedAt: Date.now() });
+        const closedSpot: ClosedTrade = { id: randomId(), slug: holding.slug, direction: "spot", leverage: 1, entryCap: holding.entryCap, exitCap: runtime.marketCapEth * ETH_USD_REFERENCE, collateral: investedClosed, pnlEth: payout - investedClosed, roiPercent: investedClosed > 0 ? (payout - investedClosed) / investedClosed * 100 : 0, openedAt: holding.openedAt, closedAt: Date.now(), reason: "spot-sale" };
+        setClosedTrades((current) => [closedSpot, ...current].slice(0, 10_000));
+        pushEvent({ slug: holding.slug, action: "spot-sell", amountEth: payout, marketCap: runtime.marketCapEth * ETH_USD_REFERENCE, actor: shortWallet(receipt.account), note: `${tokenAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })} tokens sold through the GMGN-readable pool`, transactionHash: receipt.transactionHash, blockNumber: receipt.blockNumber, executionMode: "v65-spot" });
+        return;
+      } catch (error) {
+        throw failChainExecution(holding.slug, action, error, "v65-spot");
+      }
+    }
     if ((holding.executionMode === "v54-spot" || holding.executionMode === "v55-spot") || isV54SpotMarket(token)) {
       if (!holding.tokenAmount || !token.chainMarketAddress || !token.chainTokenAddress) throw new Error("The Leverage X spot holding is missing canonical token data.");
       const networkKey = (token.chainDeploymentMode === "robinhood-mainnet-v55" || token.chainDeploymentMode === "robinhood-mainnet-v54") ? "mainnet" as const : "testnet" as const;
@@ -1908,7 +2019,7 @@ export function MarketProvider({ children }: { children: ReactNode }) {
     const identity = tokenIdentityParts({
       name: input.name,
       symbol: input.symbol,
-      emoji: input.emoji || "🧊",
+      emoji: input.emoji || "",
       imageExactHash: input.imageExactHash,
       imagePerceptualHash: input.imagePerceptualHash,
     });
@@ -1933,7 +2044,7 @@ export function MarketProvider({ children }: { children: ReactNode }) {
       slug,
       symbol: input.symbol.toUpperCase().slice(0, 10),
       name: input.name,
-      emoji: input.emoji || EMOJIS[Math.floor(Math.random() * EMOJIS.length)],
+      emoji: input.emoji || "",
       imageDataUrl: input.imageDataUrl,
       ...identity,
       ...poolPatch,

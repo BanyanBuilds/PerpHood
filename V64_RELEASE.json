@@ -1,0 +1,14 @@
+{
+  "version": "64.0.0",
+  "name": "Leverage X First Mainnet Launch",
+  "contractCandidate": "LeverageXLaunchFactoryV63",
+  "chainId": 4663,
+  "factoryDeploymentDefault": "closed-and-globally-paused",
+  "firstMarketDefault": "paused",
+  "publicLaunching": false,
+  "perps": false,
+  "gmgnOfficialLabel": false,
+  "operatorConsole": "/admin/first-launch",
+  "readinessEndpoint": "/api/v64/first-launch-readiness",
+  "gmgnEvidenceEndpoint": "/api/v64/gmgn/evidence"
+}

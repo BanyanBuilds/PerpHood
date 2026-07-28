@@ -1,5 +1,6 @@
 import type { Token } from "./types";
 import { readV54MarketRuntime } from "./chain/robinhood-v54";
+import { readV65PoolRuntime } from "./chain/robinhood-v65";
 
 export type V54PublicLaunchRow = {
   chain_id: number;
@@ -25,6 +26,18 @@ export type V54PublicLaunchRow = {
   migration_target_usd_wad: string | number;
   status: "confirmed" | "paused" | "migrated";
   created_at?: string;
+  launchpad_version?: string | null;
+  pool_type?: string | null;
+  dex_factory?: string | null;
+  pair_token?: string | null;
+  position_manager?: string | null;
+  liquidity_locker?: string | null;
+  launch_position_id?: string | number | null;
+  final_position_id?: string | number | null;
+  pool_fee?: number | null;
+  token_is_token0?: boolean | null;
+  opening_fdv_eth_wad?: string | number | null;
+  target_fdv_eth_wad?: string | number | null;
 };
 
 function wadNumber(value: string | number, decimals = 18) {
@@ -54,7 +67,7 @@ export function v54LaunchRowToToken(row: V54PublicLaunchRow): Token {
     slug: tokenAddress,
     symbol: row.symbol,
     name: row.name,
-    emoji: "🪙",
+    emoji: "",
     hue: hueFor(tokenAddress),
     cap: 0,
     price: 0,
@@ -73,7 +86,7 @@ export function v54LaunchRowToToken(row: V54PublicLaunchRow): Token {
     metadataUri: row.metadata_uri,
     metadataHash: row.metadata_hash,
     creatorWallet: row.creator_address,
-    chainDeploymentMode: network === "mainnet" ? "robinhood-mainnet-v55" : "robinhood-testnet-v55",
+    chainDeploymentMode: row.launchpad_version === "V65" ? "robinhood-mainnet-v65" : network === "mainnet" ? "robinhood-mainnet-v55" : "robinhood-testnet-v55",
     chainId: row.chain_id,
     chainFactoryAddress: row.factory_address,
     chainMarketAddress: row.market_address,
@@ -82,12 +95,12 @@ export function v54LaunchRowToToken(row: V54PublicLaunchRow): Token {
     launchTransactionHash: row.transaction_hash,
     launchBlock: Number(row.block_number),
     chainExplorerUrl: `${explorer}/address/${tokenAddress}`,
-    launchpadVersion: "V55",
+    launchpadVersion: row.launchpad_version || "V64",
     launchState: "live",
     battlePhase: row.status === "migrated" ? "migrated" : row.status === "paused" ? "paused" : "bonding",
     totalSupply: supply,
     creatorGenesisBuyEth: wadNumber(row.creator_buy_wei),
-    migrationTargetMarketCapUsd: wadNumber(row.migration_target_usd_wad),
+    migrationTargetMarketCapUsd: row.target_fdv_eth_wad ? undefined : wadNumber(row.migration_target_usd_wad),
     website: row.website || undefined,
     xHandle: row.x_handle || undefined,
     telegram: row.telegram || undefined,
@@ -101,15 +114,17 @@ export function v54LaunchRowToToken(row: V54PublicLaunchRow): Token {
 }
 
 export async function fetchV54LaunchTokens(limit = 250): Promise<Token[]> {
-  const response = await fetch(`/api/v62/launches?limit=${Math.max(1, Math.min(500, Math.floor(limit)))}`, { cache: "no-store" });
+  const response = await fetch(`/api/v65/launches?limit=${Math.max(1, Math.min(500, Math.floor(limit)))}`, { cache: "no-store" });
   const payload = await response.json() as { configured?: boolean; launches?: V54PublicLaunchRow[]; error?: string };
   if (!response.ok) throw new Error(payload.error || "V55 launch registry request failed.");
   if (!payload.configured) return [];
   const baseTokens = (payload.launches ?? []).map(v54LaunchRowToToken);
   const hydrated = await Promise.allSettled(baseTokens.map(async (token) => {
     if (!token.chainMarketAddress) return token;
-    const networkKey = (token.chainDeploymentMode === "robinhood-mainnet-v55" || token.chainDeploymentMode === "robinhood-mainnet-v54") ? "mainnet" as const : "testnet" as const;
-    const runtime = await readV54MarketRuntime(token.chainMarketAddress, networkKey);
+    const networkKey = (token.chainDeploymentMode === "robinhood-mainnet-v65" || token.chainDeploymentMode === "robinhood-mainnet-v55" || token.chainDeploymentMode === "robinhood-mainnet-v54") ? "mainnet" as const : "testnet" as const;
+    const runtime = token.chainDeploymentMode === "robinhood-mainnet-v65" && token.chainTokenAddress
+      ? await readV65PoolRuntime(token.chainMarketAddress, token.chainTokenAddress, networkKey)
+      : await readV54MarketRuntime(token.chainMarketAddress, networkKey);
     return {
       ...token,
       priceEth: runtime.priceEth,
