@@ -43,8 +43,8 @@ check(schema.includes("leveragex_v55_launches"), "Supabase uses the Leverage X V
 check(schema.includes("leveragex-token-media"), "Supabase uses the Leverage X token-media bucket");
 check(schema.includes("unique (chain_id, token_address)"), "launch registry deduplicates canonical token addresses");
 check(existsSync(join(root, "app/api/v55/launches/route.ts")) && existsSync(join(root, "app/api/v55/metadata/route.ts")) && existsSync(join(root, "app/api/v55/discovery/route.ts")), "V55 metadata, registry, and discovery APIs exist");
-check(read("components/LaunchPanel.tsx").includes('/api/v55/metadata') && read("components/LaunchPanel.tsx").includes('/api/v55/launches'), "launcher uses the V55 APIs");
-check(read("lib/v54-launch-registry.ts").includes('/api/v55/launches'), "terminal discovers confirmed V55 markets");
+check((read("components/LaunchPanel.tsx").includes('/api/v55/metadata') || read("components/LaunchPanel.tsx").includes('/api/v62/metadata')) && (read("components/LaunchPanel.tsx").includes('/api/v55/launches') || read("components/LaunchPanel.tsx").includes('/api/v62/launches')), "launcher uses a versioned production metadata and launch API");
+check(read("lib/v54-launch-registry.ts").includes('/api/v55/launches') || read("lib/v54-launch-registry.ts").includes('/api/v62/launches'), "terminal discovers confirmed launch markets through a versioned registry API");
 
 for (const [category, settings] of Object.entries(DEFAULT_CATEGORY_SETTINGS)) {
   const { key, profile } = getActiveExecutionPreset(settings);

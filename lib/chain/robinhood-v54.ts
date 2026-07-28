@@ -50,7 +50,9 @@ export const ROBINHOOD_NETWORKS: Record<RobinhoodNetworkKey, RobinhoodNetwork> =
   },
 };
 
-export const V54_TOTAL_LAUNCH_BUDGET_WEI = 1_000_000_000_000_000n; // 0.001 ETH inclusive of the configured gas ceiling.
+export const V54_MIN_TOTAL_LAUNCH_BUDGET_WEI = 1_000_000_000_000_000n; // 0.001 ETH inclusive of the configured gas ceiling.
+/** Backward-compatible alias retained for older tests and tooling. */
+export const V54_TOTAL_LAUNCH_BUDGET_WEI = V54_MIN_TOTAL_LAUNCH_BUDGET_WEI;
 export const LEVERAGEX_PROTOCOL_MIGRATION_TARGET_MARKET_CAP_USD = 45_000;
 export const V54_MARKET_CREATED_EVENT = "MarketCreated(address,address,address,uint256,uint256,uint256,uint256,bytes32)";
 
@@ -141,6 +143,7 @@ function addressFromTopic(topic?: string): Hex {
 export async function ensureRobinhoodNetwork(
   networkKey: RobinhoodNetworkKey,
   provider: Eip1193Provider | null = injectedProvider(),
+  requestedTotalBudgetEth: number | string = "0.001",
 ) {
   if (!provider) throw new Error("No injected EVM wallet was found. Install or open an EVM browser wallet first.");
   const network = ROBINHOOD_NETWORKS[networkKey];
@@ -186,11 +189,15 @@ async function estimateBudget(
   factoryAddress: Hex,
   network: RobinhoodNetwork,
   provider: Eip1193Provider,
+  requestedTotalBudgetWei: bigint,
 ): Promise<V54LaunchBudget> {
   const data = encodeV54CreateMarket(input);
   const gasPriceHex = await provider.request<Hex>({ method: "eth_gasPrice" });
   const gasPriceWei = BigInt(gasPriceHex);
-  let creatorBuyWei = V54_TOTAL_LAUNCH_BUDGET_WEI / 2n;
+  if (requestedTotalBudgetWei < V54_MIN_TOTAL_LAUNCH_BUDGET_WEI) {
+    throw new Error("Total launch spend must be at least 0.001 ETH including gas.");
+  }
+  let creatorBuyWei = requestedTotalBudgetWei / 2n;
   let gasEstimate = 0n;
   let gasLimit = 0n;
   let maximumGasCostWei = 0n;
@@ -203,30 +210,32 @@ async function estimateBudget(
     gasEstimate = BigInt(estimateHex);
     gasLimit = gasEstimate * 125n / 100n + 12_000n;
     maximumGasCostWei = gasLimit * gasPriceWei;
-    if (maximumGasCostWei >= V54_TOTAL_LAUNCH_BUDGET_WEI) {
-      throw new Error(`Current ${network.name} gas is too expensive for the 0.001 ETH total launch budget.`);
+    if (maximumGasCostWei >= requestedTotalBudgetWei) {
+      throw new Error(`Current ${network.name} gas is too expensive for the selected total launch spend.`);
     }
-    creatorBuyWei = V54_TOTAL_LAUNCH_BUDGET_WEI - maximumGasCostWei;
+    creatorBuyWei = requestedTotalBudgetWei - maximumGasCostWei;
   }
 
   if (creatorBuyWei < 1_000_000_000_000n) {
     throw new Error("The estimated gas reserve leaves too little ETH for a valid creator genesis buy.");
   }
-  return { totalBudgetWei: V54_TOTAL_LAUNCH_BUDGET_WEI, gasEstimate, gasLimit, gasPriceWei, maximumGasCostWei, creatorBuyWei };
+  return { totalBudgetWei: requestedTotalBudgetWei, gasEstimate, gasLimit, gasPriceWei, maximumGasCostWei, creatorBuyWei };
 }
 
 export async function quoteV54LaunchBudget(
   input: V54LaunchInput,
   networkKey: RobinhoodNetworkKey = "testnet",
   provider: Eip1193Provider | null = injectedProvider(),
+  requestedTotalBudgetEth: number | string = "0.001",
 ) {
   if (!provider) throw new Error("No injected EVM wallet was found.");
   const { account, network } = await ensureRobinhoodNetwork(networkKey, provider);
   enforceMainnetCanary(account, networkKey);
   const factoryAddress = normalizeAddress(network.factoryAddress, `${network.name} Leverage X factory`);
-  const budget = await estimateBudget(input, account, factoryAddress, network, provider);
+  const requestedTotalBudgetWei = toWad(requestedTotalBudgetEth);
+  const budget = await estimateBudget(input, account, factoryAddress, network, provider, requestedTotalBudgetWei);
   const walletBalance = await readRobinhoodWalletBalance(account, networkKey, provider);
-  if (walletBalance < budget.totalBudgetWei) throw new Error("Wallet needs at least 0.001 ETH on this network for the capped launch transaction.");
+  if (walletBalance < budget.totalBudgetWei) throw new Error(`Wallet needs at least ${fromWad(budget.totalBudgetWei, 18)} ETH on this network for the selected launch spend.`);
   return { account, network, factoryAddress, walletBalance, budget };
 }
 
@@ -252,9 +261,10 @@ export async function launchV54Market(
   input: V54LaunchInput,
   networkKey: RobinhoodNetworkKey = "testnet",
   provider: Eip1193Provider | null = injectedProvider(),
+  requestedTotalBudgetEth: number | string = "0.001",
 ): Promise<V54LaunchReceipt> {
   if (!provider) throw new Error("No injected EVM wallet was found.");
-  const quoted = await quoteV54LaunchBudget(input, networkKey, provider);
+  const quoted = await quoteV54LaunchBudget(input, networkKey, provider, requestedTotalBudgetEth);
   const data = encodeV54CreateMarket(input);
   const transactionHash = await provider.request<Hex>({
     method: "eth_sendTransaction",
@@ -323,7 +333,7 @@ export function creatorBuyEthFromBudget(budget: V54LaunchBudget) {
 }
 
 export function totalBudgetEth() {
-  return fromWad(V54_TOTAL_LAUNCH_BUDGET_WEI, 18);
+  return fromWad(V54_MIN_TOTAL_LAUNCH_BUDGET_WEI, 18);
 }
 
 export function parseEthAmount(value: number | string) {

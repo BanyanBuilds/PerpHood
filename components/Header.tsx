@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Activity, Plus, WalletCards } from "lucide-react";
+import { Activity, Info, Plus, WalletCards } from "lucide-react";
 import { useState } from "react";
 import { BrandMark } from "./icons";
 import { KeyButton } from "./KeyButton";
@@ -9,9 +9,11 @@ import { useMarkets } from "./MarketProvider";
 import { ProfileMenu } from "./ProfileMenu";
 import { useTerminalPerformance } from "./TerminalPerformanceProvider";
 import { LEVERAGEX_RELEASE_STAGE, LEVERAGEX_RELEASE_STATUS } from "@/lib/v56-release-state";
+import { HowItWorksModal } from "./HowItWorksModal";
 
 export function Header() {
   const [profileOpen, setProfileOpen] = useState(false);
+  const [howOpen, setHowOpen] = useState(false);
   const { connected, toggleWallet, balanceEth } = useMarkets();
   const { effectiveFps } = useTerminalPerformance();
   const release = LEVERAGEX_RELEASE_STATUS[LEVERAGEX_RELEASE_STAGE];
@@ -35,6 +37,7 @@ export function Header() {
         </div>
 
         <div className="header-actions">
+          <button type="button" className="lx-how-trigger" onClick={() => setHowOpen(true)}><Info size={15} /><span>How it works</span></button>
           {connected && <Link href="/funding" className="header-fund-button"><Plus size={15}/><span>Fund</span><strong>{balanceEth.toFixed(3)} ETH</strong></Link>}
           <KeyButton compact className={connected ? "profile-key" : ""} onClick={handleWalletButton}>
             {connected ? <><span className="profile-key-avatar">LX</span><span className="profile-key-copy"><strong>Trading account</strong><small>Open account sidebar</small></span></> : <><WalletCards size={17} />Connect Wallet</>}
@@ -42,6 +45,7 @@ export function Header() {
         </div>
       </div>
       {connected && profileOpen && <ProfileMenu onClose={() => setProfileOpen(false)} />}
+      <HowItWorksModal open={howOpen} onClose={() => setHowOpen(false)} />
     </header>
   );
 }

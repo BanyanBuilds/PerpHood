@@ -331,7 +331,8 @@ contract LeverageXLaunchFactoryV60 {
     enum LaunchMode { Closed, Allowlist, Public }
 
     uint256 public constant DEFAULT_MIGRATION_TARGET_USD_WAD = 45_000 ether;
-    uint256 public constant TOTAL_CREATOR_LAUNCH_BUDGET_WEI = 0.001 ether;
+    uint256 public constant MIN_TOTAL_CREATOR_LAUNCH_BUDGET_WEI = 0.001 ether;
+    uint256 public constant TOTAL_CREATOR_LAUNCH_BUDGET_WEI = MIN_TOTAL_CREATOR_LAUNCH_BUDGET_WEI; // compatibility alias
     uint256 public constant MIN_CREATOR_GENESIS_BUY_WEI = 1_000_000_000_000;
     uint256 public constant DEFAULT_CANARY_MAX_BUY_WEI = 0.01 ether;
     uint256 public constant DEFAULT_CANARY_MAX_SELL_TOKEN_WAD = 5_000_000 ether;
@@ -406,8 +407,9 @@ contract LeverageXLaunchFactoryV60 {
         emit NewMarketSafetyChanged(true, defaultMaxBuyWei, defaultMaxSellTokenWad);
     }
 
-    /// @dev The connected creator wallet submits this transaction. msg.value is the token-buy
-    ///      remainder after the client reserves gas inside the creator's 0.001 ETH total budget.
+    /// @dev The connected creator wallet submits this transaction. msg.value is the actual creator
+    ///      curve buy after the client reserves gas from the creator-selected total launch spend.
+    ///      The client enforces a 0.001 ETH minimum total spend, inclusive of gas.
     function createMarket(
         string calldata name,
         string calldata symbol,
@@ -426,7 +428,8 @@ contract LeverageXLaunchFactoryV60 {
         bytes memory uriBytes = bytes(metadataURI);
         if (nameBytes.length < 2 || nameBytes.length > 64 || symbolBytes.length < 1 || symbolBytes.length > 12) revert InvalidIdentity();
         if (metadataHash == bytes32(0) || uriBytes.length < 8 || uriBytes.length > 512) revert InvalidMetadata();
-        if (msg.value < MIN_CREATOR_GENESIS_BUY_WEI || msg.value >= TOTAL_CREATOR_LAUNCH_BUDGET_WEI) revert InvalidGenesisBuy();
+        if (msg.value < MIN_CREATOR_GENESIS_BUY_WEI) revert InvalidGenesisBuy();
+        if (defaultMaxBuyWei != 0 && msg.value > defaultMaxBuyWei) revert InvalidGenesisBuy();
 
         if (migrationTargetUsdWad != 0 && migrationTargetUsdWad != DEFAULT_MIGRATION_TARGET_USD_WAD) revert InvalidMigrationTarget();
         uint256 target = DEFAULT_MIGRATION_TARGET_USD_WAD;

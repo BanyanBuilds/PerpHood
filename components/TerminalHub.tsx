@@ -52,6 +52,7 @@ import { ProfileMenu } from "./ProfileMenu";
 import { useOutsideDismiss } from "./useOutsideDismiss";
 import { useTerminalPerformance, type RenderFpsMode } from "./TerminalPerformanceProvider";
 import { useUserState } from "./UserStateProvider";
+import { HowItWorksModal } from "./HowItWorksModal";
 
 type DrawerKind = "launch" | "x-launch-feed" | TrackerPanelKind;
 type ColumnKind = "new" | "cooking" | "migrated";
@@ -279,6 +280,7 @@ export function TerminalHub() {
   const [buyNotice, setBuyNotice] = useState("");
   const [pendingQuickAction, setPendingQuickAction] = useState<{ slug: string; side: Direction } | null>(null);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [howOpen, setHowOpen] = useState(false);
   const [workspaceView, setWorkspaceView] = useState<WorkspaceView>(() => params.get("view") === "movers" ? "movers" : "markets");
   const [moverQueries, setMoverQueries] = useState<Record<MoverColumnKind, string>>({ movers: "", liked: "", "market-cap": "" });
   const [launchDraft, setLaunchDraft] = useState<XLaunchDraft | null>(null);
@@ -702,6 +704,7 @@ export function TerminalHub() {
         </div>
 
         <div className="perphood-command-right">
+          <button type="button" className="lx-how-trigger terminal" onClick={() => setHowOpen(true)}><Info size={15} /><span>How it works</span></button>
           <div className={`terminal-fps-chip ${manualOverdrive ? "is-overdrive" : ""}`} aria-label={`Visual refresh target ${effectiveFps} hertz`}><b>{effectiveFps} Hz</b></div>
           <button ref={settingsButtonRef} className={settingsOpen ? "active terminal-settings-button" : "terminal-settings-button"} onClick={() => setSettingsOpen(!settingsOpen)} aria-label="Open terminal settings"><Settings2 size={17} /></button>
           {connected && <button onClick={() => ensurePanelOpen("positions")} className="header-fund-button perphood-fund-button"><Plus size={15}/><span>Fund</span></button>}
@@ -808,6 +811,7 @@ export function TerminalHub() {
         </div>
       </nav>
       <TerminalSearchOverlay open={searchOpen} query={globalQuery} setQuery={setGlobalQuery} tokens={tokens} onClose={() => setSearchOpen(false)} />
+      <HowItWorksModal open={howOpen} onClose={() => setHowOpen(false)} />
     </main>
   );
 }

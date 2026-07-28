@@ -171,7 +171,7 @@ export async function createV54Metadata(formData: FormData) {
 
   if (name.length < 2 || name.length > 64) throw new Error("Token name must be 2–64 characters.");
   if (!/^[A-Z0-9]{1,12}$/.test(symbol)) throw new Error("Ticker must use 1–12 uppercase letters or numbers.");
-  if (description.length < 4 || description.length > 1_000) throw new Error("Description must be 4–1,000 characters.");
+  if (description.length > 1_000) throw new Error("Description must be 1,000 characters or fewer.");
   if (!(file instanceof File)) throw new Error("Token artwork is required for a real launch.");
   if (!ALLOWED_IMAGE_TYPES.has(file.type)) throw new Error("Artwork must be PNG, JPG, WEBP, GIF, or AVIF.");
   if (file.size <= 0 || file.size > MAX_IMAGE_BYTES) throw new Error("Artwork must be no larger than 4 MB.");

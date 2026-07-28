@@ -1,4 +1,4 @@
-import { writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { V60_CANARY_CREATOR, V60_MAX_BUY_WEI, V60_MAX_SELL_TOKEN_WAD, assertOwnerSigner, factoryAddress, marketSnapshot, normalizeAddress, sendOwner, snapshot, vercelCanaryEnv, writeJson } from "./v60-canary-common.mts";
 
@@ -11,6 +11,27 @@ const market = normalizeAddress(process.env.V60_CANARY_MARKET_ADDRESS, "V60_CANA
 assertOwnerSigner(factory);
 const beforeFactory = snapshot(factory);
 const beforeMarket = marketSnapshot(factory, market);
+const proofPath = resolve("deployments", "v62-first-launch-proof.json");
+if (!existsSync(proofPath)) {
+  throw new Error("V62 first-launch proof is missing. Run npm run chain:v62:first-launch-proof before opening Spot.");
+}
+const proof = JSON.parse(readFileSync(proofPath, "utf8")) as {
+  factory?: string;
+  market?: { address?: string };
+  token?: { address?: string };
+  registryVerified?: boolean;
+  checks?: Record<string, boolean>;
+};
+const allProofChecksPassed = proof.checks && Object.values(proof.checks).every(Boolean);
+if (
+  proof.factory?.toLowerCase() !== factory
+    || proof.market?.address?.toLowerCase() !== market
+    || proof.token?.address?.toLowerCase() !== beforeMarket.token
+    || proof.registryVerified !== true
+    || !allProofChecksPassed
+) {
+  throw new Error("V62 first-launch proof does not match the configured factory/market/token or the Supabase registry is not verified.");
+}
 if (beforeFactory.launchMode !== 1 || !beforeFactory.canaryCreatorAllowed || beforeFactory.activeCanaryCreator !== V60_CANARY_CREATOR || beforeFactory.marketCount !== 1n || beforeFactory.firstMarket !== market) {
   throw new Error("Factory is not in the exact one-market allowlisted canary state.");
 }

@@ -51,7 +51,7 @@ console.log(`Latest block: ${latestBlock.toLocaleString("en-US")} · ${blockAgeS
 console.log(`Gas price: ${gasPriceWei.toLocaleString("en-US")} wei`);
 console.log(`Deployer balance: ${formatEth(deployerBalanceWei)} ETH`);
 
-console.log("\nCompiling deterministic V56 factory artifacts for V59 deployment tooling…");
+console.log("\nCompiling deterministic V60 factory artifacts for mainnet deployment tooling…");
 run("forge", ["clean"], { capture: false });
 run("forge", ["build", "--sizes"], { capture: false });
 console.log("\nRunning factory contract tests…");
@@ -135,7 +135,7 @@ const report = {
   },
   contract: {
     target: V59_FACTORY_TARGET,
-    sourceVersion: "V56",
+    sourceVersion: "V60",
     artifacts,
   },
   deploymentEstimate: {

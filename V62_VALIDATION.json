@@ -1,0 +1,26 @@
+{
+  "version": "V62",
+  "generatedAt": "2026-07-28T00:00:00Z",
+  "package": "leveragex-v62-mainnet-go-live@62.0.0",
+  "checks": {
+    "v55Terminal": "70/70 passed",
+    "v55VercelRegression": "12/12 passed",
+    "v56MainnetCandidate": "26/26 passed",
+    "v57ProfileDrawer": "15/15 passed",
+    "v58LaunchUi": "21/21 passed",
+    "v59MainnetPreflight": "37/37 passed",
+    "v60CanaryControls": "36/36 passed",
+    "v60VercelNullability": "7/7 passed",
+    "v61Launchpad": "20/20 passed",
+    "v62GoLive": "11/11 passed",
+    "typescriptSyntax": "348 files passed",
+    "isolatedNewModuleSemanticTypecheck": "passed",
+    "secretScan": "passed"
+  },
+  "notRun": {
+    "nextBuild": "Dependency installation could not be completed because external npm DNS was unavailable in the build environment.",
+    "foundry": "forge/cast are not installed in the build environment; contract compilation and on-chain preflight remain local gates."
+  },
+  "mainnetTransactionsBroadcast": 0,
+  "secretFindings": []
+}

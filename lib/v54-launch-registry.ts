@@ -101,7 +101,7 @@ export function v54LaunchRowToToken(row: V54PublicLaunchRow): Token {
 }
 
 export async function fetchV54LaunchTokens(limit = 250): Promise<Token[]> {
-  const response = await fetch(`/api/v55/launches?limit=${Math.max(1, Math.min(500, Math.floor(limit)))}`, { cache: "no-store" });
+  const response = await fetch(`/api/v62/launches?limit=${Math.max(1, Math.min(500, Math.floor(limit)))}`, { cache: "no-store" });
   const payload = await response.json() as { configured?: boolean; launches?: V54PublicLaunchRow[]; error?: string };
   if (!response.ok) throw new Error(payload.error || "V55 launch registry request failed.");
   if (!payload.configured) return [];

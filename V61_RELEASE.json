@@ -1,0 +1,18 @@
+{
+  "product": "leverage X",
+  "version": "61.0.0",
+  "release": "launchpad-how-it-works",
+  "chain": "Robinhood Chain mainnet",
+  "mainnetChainId": 4663,
+  "transactionsBroadcast": 0,
+  "factoryDeploymentIncluded": false,
+  "publicLaunchEnabled": false,
+  "perpsEnabled": false,
+  "requiredLaunchFields": ["name", "ticker", "imageOrGif"],
+  "optionalLaunchFields": ["description", "website", "x", "telegram"],
+  "creatorControlsMigrationTarget": false,
+  "creatorInitialBuyPopup": true,
+  "minimumTotalLaunchSpendEth": "0.001",
+  "launchSidecarCompressesTerminal": false,
+  "howItWorksOverlay": true
+}

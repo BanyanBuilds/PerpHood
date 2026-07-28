@@ -44,7 +44,7 @@ check(existsSync(join(root, "public/favicon.ico")), "transparent mark favicon ex
 check(existsSync(join(root, "app/api/v56/readiness/route.ts")), "public V56 readiness endpoint exists");
 
 const launchPanel = read("components/LaunchPanel.tsx");
-check(launchPanel.includes('useState<RobinhoodNetworkKey>("mainnet")'), "launcher defaults to mainnet");
+check(launchPanel.includes('const NETWORK_KEY = "mainnet"') || launchPanel.includes('useState<RobinhoodNetworkKey>("mainnet")'), "launcher defaults to mainnet");
 check(launchPanel.includes("NEXT_PUBLIC_V56_MAINNET_ENABLED"), "mainnet launcher has an explicit public gate");
 
 console.log(`Leverage X V56 mainnet-candidate smoke passed (${checks.length}/${checks.length}).`);

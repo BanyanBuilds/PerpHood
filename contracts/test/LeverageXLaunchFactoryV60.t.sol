@@ -90,6 +90,32 @@ contract LeverageXLaunchFactoryV60Test {
         );
     }
 
+    function testCreatorChoosesInitialBuyWithinCanaryCap() public {
+        _configureCanary();
+        vm.prank(creator);
+        (LeverageXSpotMarketV60 market,) = factory.createMarket{value: 0.005 ether}(
+            "Chosen Buy",
+            "CHOOSE",
+            "https://example.com/metadata/chosen.json",
+            keccak256("chosen-buy"),
+            0
+        );
+        require(market.creatorGenesisBuyWei() == 0.005 ether, "CREATOR_BUY");
+    }
+
+    function testRejectsCreatorBuyAboveConfiguredCap() public {
+        _configureCanary();
+        vm.expectRevert(LeverageXLaunchFactoryV60.InvalidGenesisBuy.selector);
+        vm.prank(creator);
+        factory.createMarket{value: 0.010000000000000001 ether}(
+            "Too Large",
+            "LARGE",
+            "https://example.com/metadata/large.json",
+            keccak256("large-buy"),
+            0
+        );
+    }
+
     function testZeroMigrationTargetResolvesToProtocolDefault() public {
         _configureCanary();
         vm.prank(creator);

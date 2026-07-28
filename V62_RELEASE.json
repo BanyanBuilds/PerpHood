@@ -1,0 +1,21 @@
+{
+  "version": "V62",
+  "name": "Mainnet Go-Live Gate",
+  "mainnetTransactionsBroadcast": 0,
+  "features": [
+    "full-stack go-live readiness",
+    "Supabase storage and registry probes",
+    "first launch proof",
+    "proof-gated capped Spot opening",
+    "V62 launch APIs",
+    "read-only admin console"
+  ],
+  "safety": [
+    "closed/paused factory",
+    "one allowlisted creator",
+    "first market paused",
+    "public launch disabled",
+    "perps disabled",
+    "local-only owner signing"
+  ]
+}
