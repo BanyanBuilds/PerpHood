@@ -25,7 +25,11 @@ type Props = {
   onChange: (next: CategoryTradingSettings) => void;
 };
 
-const PRESETS: QuickPresetKey[] = ["P1", "P2", "P3"];
+const PRESETS: Array<{ key: QuickPresetKey; name: string }> = [
+  { key: "P1", name: "Standard" },
+  { key: "P2", name: "Fast" },
+  { key: "P3", name: "Assault" },
+];
 const LEVERAGE: DefaultLeverage[] = [2, 5, 10, 20];
 const ACTIONS: TradeActionProfile[] = ["buy", "sell", "long", "short", "close"];
 const ROUTES: ExecutionRoute[] = ["standard", "fast", "assault", "protected"];
@@ -66,13 +70,16 @@ export function TerminalCategorySettings({ category, label, value, onChange }: P
         <em>{activePreset} · {execution.executionRoute}</em>
       </header>
 
-      <div className="v55-preset-switcher" aria-label="Execution preset">
-        {PRESETS.map((preset) => {
-          const profile = getExecutionPreset(normalized, preset);
-          return <button key={preset} className={activePreset === preset ? "active" : ""} onClick={() => selectPreset(preset)}>
-            <b>{preset}</b><small>{profile.executionRoute} · {profile.maxNetworkFeeEth.toFixed(5)} ETH</small>
-          </button>;
-        })}
+      <div className="v82-preset-row">
+        <span><small>Trading preset</small><strong>{PRESETS.find((item) => item.key === activePreset)?.name ?? "Standard"}</strong></span>
+        <div className="v55-preset-switcher" aria-label="Execution preset">
+          {PRESETS.map(({ key, name }) => {
+            const profile = getExecutionPreset(normalized, key);
+            return <button key={key} className={activePreset === key ? "active" : ""} onClick={() => selectPreset(key)} title={`${name}: ${profile.executionRoute}, max ${profile.maxNetworkFeeEth.toFixed(5)} ETH network fee`}>
+              <b>{name}</b>
+            </button>;
+          })}
+        </div>
       </div>
 
       <nav>
@@ -154,7 +161,7 @@ export function TerminalCategorySettings({ category, label, value, onChange }: P
         <ToggleRow label="MEV protection required when available" value={execution.mevMode !== "public"} onChange={(enabled) => patchExecution({ mevMode: enabled ? "auto" : "public" })} />
         <NumericField label="Maximum network fee" value={execution.maxNetworkFeeEth} onChange={(maxNetworkFeeEth) => patchExecution({ maxNetworkFeeEth })} suffix="ETH" step={0.000001} />
         <NumericField label="Maximum price impact" value={execution.maxPriceImpactPercent} onChange={(maxPriceImpactPercent) => patchExecution({ maxPriceImpactPercent })} suffix="%" step={0.5} min={0.1} max={100} />
-        <p className="category-settings-note"><ShieldCheck size={14} />These values are saved only for <b>{label}</b>. Every other Markets and Movers column keeps its own P1/P2/P3 execution profile.</p>
+        <p className="category-settings-note"><ShieldCheck size={14} />These values are saved only for <b>{label}</b>. Every Markets and Movers column keeps its own Standard, Fast, and Assault execution profile.</p>
       </div>}
     </div>}
   </>;

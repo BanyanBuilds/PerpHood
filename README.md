@@ -1,3 +1,11 @@
+# Leverage X V80 — Secure Launch Deployment
+
+V80 adds a Vercel-secret-backed, server-only Robinhood Chain mainnet deployment path for the permanent liquidity locker and launch factory. See `V80_SECURE_LAUNCH_DEPLOYMENT.md`.
+
+# leverage X V79 — Solvency Controls
+
+The active production path now includes V76 market authorization, V78 TWAP pricing, and the V79 insurance-reserve/open-interest solvency engine. See `V79_SOLVENCY_CONTROLS.md`.
+
 # leverage X V65 — GMGN Live Pool
 
 V65 is the current authoritative project baseline. Every V65 launch creates a standard fixed-supply ERC-20 and a canonical token/WETH Uniswap V3 pool in the first confirmed launch transaction, then publishes deterministic factory attribution and standard pool events for external indexers.

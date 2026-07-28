@@ -1,0 +1,20 @@
+import assert from "node:assert/strict";
+import { V85LiveEventBuffer, validateV85Event } from "../lib/v85-live-data.ts";
+
+const market = "0x1111111111111111111111111111111111111111" as const;
+const tx = `0x${"a".repeat(64)}` as const;
+const buffer = new V85LiveEventBuffer(10);
+const first = buffer.publish({ id: "event-1", kind: "TOKEN_CREATED", chainId: 46630, blockNumber: 100, transactionHash: tx, marketAddress: market, occurredAt: "2026-07-28T20:00:00.000Z", payload: { ticker: "LXV" } });
+buffer.publish(first);
+assert.equal(buffer.health().retained, 1, "duplicate event IDs must be idempotent");
+for (let i = 2; i <= 12; i += 1) buffer.publish({ id: `event-${i}`, kind: "PRICE_UPDATED", chainId: 46630, blockNumber: 100 + i, marketAddress: market, payload: { priceWad: String(i) } });
+assert.equal(buffer.health().retained, 10);
+assert.equal(buffer.health().dropped, 2);
+const page = buffer.snapshot("event-8", 2);
+assert.deepEqual(page.events.map((event) => event.id), ["event-9", "event-10"]);
+assert.throws(() => validateV85Event({ kind: "PRICE_UPDATED", chainId: 0, payload: {} }), /chainId/);
+assert.throws(() => validateV85Event({ kind: "BAD_EVENT", chainId: 1, payload: {} }), /Unsupported/);
+console.log("PASS: validated live event schema");
+console.log("PASS: idempotent event ingestion");
+console.log("PASS: bounded ring buffer and cursor paging");
+console.log("PASS: V85 live data engine smoke passed");

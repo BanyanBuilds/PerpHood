@@ -1,6 +1,6 @@
 {
-  "name": "leveragex-v78-uniswap-v3-twap-oracle",
-  "version": "78.0.0",
+  "name": "leveragex-v89-protocol-stats",
+  "version": "0.89.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -291,7 +291,22 @@
     "v77:smoke": "node --experimental-strip-types scripts/v77-perps-engine-static-smoke.mts",
     "chain:build:v78": "FOUNDRY_PROFILE=twaporacle forge build --sizes",
     "chain:test:v78": "FOUNDRY_PROFILE=twaporacle forge test -vvv",
-    "test:v78-static": "node --experimental-strip-types scripts/v78-twap-oracle-static-smoke.mts"
+    "test:v78-static": "node --experimental-strip-types scripts/v78-twap-oracle-static-smoke.mts",
+    "compile:mint-path": "node scripts/v80-compile-mint-path.mjs",
+    "prebuild": "npm run compile:mint-path",
+    "test:v80": "node --experimental-strip-types scripts/v80-secure-deployment-smoke.mts",
+    "test:v81": "node --experimental-strip-types scripts/v81-mainnet-deployment-smoke.mts",
+    "test:v83-static": "node --experimental-strip-types scripts/v83-order-pipeline-static-smoke.mts",
+    "test:v85-live": "node --experimental-strip-types scripts/v85-live-data-smoke.mts",
+    "test:v85": "npm run test:v85-live",
+    "indexer:v86": "node --env-file-if-exists=.env.mainnet.local --experimental-strip-types scripts/v86-chain-live-worker.mts watch",
+    "indexer:v86:once": "node --env-file-if-exists=.env.mainnet.local --experimental-strip-types scripts/v86-chain-live-worker.mts once",
+    "test:v86-live-bridge": "node --experimental-strip-types scripts/v86-chain-live-bridge-smoke.mts",
+    "test:v86": "npm run test:v85 && npm run test:v86-live-bridge",
+    "test:v87-state": "node --experimental-strip-types scripts/v87-persistent-state-smoke.mts",
+    "test:v87": "npm run test:v86 && npm run test:v87-state",
+    "test:v88": "node --experimental-strip-types scripts/v88-immediate-perps-smoke.mts && npm run test:v87",
+    "test:v89": "node --experimental-strip-types scripts/v89-protocol-stats-smoke.mts && npm run test:v88"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.14",
@@ -301,7 +316,9 @@
     "next": "16.2.11",
     "react": "19.2.0",
     "react-dom": "19.2.0",
-    "tailwindcss": "^4.1.14"
+    "tailwindcss": "^4.1.14",
+    "ethers": "^6.15.0",
+    "solc": "^0.8.30"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

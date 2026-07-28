@@ -99,3 +99,18 @@ cbor_metadata = false
 
 [profile.twaporacle.fuzz]
 runs = 512
+
+[profile.solvencyengine]
+src = "contracts/solvency-engine-src"
+test = "contracts/test-solvency-engine"
+out = "contracts/out-solvency-engine"
+cache_path = "contracts/cache-solvency-engine"
+solc_version = "0.8.28"
+optimizer = true
+optimizer_runs = 1000
+via_ir = true
+bytecode_hash = "none"
+cbor_metadata = false
+
+[profile.solvencyengine.fuzz]
+runs = 512

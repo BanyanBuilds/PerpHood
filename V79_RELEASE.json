@@ -1,0 +1,9 @@
+{
+  "version": "79.0.0",
+  "name": "Leverage X V79 \u2014 Insurance Reserves and Solvency Controls",
+  "status": "controlled-mainnet-candidate-not-audited",
+  "activeContract": "contracts/solvency-engine-src/LeverageXSolvencyPositionEngineV79.sol",
+  "tests": "START_V79_CONTRACT_TESTS.cmd",
+  "deploy": "START_V79_DEPLOY_SOLVENCY_ENGINE.cmd",
+  "git": "PUSH_TO_GITHUB.cmd"
+}

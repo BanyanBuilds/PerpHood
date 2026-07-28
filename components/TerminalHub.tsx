@@ -5,12 +5,14 @@
 import {
   Activity,
   Bell,
+  BarChart3,
   CircleDollarSign,
   Crosshair,
   Filter,
   Heart,
   Info,
   RadioTower,
+  MonitorPlay,
   Newspaper,
   PanelLeftClose,
   PanelRightClose,
@@ -53,6 +55,8 @@ import { useOutsideDismiss } from "./useOutsideDismiss";
 import { useTerminalPerformance, type RenderFpsMode } from "./TerminalPerformanceProvider";
 import { useUserState } from "./UserStateProvider";
 import { HowItWorksModal } from "./HowItWorksModal";
+import { BroadcastMode } from "./BroadcastMode";
+import { ProtocolStatsModal } from "./ProtocolStatsModal";
 
 type DrawerKind = "launch" | "x-launch-feed" | TrackerPanelKind;
 type ColumnKind = "new" | "cooking" | "migrated";
@@ -280,7 +284,9 @@ export function TerminalHub() {
   const [buyNotice, setBuyNotice] = useState("");
   const [pendingQuickAction, setPendingQuickAction] = useState<{ slug: string; side: Direction } | null>(null);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [broadcastOpen, setBroadcastOpen] = useState(false);
   const [howOpen, setHowOpen] = useState(false);
+  const [protocolStatsOpen, setProtocolStatsOpen] = useState(false);
   const [workspaceView, setWorkspaceView] = useState<WorkspaceView>(() => params.get("view") === "movers" ? "movers" : "markets");
   const [moverQueries, setMoverQueries] = useState<Record<MoverColumnKind, string>>({ movers: "", liked: "", "market-cap": "" });
   const [launchDraft, setLaunchDraft] = useState<XLaunchDraft | null>(null);
@@ -704,6 +710,7 @@ export function TerminalHub() {
         </div>
 
         <div className="perphood-command-right">
+          <button type="button" className={broadcastOpen ? "lx-broadcast-trigger active" : "lx-broadcast-trigger"} onClick={() => setBroadcastOpen((value) => !value)}><MonitorPlay size={15} /><span>Broadcast</span><i /></button>
           <button type="button" className="lx-how-trigger terminal" onClick={() => setHowOpen(true)}><Info size={15} /><span>How it works</span></button>
           <div className={`terminal-fps-chip ${manualOverdrive ? "is-overdrive" : ""}`} aria-label={`Visual refresh target ${effectiveFps} hertz`}><b>{effectiveFps} Hz</b></div>
           <button ref={settingsButtonRef} className={settingsOpen ? "active terminal-settings-button" : "terminal-settings-button"} onClick={() => setSettingsOpen(!settingsOpen)} aria-label="Open terminal settings"><Settings2 size={17} /></button>
@@ -732,6 +739,7 @@ export function TerminalHub() {
 
       <TransactionLifecycleTracker execution={chainExecution} />
       {profileOpen && <ProfileMenu onClose={() => setProfileOpen(false)} onOpenPnl={() => setPnlWidgetOpen(true)} />}
+      {broadcastOpen && <BroadcastMode onClose={() => setBroadcastOpen(false)} />}
       {buyNotice && <div className="terminal-buy-notice">{buyNotice}</div>}
       {pnlWidgetOpen && <FloatingPnlWidget onClose={() => setPnlWidgetOpen(false)} />}
 
@@ -786,6 +794,7 @@ export function TerminalHub() {
           {bottomDockSettings.showEngine && <><span><CircleDollarSign size={13} /><b>Shared curve</b></span><span><ShieldCheck size={13} /><b>Engine online</b></span></>}
         </div>
         <div className="terminal-tool-right">
+          <button className={protocolStatsOpen ? "active protocol-stats-button" : "protocol-stats-button"} onClick={() => setProtocolStatsOpen(true)} title="View live protocol statistics"><BarChart3 size={14} /><b>Stats</b></button>
           {TERMINAL_TOOLS.filter(([kind, , , side]) => side === "right" && kind !== "launch").map(([kind, label, Icon]) => <button key={kind} className={openPanels.includes(kind) ? "active" : ""} onClick={() => openTool(kind)} title={label}><Icon size={14} /><b>{label}</b></button>)}
           <button className={pnlWidgetOpen ? "active" : ""} onClick={() => setPnlWidgetOpen((open) => !open)} title="Show floating live PNL"><CircleDollarSign size={14} /><b>Live PNL</b></button>
           <button onClick={() => setOpenPanels([])} title="Close all sidecars"><X size={14} /><b>Close panels</b></button>
@@ -812,6 +821,7 @@ export function TerminalHub() {
       </nav>
       <TerminalSearchOverlay open={searchOpen} query={globalQuery} setQuery={setGlobalQuery} tokens={tokens} onClose={() => setSearchOpen(false)} />
       <HowItWorksModal open={howOpen} onClose={() => setHowOpen(false)} />
+      <ProtocolStatsModal open={protocolStatsOpen} onClose={() => setProtocolStatsOpen(false)} />
     </main>
   );
 }

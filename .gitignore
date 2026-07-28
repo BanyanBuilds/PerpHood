@@ -1,24 +1,31 @@
-node_modules
-.next
-out
+# Dependencies and build output
+node_modules/
+.next/
+out/
+contracts/out*/
+contracts/cache*/
+cache/
+broadcast/
+
+# Secrets — never commit
 .env
 .env.local
-*.log
-.DS_Store
-
-.perphood-v22-sequencer-state.json
-.perphood-v22-sequencer-state.json.tmp
-
-.perphood/
-
-*.tsbuildinfo
-
-*.tsbuildinfo
-
-# V59 local mainnet secrets and compiler artifacts
-.env.mainnet.local
 .env.*.local
-contracts/out/
-contracts/cache/
-deployments/*.local.json
-deployments/*.secret*
+.env.production
+.env.preview
+*.pem
+*.key
+*.p12
+
+# Vercel local metadata and pulled secrets
+.vercel/
+
+# Runtime deployment output
+artifacts/v80/*.local.json
+deployments/*.private.json
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
