@@ -129,7 +129,7 @@ export async function deployLaunchContracts() {
   const factoryReceipt = await factoryTx?.wait(1);
   const factoryAddress = await launchFactory.getAddress();
   if (!factoryReceipt || (await p.getCode(factoryAddress)) === "0x") throw new Error("Launch factory deployment was not confirmed.");
-  const bindTx = await locker.bindFactory(factoryAddress);
+  const bindTx = await locker.getFunction("bindFactory")(factoryAddress);
   const bindReceipt = await bindTx.wait(1);
   if (!bindReceipt) throw new Error("Locker/factory binding was not confirmed.");
   const verification = await verifyDeployment(lockerAddress, factoryAddress);
