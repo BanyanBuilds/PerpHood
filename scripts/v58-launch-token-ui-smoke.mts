@@ -13,23 +13,23 @@ const checks: Array<[string, boolean]> = [
   ["launcher renamed Launch Token", hub.includes('"Launch Token"') && hero.includes("Launch Token")],
   ["BattlePool launch button removed", !hub.includes("Launch BattlePool") && !hero.includes("Launch BattlePool")],
   ["old oversized mint headline removed", !component.includes("Mint a real one-billion-supply memecoin")],
-  ["professional compact launch header", component.includes('className="lx-launch-head"') && component.includes("Coin details and artwork become permanent")],
-  ["three-step creation flow", component.includes("Coin details") && component.includes("Launch setup") && component.includes("Review")],
-  ["clean coin details hierarchy", component.includes('lx-launch-details') && component.includes("Choose carefully—these cannot be changed")],
-  ["optional social links are collapsible", component.includes("socialOpen") && component.includes("Add social links")],
-  ["large media dropzone", component.includes('className={`lx-launch-dropzone') && component.includes("Select an image or GIF")],
-  ["animated GIF support retained", component.includes('image/gif') && component.includes("GIFs remain animated")],
-  ["live token preview", component.includes('className="lx-launch-preview"') && component.includes("LIVE PREVIEW")],
-  ["inclusive creator budget remains clear", component.includes("0.001 ETH means 0.001 ETH total")],
-  ["mainnet factory truth remains visible", component.includes("The mainnet factory must be deployed") && component.includes("factoryReady")],
-  ["final immutable signing review", component.includes("Signing review") && component.includes("Only verified receipts enter the registry")],
-  ["launch panel stays non-modal", css.includes("premium non-modal Launch Token workspace")],
-  ["right dock expands without hiding full terminal", css.includes("has-launch-right-dock") && css.includes("minmax(570px, 640px)")],
-  ["floating launcher gets professional width", css.includes('.terminal-sidecar.floating[data-panel="launch"]') && sidecar.includes('id === "launch" ? 720 : 390')],
-  ["responsive single-column launcher", css.includes(".lx-launch-create-grid") && css.includes("grid-template-columns: 1fr")],
+  ["fast launch header", component.includes("FAST LAUNCH") && component.includes("Connect wallet. Add artwork. Launch")],
+  ["two-step fast creation flow", component.includes('type LaunchStep = "create" | "review"') && component.includes(">Artwork<") && component.includes(">Launch<")],
+  ["artwork is the only token input", component.includes("No image means no launch") && component.includes("minimumReady = connected") && component.includes("Boolean(artwork)")],
+  ["name ticker and description are generated", component.includes("automaticIdentity") && component.includes("AUTO_DESCRIPTION") && component.includes("AUTO-GENERATED IDENTITY")],
+  ["no migration selector", !component.includes("Migration target</span><select") && !component.includes("setMigrationTargetMarketCapUsd")],
+  ["real drag and drop upload", component.includes("onDrop={handleDrop}") && component.includes("event.dataTransfer.files")],
+  ["animated GIF support retained", component.includes('image/gif') && component.includes("Animated GIF")],
+  ["continue turns ready only at minimum", component.includes('lx-fast-continue ${minimumReady ? "ready" : ""}') && component.includes("disabled={!minimumReady || busy}")],
+  ["inclusive creator budget remains clear", component.includes("ETH incl. gas") && component.includes("0.001 ETH including gas")],
+  ["mainnet factory truth remains visible", component.includes("The mainnet factory is not deployed yet") && component.includes("factoryReady")],
+  ["final one-wallet signing review", component.includes("One-wallet launch") && component.includes("Wallet signs locally")],
+  ["launch panel stays non-modal", css.includes("one-image fast launcher + non-compressing sidecar behavior")],
+  ["right launch dock overlays instead of squeezing", css.includes('.terminal-dock-stack.right[data-launch-open="true"]') && css.includes("position: absolute")],
+  ["market workspace keeps full-width track", css.includes("has-launch-right-dock:not(.has-left-docks)") && css.includes("grid-template-columns: minmax(0, 1fr) !important")],
+  ["floating launcher remains usable", css.includes('.terminal-sidecar.floating[data-panel="launch"]') && sidecar.includes('id === "launch" ? 720 : 390')],
   ["clean transparent vector mark", svg.includes("linearGradient") && !svg.includes("<rect") && !svg.includes("filter")],
-  ["favicon and app icon assets regenerated", ["public/favicon.ico", "public/favicon-16.png", "public/favicon-32.png", "public/apple-touch-icon.png", "public/icon-192.png", "public/icon-512.png"].every((path) => existsSync(path) && statSync(path).size > 100)],
-  ["boxed logo glow removed", css.includes("V58 logo optical sizing") && css.includes("filter: none !important")],
+  ["favicon and app icon assets retained", ["public/favicon.ico", "public/favicon-16.png", "public/favicon-32.png", "public/apple-touch-icon.png", "public/icon-192.png", "public/icon-512.png"].every((path) => existsSync(path) && statSync(path).size > 100)],
 ];
 
 let passed = 0;
@@ -37,5 +37,5 @@ for (const [label, ok] of checks) {
   console.log(`${ok ? "PASS" : "FAIL"} ${label}`);
   if (ok) passed += 1;
 }
-console.log(`\nLeverage X V58 Launch Token UI: ${passed}/${checks.length} checks passed.`);
+console.log(`\nLeverage X fast Launch Token UI: ${passed}/${checks.length} checks passed.`);
 if (passed !== checks.length) process.exit(1);

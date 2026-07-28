@@ -51,6 +51,7 @@ export const ROBINHOOD_NETWORKS: Record<RobinhoodNetworkKey, RobinhoodNetwork> =
 };
 
 export const V54_TOTAL_LAUNCH_BUDGET_WEI = 1_000_000_000_000_000n; // 0.001 ETH inclusive of the configured gas ceiling.
+export const LEVERAGEX_PROTOCOL_MIGRATION_TARGET_MARKET_CAP_USD = 45_000;
 export const V54_MARKET_CREATED_EVENT = "MarketCreated(address,address,address,uint256,uint256,uint256,uint256,bytes32)";
 
 export type V54LaunchInput = {
@@ -58,7 +59,8 @@ export type V54LaunchInput = {
   symbol: string;
   metadataURI: string;
   metadataHash: Hex;
-  migrationTargetMarketCapUsd: number;
+  /** Retained for ABI compatibility. The protocol always encodes its fixed migration target. */
+  migrationTargetMarketCapUsd?: number;
 };
 
 export type V54LaunchBudget = {
@@ -115,7 +117,7 @@ export function encodeV54CreateMarket(input: V54LaunchInput) {
   const headBytes = 5 * 32;
   const symbolOffset = headBytes + nameTail.length / 2;
   const uriOffset = symbolOffset + symbolTail.length / 2;
-  const targetUsdWad = BigInt(Math.round(input.migrationTargetMarketCapUsd)) * 10n ** 18n;
+  const targetUsdWad = BigInt(LEVERAGEX_PROTOCOL_MIGRATION_TARGET_MARKET_CAP_USD) * 10n ** 18n;
   return `${functionSelector("createMarket(string,string,string,bytes32,uint256)")}${encodeUint(headBytes)}${encodeUint(symbolOffset)}${encodeUint(uriOffset)}${encodeBytes32(input.metadataHash)}${encodeUint(targetUsdWad)}${nameTail}${symbolTail}${uriTail}` as Hex;
 }
 

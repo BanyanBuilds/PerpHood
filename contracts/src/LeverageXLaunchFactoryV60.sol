@@ -383,6 +383,7 @@ contract LeverageXLaunchFactoryV60 {
     error Reentrancy();
     error UnsafeCanaryState();
     error InvalidCanaryMarket();
+    error InvalidMigrationTarget();
 
     modifier onlyOwner() {
         if (msg.sender != owner) revert OnlyOwner();
@@ -427,7 +428,8 @@ contract LeverageXLaunchFactoryV60 {
         if (metadataHash == bytes32(0) || uriBytes.length < 8 || uriBytes.length > 512) revert InvalidMetadata();
         if (msg.value < MIN_CREATOR_GENESIS_BUY_WEI || msg.value >= TOTAL_CREATOR_LAUNCH_BUDGET_WEI) revert InvalidGenesisBuy();
 
-        uint256 target = migrationTargetUsdWad == 0 ? DEFAULT_MIGRATION_TARGET_USD_WAD : migrationTargetUsdWad;
+        if (migrationTargetUsdWad != 0 && migrationTargetUsdWad != DEFAULT_MIGRATION_TARGET_USD_WAD) revert InvalidMigrationTarget();
+        uint256 target = DEFAULT_MIGRATION_TARGET_USD_WAD;
         market = new LeverageXSpotMarketV60{value: msg.value}(
             msg.sender,
             name,

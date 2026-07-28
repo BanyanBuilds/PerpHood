@@ -77,6 +77,32 @@ contract LeverageXLaunchFactoryV60Test {
         factory.createMarket{value: 0.00082 ether}("Blocked", "BLOCK", "https://example.com/blocked.json", keccak256("blocked"), 0);
     }
 
+    function testRejectsCustomMigrationTarget() public {
+        _configureCanary();
+        vm.expectRevert(LeverageXLaunchFactoryV60.InvalidMigrationTarget.selector);
+        vm.prank(creator);
+        factory.createMarket{value: 0.00082 ether}(
+            "Custom Target",
+            "CUSTOM",
+            "https://example.com/metadata/custom.json",
+            keccak256("custom-target"),
+            69_000 ether
+        );
+    }
+
+    function testZeroMigrationTargetResolvesToProtocolDefault() public {
+        _configureCanary();
+        vm.prank(creator);
+        (LeverageXSpotMarketV60 market,) = factory.createMarket{value: 0.00082 ether}(
+            "Protocol Target",
+            "FIXED",
+            "https://example.com/metadata/fixed.json",
+            keccak256("fixed-target"),
+            0
+        );
+        require(market.migrationTargetUsdWad() == factory.DEFAULT_MIGRATION_TARGET_USD_WAD(), "TARGET");
+    }
+
     function testCanaryMarketStartsPausedCappedAndFixedSupply() public {
         (LeverageXSpotMarketV60 market, LeverageXTokenV60 token) = _launch();
         require(market.paused(), "LOCAL_NOT_PAUSED");

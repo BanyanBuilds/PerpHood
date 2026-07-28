@@ -25,7 +25,7 @@ const favicon = file("public/icon.svg");
 const css = file("app/globals.css");
 const profile = file("app/profile/page.tsx");
 
-check("package promoted to V60", pkg.version === "60.0.0" && pkg.name === "leveragex-v60-mainnet-canary-control");
+check("package promoted to V60", pkg.version?.startsWith("60.") === true && pkg.name === "leveragex-v60-mainnet-canary-control");
 check("V60 command surface exists", ["chain:v60:canary:preflight", "chain:v60:canary:configure", "chain:v60:canary:status", "chain:v60:canary:open", "chain:v60:emergency-pause"].every((key) => Boolean(pkg.scripts?.[key])));
 check("V60 production contract is packaged", existsSync("contracts/src/LeverageXLaunchFactoryV60.sol") && contract.includes("contract LeverageXLaunchFactoryV60"));
 check("V59 deployment path now targets V60 bytecode", v59Common.includes("LeverageXLaunchFactoryV60.sol:LeverageXLaunchFactoryV60") && v59Common.includes("LeverageXSpotMarketV60"));
@@ -52,7 +52,7 @@ check("readiness has canary gates", readiness.includes("canaryConfigurationReady
 check("readiness route is no-store", route.includes("no-store") && route.includes("readV60CanaryReadiness"));
 check("admin console is V60", consoleUi.includes("Mainnet Canary Control") && admin.includes("V60CanaryConsole"));
 check("admin makes public/perps lock explicit", consoleUi.includes("Public launch mode disabled") && consoleUi.includes("Long/Short disabled"));
-check("launch panel labels canary mainnet", launch.includes("(canary only)") && launch.includes("Canary creator only"));
+check("launch panel preserves canary restriction", launch.includes("MAINNET_CANARY_ONLY") && launch.includes("First launch is restricted"));
 check("chain launch enforces configured creator", chainClient.includes("enforceMainnetCanary") && chainClient.includes("MAINNET_CANARY_CREATOR"));
 check("V60 env controls are documented", env.includes("V60_CANARY_CREATOR_ADDRESS") && env.includes("V60_CANARY_OPEN_CONFIRM") && env.includes("NEXT_PUBLIC_LEVERAGEX_CANARY_CREATOR_ADDRESS"));
 check("no browser owner signing route", !route.includes("private") && !consoleUi.includes("eth_sendTransaction"));

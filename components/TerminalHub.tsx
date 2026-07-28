@@ -282,6 +282,7 @@ export function TerminalHub() {
   const [workspaceView, setWorkspaceView] = useState<WorkspaceView>(() => params.get("view") === "movers" ? "movers" : "markets");
   const [moverQueries, setMoverQueries] = useState<Record<MoverColumnKind, string>>({ movers: "", liked: "", "market-cap": "" });
   const [launchDraft, setLaunchDraft] = useState<XLaunchDraft | null>(null);
+  const [openLaunchAfterWallet, setOpenLaunchAfterWallet] = useState(false);
   const [panelPlacement, setPanelPlacement] = useState<Record<DrawerKind, SidecarPlacement>>(() => ({ ...DEFAULT_PANEL_PLACEMENT }));
   const [stripSettings, setStripSettings] = useState<PositionWatchStripSettings>({ showPositions: true, showWatchlist: true, showPnl: true, showMarketCap: true, maxPositions: 8, maxWatchlist: 10, compact: false });
   const [bottomDockSettings, setBottomDockSettings] = useState({ showConnection: true, showLaunch: true, showEngine: true, showLabels: true, compact: false });
@@ -498,16 +499,33 @@ export function TerminalHub() {
     setOpenPanels((current) => current.includes(kind) ? current : [...current, kind]);
   }, [openPanels, panelPlacement]);
 
+  const requestLaunchAccess = useCallback(() => {
+    if (connected) return true;
+    setOpenLaunchAfterWallet(true);
+    toggleWallet();
+    setBuyNotice("Connect your wallet to open Launch Token.");
+    window.setTimeout(() => setBuyNotice(""), 3200);
+    return false;
+  }, [connected, toggleWallet]);
+
+  useEffect(() => {
+    if (!connected || !openLaunchAfterWallet) return;
+    setOpenLaunchAfterWallet(false);
+    openPanelWithCapacity("launch");
+  }, [connected, openLaunchAfterWallet, openPanelWithCapacity]);
+
   const openTool = useCallback((kind: DrawerKind) => {
     if (openPanels.includes(kind)) {
       setOpenPanels((current) => current.filter((panel) => panel !== kind));
       return;
     }
+    if (kind === "launch" && !requestLaunchAccess()) return;
     openPanelWithCapacity(kind);
-  }, [openPanelWithCapacity, openPanels]);
+  }, [openPanelWithCapacity, openPanels, requestLaunchAccess]);
   const ensurePanelOpen = useCallback((kind: DrawerKind) => {
+    if (kind === "launch" && !requestLaunchAccess()) return;
     openPanelWithCapacity(kind);
-  }, [openPanelWithCapacity]);
+  }, [openPanelWithCapacity, requestLaunchAccess]);
   const closePanel = useCallback((kind: DrawerKind) => {
     setOpenPanels((current) => current.filter((panel) => panel !== kind));
   }, []);
@@ -714,7 +732,7 @@ export function TerminalHub() {
       {buyNotice && <div className="terminal-buy-notice">{buyNotice}</div>}
       {pnlWidgetOpen && <FloatingPnlWidget onClose={() => setPnlWidgetOpen(false)} />}
 
-      <div className="terminal-hub-workspace">
+      <div className="terminal-hub-workspace" data-launch-open={rightPanels.includes("launch") ? "true" : "false"}>
         {leftPanels.length > 0 && <div className="terminal-dock-stack left" data-count={leftPanels.length} aria-label={`Left docked panels · ${leftPanels.length} of ${MAX_LEFT_DOCK_PANELS} slots used`}>{leftPanels.map((panel, index) => renderDockPanel(panel, "left", index))}</div>}
 
         {workspaceView === "markets" ? (
@@ -751,7 +769,7 @@ export function TerminalHub() {
           </section>
         )}
 
-        {rightPanels.length > 0 && <div className="terminal-dock-stack right" aria-label="Right docked panels">{rightPanels.map((panel, index) => renderDockPanel(panel, "right", index))}</div>}
+        {rightPanels.length > 0 && <div className="terminal-dock-stack right" data-launch-open={rightPanels.includes("launch") ? "true" : "false"} aria-label="Right docked panels">{rightPanels.map((panel, index) => renderDockPanel(panel, "right", index))}</div>}
         {floatingPanels.map((panel, index) => renderDockPanel(panel, "floating", index))}
       </div>
 
